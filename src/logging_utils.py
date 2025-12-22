@@ -26,9 +26,9 @@ def print_conf_matrix_to_file(file: TextIO, model_name: str, y, y_pred):
     file.write(str(confusion_matrix(y, y_pred)))
 
 
-def log_classification_report(model_name: str, y_true, y_pred):
+def log_classification_report(y_true, y_pred):
     report = classification_report(y_true, y_pred)
-    file_path = f"{model_name}_classification_report.txt"
+    file_path = "classification_report.txt"
 
     with open(file_path, "w") as f:
         f.write(str(report))
@@ -37,9 +37,9 @@ def log_classification_report(model_name: str, y_true, y_pred):
     os.remove(file_path)
 
 
-def log_confusion_matrix(model_name: str, y_true, y_pred):
+def log_confusion_matrix(y_true, y_pred):
     matrix = confusion_matrix(y_true, y_pred)
-    file_path = f"{model_name}_confusion_matrix.txt"
+    file_path = "confusion_matrix.txt"
 
     with open(file_path, "w") as f:
         f.write(np.array2string(matrix))
@@ -58,17 +58,17 @@ def setup_mlflow():
     mlflow.set_experiment(EXPERIMENT_NAME)
 
 
-def log_hyperparams(params):
+def log_params(params):
     mlflow.log_params(params)
 
 
-def start_parent_run(model_name: str):
+def start_parent_run(model_name: str) -> mlflow.ActiveRun:
     run = mlflow.start_run(run_name=model_name)
     mlflow.set_tag("model", model_name)
     return run
 
 
-def start_child_hp_run(fold_name: str):
+def start_child_hp_run(fold_name: str) -> mlflow.ActiveRun:
     return mlflow.start_run(run_name=fold_name, nested=True)
 
 
@@ -120,12 +120,3 @@ class EpochMetricsTracker(Callback):
             for k, v in entry.items():
                 if k != "epoch":
                     mlflow.log_metric(k, v, step=epoch)
-
-        # Final fold metrics (single values)
-        if "val_acc" in trainer.callback_metrics:
-            mlflow.log_metric(
-                "final_val_acc", float(trainer.callback_metrics["val_acc"])
-            )
-
-        if "val_f1" in trainer.callback_metrics:
-            mlflow.log_metric("final_val_f1", float(trainer.callback_metrics["val_f1"]))
