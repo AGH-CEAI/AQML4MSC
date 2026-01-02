@@ -4,8 +4,8 @@ import numpy as np
 import pytorch_lightning as pl
 import torch
 
-from src.training.base_training import BaseTraining
-from src.utils import get_dataloader
+from aqml4msc.training.base_training import BaseTraining
+from aqml4msc.utils.misc import get_dataloader
 
 
 class MLPTraining(BaseTraining):

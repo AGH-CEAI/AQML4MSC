@@ -2,7 +2,7 @@ from typing import Tuple, Type
 
 import numpy as np
 
-from src.training.base_training import BaseTraining
+from aqml4msc.training.base_training import BaseTraining
 
 
 class SVMTraining(BaseTraining):

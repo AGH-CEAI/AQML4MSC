@@ -7,7 +7,7 @@ import numpy as np
 from pytorch_lightning.callbacks import Callback
 from sklearn.metrics import classification_report, confusion_matrix
 
-EXPERIMENT_NAME = "MIST_Multisource_Classification"
+EXPERIMENT_NAME = "MNIST_Multisource_Classification"
 MLFLOW_URI = "http://localhost:5001"
 
 

@@ -1,10 +1,10 @@
 from torch import nn
 
-from src.data_loading import choose_digits, load_data
-from src.logging_utils import EpochMetricsTracker
-from src.models.vqa import QMLP_1
-from src.pipeline import ClassificationPipeline
-from src.training.mlp_training import MLPTraining
+from aqml4msc.data.loading import choose_digits, load_data
+from aqml4msc.logging.mlflow_utils import EpochMetricsTracker
+from aqml4msc.models.vqa import QMLP_1
+from aqml4msc.pipeline.pipeline import ClassificationPipeline
+from aqml4msc.training.mlp_training import MLPTraining
 
 
 def manual_exp_1():

@@ -4,7 +4,7 @@ import pennylane as qml
 import torch
 from torch import nn
 
-from src.models.base_mlp_model import BaseMLPModel
+from aqml4msc.models.base_mlp_model import BaseMLPModel
 
 
 class QMLP_1(BaseMLPModel):

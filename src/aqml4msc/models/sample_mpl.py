@@ -1,6 +1,6 @@
 import torch.nn as nn
 
-from src.models.base_mlp_model import BaseMLPModel
+from aqml4msc.models.base_mlp_model import BaseMLPModel
 
 
 class SimpleMLP(BaseMLPModel):
