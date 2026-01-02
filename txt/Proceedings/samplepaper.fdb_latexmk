@@ -1,5 +1,5 @@
 # Fdb version 4
-["pdflatex"] 1767357492.18652 "/home/sebastian/Projects/AQML4MSC/txt/Proceedings/samplepaper.tex" "samplepaper.pdf" "samplepaper" 1767357492.357 2
+["pdflatex"] 1767370564.12886 "/home/sebastian/Projects/AQML4MSC/txt/Proceedings/samplepaper.tex" "samplepaper.pdf" "samplepaper" 1767370564.3635 0
   "/etc/texmf/web2c/texmf.cnf" 1765719425.40882 475 c0e671620eb5563b2130f56340a5fde8 ""
   "/home/sebastian/.texlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx0900.600pk" 1765719550.29556 22480 72718150220e861ebc36236fd9a1172a ""
   "/home/sebastian/.texlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1000.600pk" 1765719549.43454 25396 c996b390c6d5308ba2f695665c96d301 ""
@@ -12,7 +12,7 @@
   "/home/sebastian/.texlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/ecti1000.600pk" 1765719549.13052 31872 fd1ea044bb28dea50fa57654e43eda20 ""
   "/home/sebastian/.texlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/ectt0900.600pk" 1765719550.59764 17492 aba536652441182dad40c6b6b21f8d91 ""
   "/home/sebastian/.texlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/tcrm0900.600pk" 1765719549.98552 10448 d4ab4eae0181598650235dd256149a42 ""
-  "/home/sebastian/Projects/AQML4MSC/txt/Proceedings/samplepaper.tex" 1767357491.63406 8418 519c09f503ffbd0f6dcec19530c56857 ""
+  "/home/sebastian/Projects/AQML4MSC/txt/Proceedings/samplepaper.tex" 1767370563.93364 9797 7df9166c20543ef0ab71a1746d587c85 ""
   "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/jknappen/ec/ecbx0900.tfm" 1136768653 3584 1a7de6c99457381c64abc1a7c545505f ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/jknappen/ec/ecbx1000.tfm" 1136768653 3584 2d666ecf6d466d8b007246bc2f94d9da ""
@@ -54,6 +54,8 @@
   "/usr/share/texlive/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def" 1704491087 30006 57b07afb710ee2f649c65cfbafda39c1 ""
   "/usr/share/texlive/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg" 1279039959 678 4792914a8f45be57bb98413425e4c7af ""
   "/usr/share/texlive/texmf-dist/tex/latex/oberdiek/aliascnt.sty" 1575152444 2652 813491e2bc95c1dafbb39cd7c54b380b ""
+  "/usr/share/texlive/texmf-dist/tex/latex/ragged2e/ragged2e.sty" 1687466457 10085 3dececaeed388e31285c366e124c0c4e ""
+  "/usr/share/texlive/texmf-dist/tex/latex/tools/array.sty" 1698869629 12667 e4b5eb11e4b7239e6c8a52bbe074a6c6 ""
   "/usr/share/texlive/texmf-dist/tex/latex/tools/multicol.sty" 1686341992 32515 51caec75eda9c8890135f12f1a4eddc3 ""
   "/usr/share/texlive/texmf-dist/web2c/texmf.cnf" 1707919699 40399 f2c302f7d2af602abb742093540a5834 ""
   "/usr/share/texmf/web2c/texmf.cnf" 1707919699 40399 f2c302f7d2af602abb742093540a5834 ""
@@ -61,8 +63,8 @@
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1765719444 6800793 2f231e3553e2fddeacf64e3a864117ed ""
   "fig/fig1.eps" 1765719268.69857 357553 784a1d3035e9550a463f314c33bb157f ""
   "llncs.cls" 1765719268.69968 43402 5fb5a2dc40571aa40f3d199c00cbb986 ""
-  "samplepaper.aux" 1767357492.30639 1701 87cb0fca012cf3996060f2059bdda470 "pdflatex"
-  "samplepaper.tex" 1767357491.63406 8418 519c09f503ffbd0f6dcec19530c56857 ""
+  "samplepaper.aux" 1767370564.30958 2243 2685578226f1657d0340d26d78b3b594 "pdflatex"
+  "samplepaper.tex" 1767370563.93364 9797 7df9166c20543ef0ab71a1746d587c85 ""
   (generated)
   "samplepaper.aux"
   "samplepaper.log"
