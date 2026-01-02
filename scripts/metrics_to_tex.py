@@ -5,59 +5,129 @@ from mlflow.tracking import MlflowClient
 from aqml4msc.logging.mlflow_utils import EXPERIMENT_NAME, MLFLOW_URI
 
 
-def latex_escape(s):
+# -----------------------------
+# Utilities
+# -----------------------------
+def latex_escape(s) -> str:
     return str(s).replace("_", r"\_")
 
 
+# -----------------------------
+# MLflow setup
+# -----------------------------
 client = MlflowClient(tracking_uri=MLFLOW_URI)
 experiment = client.get_experiment_by_name(EXPERIMENT_NAME)
 
-# Fetch runs
+if experiment is None:
+    raise RuntimeError(f"Experiment '{EXPERIMENT_NAME}' not found")
+
 runs = client.search_runs(
-    experiment_ids=[experiment.experiment_id],  # type: ignore
-    order_by=[],
-    max_results=100,
+    experiment_ids=[experiment.experiment_id],
+    max_results=500,
 )
 
-# Group runs by parent run name
-runs_by_parent = defaultdict(list)
+# -----------------------------
+# Group runs
+# -----------------------------
+parent_runs = {}
+children_by_parent = defaultdict(list)
+
 for run in runs:
-    parent_id = run.data.tags.get("mlflow.parentRunId", None)
-    parent_run_name = "Root"
-    if parent_id:
-        parent_run = client.get_run(parent_id)
-        parent_run_name = parent_run.data.tags.get("mlflow.runName", parent_id)
-    runs_by_parent[parent_run_name].append(run)
+    parent_id = run.data.tags.get("mlflow.parentRunId")
+    if parent_id is None:
+        parent_runs[run.info.run_id] = run
+    else:
+        children_by_parent[parent_id].append(run)
 
-# Transposed LaTeX tables
-for parent_name, group_runs in runs_by_parent.items():
-    # Collect all metrics keys in this group
-    all_metrics = set()
-    for run in group_runs:
-        all_metrics.update(run.data.metrics.keys())
-    all_metrics = sorted(all_metrics)
 
-    # Include model as a "metric" to show in rows
-    all_metrics = ["Model"] + all_metrics
+# -----------------------------
+# Generate LaTeX
+# -----------------------------
+for parent_id, parent_run in parent_runs.items():
+    child_runs = children_by_parent.get(parent_id, [])
+    if not child_runs:
+        continue
 
-    # Print table header (runs as columns)
-    print(f"% Parent run: {parent_name}")
-    col_spec = "l" + "c" * len(group_runs)
-    print(r"\begin{tabular}{" + col_spec + "}")
-    header = ["Metric / Run"] + [
-        run.data.tags.get("mlflow.runName", run.info.run_id) for run in group_runs
+    run_name = parent_run.data.tags.get("mlflow.runName", parent_run.info.run_id)
+
+    # ==================================================
+    # PARAMETERS (PARENT)
+    # ==================================================
+    print(f"% ===== Hyperparameters: {latex_escape(run_name)} =====")
+    print(r"\begin{table}[t]")
+    print(r"\centering")
+    print(r"\caption{Hyperparameters for experiment " + latex_escape(run_name) + r"}")
+    print(r"\begin{tabular}{ll}")
+    print(r"\hline")
+    print(r"Parameter & Value \\")
+    print(r"\hline")
+
+    for k, v in sorted(parent_run.data.params.items()):
+        print(
+            f"{latex_escape(k)} & "
+            r"\texttt{" + latex_escape(v) + r"} \\"
+        )
+
+    print(r"\hline")
+    print(r"\end{tabular}")
+    print(r"\end{table}")
+    print()
+
+    # ==================================================
+    # METRICS (PARENT)
+    # ==================================================
+    print(f"% ===== Final Metrics: {latex_escape(run_name)} =====")
+    print(r"\begin{table}[t]")
+    print(r"\centering")
+    print(r"\caption{Final metrics for " + latex_escape(run_name) + r"}")
+    print(r"\begin{tabular}{lc}")
+    print(r"\hline")
+    print(r"Metric & Value \\")
+    print(r"\hline")
+
+    for metric, value in sorted(parent_run.data.metrics.items()):
+        print(f"{latex_escape(metric)} & {value:.3f} \\\\")
+
+    print(r"\hline")
+    print(r"\end{tabular}")
+    print(r"\end{table}")
+    print()
+
+    # ==================================================
+    # METRICS (CHILD RUNS / FOLDS)
+    # ==================================================
+    metric_names = sorted({m for run in child_runs for m in run.data.metrics.keys()})
+
+    fold_names = [
+        run.data.tags.get("mlflow.runName", f"Fold {i + 1}")
+        for i, run in enumerate(child_runs)
     ]
+
+    print(f"% ===== CV Metrics per Fold: {latex_escape(run_name)} =====")
+    print(r"\begin{table}[t]")
+    print(r"\centering")
+    print(
+        r"\caption{Cross-validation metrics per fold for "
+        + latex_escape(run_name)
+        + r"}"
+    )
+
+    col_spec = "l" + "c" * len(child_runs)
+    print(rf"\begin{{tabular}}{{{col_spec}}}")
+    print(r"\hline")
+
+    header = ["Metric"] + [latex_escape(n) for n in fold_names]
     print(" & ".join(header) + r" \\")
     print(r"\hline")
 
-    # Print rows (metrics as rows)
-    for metric in all_metrics:
+    for metric in metric_names:
         row = [latex_escape(metric)]
-        for run in group_runs:
-            if metric == "Model":
-                row.append(run.data.tags.get("model", "N/A"))
-            else:
-                row.append(f"{run.data.metrics.get(metric, float('nan')):.3f}")
+        for run in child_runs:
+            value = run.data.metrics.get(metric)
+            row.append(f"{value:.3f}" if value is not None else "--")
         print(" & ".join(row) + r" \\")
+
+    print(r"\hline")
     print(r"\end{tabular}")
+    print(r"\end{table}")
     print("\n")
