@@ -6,7 +6,7 @@ from torchmetrics.classification import MulticlassAccuracy, MulticlassF1Score
 
 
 class BaseMLPModel(pl.LightningModule):
-    def __init__(self, lr=1e-3, loss_fn=None, num_classes=3):
+    def __init__(self, lr=1e-3, loss_fn=nn.CrossEntropyLoss(), num_classes=3):
         super().__init__()
         self.save_hyperparameters(ignore=["loss_fn"])
 
@@ -21,7 +21,7 @@ class BaseMLPModel(pl.LightningModule):
         )
         self.train_metrics = metrics.clone(prefix="train_")
         self.val_metrics = metrics.clone(prefix="val_")
-        self.loss_fn = nn.CrossEntropyLoss()
+        self.loss_fn = loss_fn
 
     def forward(self, x):
         raise NotImplementedError
