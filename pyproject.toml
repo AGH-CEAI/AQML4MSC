@@ -9,6 +9,7 @@ dependencies = [
     "matplotlib>=3.10.8",
     "mlflow>=3.7.0",
     "numpy>=2.3.5",
+    "optuna>=4.6.0",
     "pennylane>=0.43.1",
     "scikit-image>=0.25.2",
     "scikit-learn>=1.8.0",
