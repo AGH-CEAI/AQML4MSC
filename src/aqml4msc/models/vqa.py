@@ -54,3 +54,6 @@ class QMLP_1(BaseMLPModel):
         weight_shapes = {"weights": (n_layers, n_qubits)}
 
         return qml.qnn.TorchLayer(qnode, weight_shapes)  # type: ignore
+
+    def apply_ansatz(self, quantum_layer):
+        self.model_classifier = quantum_layer
