@@ -27,7 +27,7 @@ def vertical_projection_mean(imgs):
 ########################################
 
 
-def preproces_pipeline(imgs: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
+def preprocess_pipeline(imgs: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
     # (2115, 26, 28) -> (2115, 14, 28), (2115, 14, 28)
     imgs_top, img_bottom = cut_in_half(imgs)
 

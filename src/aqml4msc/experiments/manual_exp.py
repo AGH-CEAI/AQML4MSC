@@ -59,4 +59,3 @@ def manual_exp_1():
         model_params=model_params,
         trainer_params=trainer_params,
     )
-    # logowanie parametrów i moze modelu
