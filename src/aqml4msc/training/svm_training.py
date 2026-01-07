@@ -1,6 +1,8 @@
 from typing import Tuple, Type
 
+import mlflow.sklearn as mlflow_sklearn
 import numpy as np
+from mlflow.models import ModelSignature
 
 from aqml4msc.training.base_training import BaseTraining
 
@@ -18,6 +20,9 @@ class SVMTraining(BaseTraining):
     ):
         self.model.fit(train_data, train_y)
 
-    def predict(self, val_data: Tuple, val_y: np.ndarray):
+    def predict(self, val_data: Tuple):
         data = val_data
         return self.model.predict(data)
+
+    def log_model(self, model_name: str, signature: ModelSignature):
+        mlflow_sklearn.log_model(self.model, name=model_name, signature=signature)

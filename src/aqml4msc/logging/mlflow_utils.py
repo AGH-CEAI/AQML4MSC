@@ -1,11 +1,14 @@
 import os
 from statistics import mean, stdev
-from typing import Any, Dict, TextIO
+from typing import Any, Dict, TextIO, Tuple
 
 import mlflow
 import numpy as np
+from mlflow.models import infer_signature
 from pytorch_lightning.callbacks import Callback
 from sklearn.metrics import classification_report, confusion_matrix
+
+from aqml4msc.training.base_training import BaseTraining
 
 EXPERIMENT_NAME = "MNIST_Multisource_Classification"
 # MLFLOW_URI = "http://localhost:5001"
@@ -106,6 +109,15 @@ def log_aggregated_metrics(all_fold_metrics: dict):
     for metric_name, values in all_fold_metrics.items():
         mlflow.log_metric(f"{metric_name}_mean", mean(values))
         mlflow.log_metric(f"{metric_name}_std", stdev(values))
+
+
+def log_model(
+    trainer: BaseTraining,
+    X_val: Tuple[np.ndarray, np.ndarray],
+    model_name: str = "model",
+):
+    signature = infer_signature(X_val, trainer.predict(X_val))
+    trainer.log_model(model_name=model_name, signature=signature)
 
 
 # ------------------------------------------------------------------------------

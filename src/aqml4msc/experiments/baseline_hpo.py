@@ -48,6 +48,7 @@ def hpo_baseline_1():
             "seed": 42,
             "n_folds": 5,
             "parent_run_name": "HPO_classical_MLP",
+            "model_name": "Classical_MLP_baseline",
         }
 
         training = MLPTraining(

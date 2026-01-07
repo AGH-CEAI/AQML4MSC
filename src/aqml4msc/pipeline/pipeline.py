@@ -49,7 +49,7 @@ class ClassificationPipeline:
                         val_data=val_data,
                         val_y=val_y,
                     )
-                    preds = classifier.predict(val_data=val_data, val_y=val_y)
+                    preds = classifier.predict(val_data=val_data)
 
                     preds = label_encoder.inverse_transform(preds)
                     true_labels = label_encoder.inverse_transform(val_y)
@@ -64,5 +64,10 @@ class ClassificationPipeline:
 
             aggretated_metrics = aggregate_fold_metrics(metrics)
             mlflow_utils.log_aggregated_metrics(aggretated_metrics)
+            mlflow_utils.log_model(
+                trainer=classifier,
+                X_val=val_data,
+                model_name=experiment_params["model_name"],
+            )
 
         return aggretated_metrics  # [pracap]

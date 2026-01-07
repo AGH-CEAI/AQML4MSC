@@ -1,8 +1,10 @@
 from typing import Tuple, Type
 
+import mlflow.pytorch as mlflow_pytorch
 import numpy as np
 import pytorch_lightning as pl
 import torch
+from mlflow.models import ModelSignature
 
 from aqml4msc.training.base_training import BaseTraining
 from aqml4msc.utils.misc import get_dataloader
@@ -26,7 +28,10 @@ class MLPTraining(BaseTraining):
         val_dataloader = get_dataloader(*val_data, y=val_y, batch_size=self.batch_size)
         self.trainer.fit(self.model, train_dataloader, val_dataloader)
 
-    def predict(self, val_data: Tuple, val_y: np.ndarray):
-        dataloader = get_dataloader(*val_data, y=val_y, batch_size=self.batch_size)
+    def predict(self, val_data: Tuple):
+        dataloader = get_dataloader(*val_data, batch_size=self.batch_size)
         preds = self.trainer.predict(self.model, dataloader)
         return torch.cat(preds, dim=0).cpu().numpy()  # type: ignore
+
+    def log_model(self, model_name: str, signature: ModelSignature):
+        mlflow_pytorch.log_model(self.model, name=model_name, signature=signature)

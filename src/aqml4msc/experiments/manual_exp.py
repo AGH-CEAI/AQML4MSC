@@ -38,6 +38,7 @@ def manual_exp_1():
         "seed": 42,
         "n_folds": 5,
         "parent_run_name": "QMLP_initial_run",
+        "model_name": "QMLP_1",
     }
 
     training = MLPTraining(

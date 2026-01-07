@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Tuple, Type
 
 import numpy as np
+from mlflow.models import ModelSignature
 
 
 class BaseTraining(ABC):
@@ -21,7 +22,11 @@ class BaseTraining(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def predict(self, val_data: Tuple, val_y: np.ndarray):
+    def predict(self, val_data: Tuple):
+        raise NotImplementedError
+
+    @abstractmethod
+    def log_model(self, model_name: str, signature: ModelSignature):
         raise NotImplementedError
 
     def reset_model(self):
