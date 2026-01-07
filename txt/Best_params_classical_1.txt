@@ -1,0 +1,2 @@
+Best is trial 10 with value: 0.9598954971469882.
+{'lr': 0.0012191286815755042, 'hidden_dim_part': 128, 'output_dim_part': 128, 'hidden_dim_class': 64, 'batch_size': 64}

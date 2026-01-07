@@ -1,0 +1,247 @@
+
+\documentclass[runningheads]{llncs}
+
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{array}
+\usepackage{ragged2e}
+\usepackage{braket}
+\usepackage{amsmath}
+
+
+\begin{document}
+%
+\title{Auto Quantum Machine Learning for Multisource Classification}
+
+\author{First Author\inst{1}\orcidID{0000-1111-2222-3333} \and
+Second Author\inst{2,3}\orcidID{1111-2222-3333-4444} \and
+Third Author\inst{3}\orcidID{2222--3333-4444-5555}}
+%
+\authorrunning{F. Author et al.}
+% First names are abbreviated in the running head.
+% If there are more than two authors, 'et al.' is used.
+%
+\institute{Princeton University, Princeton NJ 08544, USA \and
+Springer Heidelberg, Tiergartenstr. 17, 69121 Heidelberg, Germany
+\email{lncs@springer.com}\\
+\url{http://www.springer.com/gp/computer-science/lncs} \and
+ABC Institute, Rupert-Karls-University Heidelberg, Heidelberg, Germany\\
+\email{\{abc,lncs\}@uni-heidelberg.de}}
+%
+\maketitle              % typeset the header of the contribution
+%
+\begin{abstract}
+The abstract should briefly summarize the contents of the paper in
+150--250 words.
+
+\keywords{First keyword  \and Second keyword \and Another keyword.}
+\end{abstract}
+%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Approach}
+
+\begin{equation}
+E(\sigma_z) = \bra{\phi(x)}U^\dagger M U \ket{\phi(x)}
+\end{equation}
+
+\begin{equation}
+M = \sigma_z \otimes \sigma_z \otimes \sigma_z \otimes I \otimes I \otimes ...
+\end{equation}
+
+\begin{equation}
+\ket{\phi(x)} = (R_x(x_0) \otimes R_x(x_1) \otimes ... \otimes R_x(x_n)) \ket{0} 
+\end{equation}
+
+\begin{equation}
+U(\boldsymbol{\theta}) = \prod_{\ell=1}^{L} U_{\mathrm{BEL}}(\boldsymbol{\theta}^{(\ell)})
+\end{equation}
+
+\begin{equation}
+U_{\mathrm{BEL}}(\boldsymbol{\theta})
+=
+\mathrm{CNOT}_{n,1}
+\left(
+\prod_{i=1}^{n-1} \mathrm{CNOT}_{i,i+1}
+\right)
+\left(
+\bigotimes_{i=1}^{n} R_Y(\theta_i)
+\right)
+\end{equation}
+
+\begin{align*}
+R_Y(\theta) &= e^{-i \theta Y / 2}\\
+&= \begin{pmatrix}
+cos(\frac{\theta}{2}) & -sin(\frac{\theta}{2})  \\
+sin(\frac{\theta}{2})  & cos(\frac{\theta}{2}) 
+\end{pmatrix}
+\end{align*}
+
+\begin{equation}
+\mathrm{CNOT}_{i,i+1}
+=
+\ket{0}\!\bra{0}_i \otimes I_{i+1}
++
+\ket{1}\!\bra{1}_i \otimes X_{i+1}
+\end{equation}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Results}
+
+% ===== Hyperparameters: QMLP\_initial\_run =====
+\begin{table}[t]
+\centering
+\caption{Hyperparameters for experiment QMLP\_initial\_run}\label{tab1}
+\small
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.1}
+\begin{tabular}{>{\RaggedRight\arraybackslash}p{0.35\linewidth}
+                >{\RaggedRight\arraybackslash}p{0.55\linewidth}}
+\hline
+Parameter & Value \\
+\hline
+accelerator & \texttt{auto} \\
+batch\_size & \texttt{32} \\
+callbacks & \texttt{[<src.logging\_utils.EpochMetricsTracker object at 0x7021fc10c080>]} \\
+devices & \texttt{auto} \\
+digits & \texttt{[5, 6, 7]} \\
+enable\_checkpointing & \texttt{False} \\
+enable\_progress\_bar & \texttt{True} \\
+hidden\_dim & \texttt{[128]} \\
+input\_dim & \texttt{14} \\
+logger & \texttt{False} \\
+loss\_fn & \texttt{CrossEntropyLoss()} \\
+lr & \texttt{0.001} \\
+max\_epochs & \texttt{100} \\
+n\_folds & \texttt{5} \\
+n\_layers & \texttt{3} \\
+n\_qubits & \texttt{6} \\
+num\_classes & \texttt{3} \\
+num\_sanity\_val\_steps & \texttt{0} \\
+num\_workers & \texttt{4} \\
+parent\_run\_name & \texttt{QMLP\_initial\_run} \\
+seed & \texttt{42} \\
+\hline
+\end{tabular}
+\end{table}
+
+% ===== Final Metrics: QMLP\_initial\_run =====
+\begin{table}[t]
+\centering
+\caption{Final metrics for QMLP\_initial\_run}\label{tab2}
+\begin{tabular}{|l|c|}
+\hline
+Metric & Value \\
+\hline
+accuracy\_avg\_mean & 0.870 \\
+accuracy\_avg\_std & 0.031 \\
+accuracy\_mean & 0.872 \\
+accuracy\_std & 0.030 \\
+f1\_macro\_mean & 0.870 \\
+f1\_macro\_std & 0.031 \\
+f1\_micro\_mean & 0.872 \\
+f1\_micro\_std & 0.030 \\
+f1\_weighted\_mean & 0.872 \\
+f1\_weighted\_std & 0.030 \\
+precision\_macro\_mean & 0.873 \\
+precision\_macro\_std & 0.031 \\
+precision\_micro\_mean & 0.872 \\
+precision\_micro\_std & 0.030 \\
+precision\_weighted\_mean & 0.874 \\
+precision\_weighted\_std & 0.030 \\
+recall\_macro\_mean & 0.870 \\
+recall\_macro\_std & 0.031 \\
+recall\_micro\_mean & 0.872 \\
+recall\_micro\_std & 0.030 \\
+recall\_weighted\_mean & 0.872 \\
+recall\_weighted\_std & 0.030 \\
+\hline
+\end{tabular}
+\end{table}
+
+% ===== CV Metrics per Fold: QMLP\_initial\_run =====
+\begin{table}[t]
+\centering
+\caption{Cross-validation metrics per fold for QMLP\_initial\_run}\label{tab3}
+\begin{tabular}{|l|c|c|c|c|c|}
+\hline
+Metric & Fold 5 & Fold 4 & Fold 3 & Fold 2 & Fold 1 \\
+\hline
+accuracy & 0.861 & 0.890 & 0.865 & 0.912 & 0.833 \\
+accuracy\_avg & 0.857 & 0.891 & 0.864 & 0.910 & 0.830 \\
+f1\_macro & 0.858 & 0.890 & 0.864 & 0.911 & 0.829 \\
+f1\_micro & 0.861 & 0.890 & 0.865 & 0.912 & 0.833 \\
+f1\_weighted & 0.860 & 0.891 & 0.866 & 0.912 & 0.832 \\
+precision\_macro & 0.864 & 0.890 & 0.864 & 0.912 & 0.831 \\
+precision\_micro & 0.861 & 0.890 & 0.865 & 0.912 & 0.833 \\
+precision\_weighted & 0.863 & 0.893 & 0.867 & 0.912 & 0.835 \\
+recall\_macro & 0.857 & 0.891 & 0.864 & 0.910 & 0.830 \\
+recall\_micro & 0.861 & 0.890 & 0.865 & 0.912 & 0.833 \\
+recall\_weighted & 0.861 & 0.890 & 0.865 & 0.912 & 0.833 \\
+train\_acc & 0.875 & 0.896 & 0.872 & 0.916 & 0.841 \\
+train\_f1 & 0.877 & 0.895 & 0.871 & 0.917 & 0.839 \\
+train\_loss & 0.630 & 0.476 & 0.637 & 0.577 & 0.661 \\
+val\_acc & 0.858 & 0.889 & 0.864 & 0.911 & 0.829 \\
+val\_f1 & 0.860 & 0.889 & 0.864 & 0.912 & 0.828 \\
+val\_loss & 0.649 & 0.490 & 0.654 & 0.589 & 0.670 \\
+\hline
+\end{tabular}
+\end{table}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Conclusion}
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{credits}
+\subsubsection{\ackname} A bold run-in heading in small font size at the end of the paper is
+used for general acknowledgments, for example: This study was funded
+by X (grant number Y).
+
+\subsubsection{\discintname}
+The authors have no competing interests to declare that are
+relevant to the content of this article.
+\end{credits}
+%
+% ---- Bibliography ----
+%
+% BibTeX users should specify bibliography style 'splncs04'.
+% References will then be sorted and formatted in the correct style.
+%
+% \bibliographystyle{splncs04}
+% \bibliography{mybibliography}
+%
+\begin{thebibliography}{8}
+\bibitem{ref_article1}
+Author, F.: Article title. Journal \textbf{2}(5), 99--110 (2016)
+
+\bibitem{ref_lncs1}
+Author, F., Author, S.: Title of a proceedings paper. In: Editor,
+F., Editor, S. (eds.) CONFERENCE 2016, LNCS, vol. 9999, pp. 1--13.
+Springer, Heidelberg (2016). \doi{10.10007/1234567890}
+
+
+\bibitem{ref_url1}
+LNCS Homepage, \url{http://www.springer.com/lncs}, last accessed 2023/10/25
+\end{thebibliography}
+
+
+
+
+
+
+\end{document}
