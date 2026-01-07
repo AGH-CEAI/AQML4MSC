@@ -12,3 +12,11 @@ wheels/
 .vscode
 data/
 mlflow.db
+
+
+# Latex-generated
+*aqml4msc.log
+*aqml4msc.pdf
+*aqml4msc.synctex.gz
+*aqml4msc.aux
+*aqml4msc.bbl
