@@ -20,3 +20,5 @@ mlflow.db
 *aqml4msc.synctex.gz
 *aqml4msc.aux
 *aqml4msc.bbl
+*aqml4msc.fls
+*aqml4msc.fdb_latexmk
