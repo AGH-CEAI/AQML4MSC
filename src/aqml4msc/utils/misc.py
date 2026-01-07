@@ -9,7 +9,7 @@ from torch.utils.data import DataLoader, Subset, TensorDataset
 
 def get_dataloader(
     *X_sources: np.ndarray,
-    y: np.ndarray,
+    y: np.ndarray | None = None,
     indices: np.ndarray | None = None,
     shuffle: bool = False,
     batch_size: int = 32,
@@ -17,15 +17,17 @@ def get_dataloader(
     if len(X_sources) == 0:
         raise ValueError("At least one X source must be provided")
 
-    n_samples = y.shape[0]
-    for i, X in enumerate(X_sources):
-        if X.shape[0] != n_samples:
-            raise ValueError(
-                f"X_sources[{i}] has {X.shape[0]} samples, expected {n_samples}"
-            )
+    if y is not None:
+        n_samples = y.shape[0]
+        for i, X in enumerate(X_sources):
+            if X.shape[0] != n_samples:
+                raise ValueError(
+                    f"X_sources[{i}] has {X.shape[0]} samples, expected {n_samples}"
+                )
 
     tensors = [from_numpy(X).float() for X in X_sources]
-    tensors.append(from_numpy(y))
+    if y is not None:
+        tensors.append(from_numpy(y))
 
     dataset = TensorDataset(*tensors)
 
