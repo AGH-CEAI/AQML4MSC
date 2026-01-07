@@ -1,6 +1,6 @@
 import os
 from statistics import mean, stdev
-from typing import TextIO
+from typing import Any, Dict, TextIO
 
 import mlflow
 import numpy as np
@@ -8,7 +8,7 @@ from pytorch_lightning.callbacks import Callback
 from sklearn.metrics import classification_report, confusion_matrix
 
 EXPERIMENT_NAME = "MNIST_Multisource_Classification"
-MLFLOW_URI = "http://localhost:5001"
+# MLFLOW_URI = "http://localhost:5001"
 
 
 # ------------------------------------------------------------------------------
@@ -54,8 +54,33 @@ def log_confusion_matrix(y_true, y_pred):
 
 
 def setup_mlflow():
-    mlflow.set_tracking_uri(MLFLOW_URI)
+    mlflow.set_tracking_uri(os.environ["MLFLOW_TRACKING_URI"])
+    prepare_mlflow_experiment(EXPERIMENT_NAME)
     mlflow.set_experiment(EXPERIMENT_NAME)
+
+
+def prepare_mlflow_experiment(exp_name: str) -> None:
+    """
+    _summary_ TODO
+    """
+    if not mlflow.get_experiment_by_name(exp_name):
+        create_mlflow_experiment(exp_name)
+
+
+def create_mlflow_experiment(exp_name: str) -> None:
+    """
+    _summary_ TODO
+
+    :param exp_name: _description_
+    :type exp_name: str
+    """
+    tags: Dict[str, Any] = {
+        "project_name": "AQML4MSC",
+    }
+
+    mlflow.create_experiment(
+        name=exp_name, tags=tags, artifact_location=os.environ["MLFLOW_ARTIFACTS_ROOT"]
+    )
 
 
 def log_params(params):
