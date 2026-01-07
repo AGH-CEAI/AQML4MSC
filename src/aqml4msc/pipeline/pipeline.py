@@ -1,5 +1,3 @@
-from typing import List
-
 import numpy as np
 
 from aqml4msc.logging import mlflow_utils
@@ -19,7 +17,7 @@ class ClassificationPipeline:
         trainer_params: dict,
         data_params: dict,
         experiment_params: dict,
-    ) -> List[dict]:
+    ) -> dict:
         X_source_a, X_source_b = preproces_pipeline(X)
         label_encoder, y = encode_labels(y)
 
@@ -67,4 +65,4 @@ class ClassificationPipeline:
             aggretated_metrics = aggregate_fold_metrics(metrics)
             mlflow_utils.log_aggregated_metrics(aggretated_metrics)
 
-        return metrics  # [pracap]
+        return aggretated_metrics  # [pracap]

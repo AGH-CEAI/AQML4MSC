@@ -59,5 +59,4 @@ def manual_exp_1():
         model_params=model_params,
         trainer_params=trainer_params,
     )
-    # ustawić srednie metryki
-    # logowanie parametrów i moze moedlu
+    # logowanie parametrów i moze modelu
