@@ -26,7 +26,7 @@ class QMLP_1(BaseMLPModel):
             input_dim=input_dim, hidden_dim=hidden_dim, num_classes=num_classes
         )
         self.model_classifier = self.make_quantum_classifier(
-            n_qubits=n_qubits, n_layers=n_layers
+            n_qubits=n_qubits, n_layers=n_layers, num_classes=num_classes
         )
 
     def forward(self, x_top, x_bottom):
@@ -42,14 +42,14 @@ class QMLP_1(BaseMLPModel):
             nn.Linear(hidden_dim[0], num_classes),
         )
 
-    def make_quantum_classifier(self, n_qubits=6, n_layers=3):
+    def make_quantum_classifier(self, num_classes, n_qubits=6, n_layers=3):
         dev = qml.device("default.qubit", wires=n_qubits)
 
         @qml.qnode(dev)
         def qnode(inputs, weights):
             qml.AngleEmbedding(inputs, wires=range(n_qubits))
             qml.BasicEntanglerLayers(weights, wires=range(n_qubits))
-            return [qml.expval(qml.PauliZ(wires=i)) for i in range(3)]
+            return [qml.expval(qml.PauliZ(wires=i)) for i in range(num_classes)]
 
         weight_shapes = {"weights": (n_layers, n_qubits)}
 
