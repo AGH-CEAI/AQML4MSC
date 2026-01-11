@@ -60,8 +60,7 @@ class BaseMLPModel(pl.LightningModule):
         self.val_metrics.reset()
 
     def predict_step(self, batch, batch_idx):
-        *inputs, _ = batch
-        logits = self(*inputs)
+        logits = self(*batch)
         return torch.argmax(logits, dim=1)
 
     def configure_optimizers(self):

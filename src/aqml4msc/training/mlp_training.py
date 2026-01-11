@@ -29,7 +29,7 @@ class MLPTraining(BaseTraining):
         self.trainer.fit(self.model, train_dataloader, val_dataloader)
 
     def predict(self, val_data: Tuple):
-        dataloader = get_dataloader(*val_data, batch_size=self.batch_size)
+        dataloader = get_dataloader(*val_data, y=None, batch_size=self.batch_size)
         preds = self.trainer.predict(self.model, dataloader)
         return torch.cat(preds, dim=0).cpu().numpy()  # type: ignore
 
