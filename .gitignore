@@ -22,3 +22,8 @@ mlflow.db
 *aqml4msc.bbl
 *aqml4msc.fls
 *aqml4msc.fdb_latexmk
+scripts/start_mlflow_server.sh
+Dockerfile
+*.env
+scripts/run_with_mlflow.sh
+scripts/docker_run.sh
