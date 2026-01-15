@@ -4,7 +4,7 @@ from aqml4msc.logging import mlflow_utils
 from aqml4msc.metrics.core import aggregate_fold_metrics, compute_classification_metrics
 from aqml4msc.preprocessing.transforms import preprocess_pipeline
 from aqml4msc.training.base_training import BaseTraining
-from aqml4msc.utils.misc import encode_labels, get_stratified_cv_splits
+from aqml4msc.utils.misc import encode_labels, get_stratified_cv_splits, set_seeds
 
 
 class ClassificationPipeline:
@@ -18,6 +18,8 @@ class ClassificationPipeline:
         data_params: dict,
         experiment_params: dict,
     ) -> dict:
+        set_seeds(experiment_params["seed"])
+
         X_source_a, X_source_b = preprocess_pipeline(X)
         label_encoder, y = encode_labels(y)
 

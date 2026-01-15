@@ -1,6 +1,8 @@
+import random
 from typing import Iterator, Tuple
 
 import numpy as np
+import torch
 from sklearn.calibration import LabelEncoder
 from sklearn.model_selection import StratifiedKFold
 from torch import from_numpy
@@ -73,3 +75,9 @@ def encode_labels(y: np.ndarray) -> Tuple[LabelEncoder, np.ndarray]:
     label_encoder.fit(y)
     y = label_encoder.transform(y)  # type: ignore
     return label_encoder, y
+
+
+def set_seeds(seed: int):
+    torch.manual_seed(seed)
+    random.seed(seed)
+    np.random.seed(seed)
