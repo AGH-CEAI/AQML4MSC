@@ -1,8 +1,11 @@
+import os
 from collections import defaultdict
 
 from mlflow.tracking import MlflowClient
 
-from aqml4msc.logging.mlflow_utils import EXPERIMENT_NAME, MLFLOW_URI
+from aqml4msc.logging.mlflow_utils import EXPERIMENT_NAME
+
+SEARCHED_RUNS_IDS = {"8dd441d425f844cba9dad329b54c68e3"}
 
 
 # -----------------------------
@@ -15,7 +18,7 @@ def latex_escape(s) -> str:
 # -----------------------------
 # MLflow setup
 # -----------------------------
-client = MlflowClient(tracking_uri=MLFLOW_URI)
+client = MlflowClient(tracking_uri=os.environ["MLFLOW_TRACKING_URI"])
 experiment = client.get_experiment_by_name(EXPERIMENT_NAME)
 
 if experiment is None:
@@ -35,9 +38,11 @@ children_by_parent = defaultdict(list)
 for run in runs:
     parent_id = run.data.tags.get("mlflow.parentRunId")
     if parent_id is None:
-        parent_runs[run.info.run_id] = run
+        if not bool(SEARCHED_RUNS_IDS) or run.info.run_id in SEARCHED_RUNS_IDS:
+            parent_runs[run.info.run_id] = run
     else:
-        children_by_parent[parent_id].append(run)
+        if not bool(SEARCHED_RUNS_IDS) or parent_id in SEARCHED_RUNS_IDS:
+            children_by_parent[parent_id].append(run)
 
 
 # -----------------------------
@@ -59,7 +64,7 @@ for parent_id, parent_run in parent_runs.items():
     print(r"\caption{Hyperparameters for experiment " + latex_escape(run_name) + r"}")
     print(r"\begin{tabular}{ll}")
     print(r"\hline")
-    print(r"Parameter & Value \\")
+    print(r"Parameter & Mean Value \\")
     print(r"\hline")
 
     for k, v in sorted(parent_run.data.params.items()):
@@ -86,7 +91,13 @@ for parent_id, parent_run in parent_runs.items():
     print(r"\hline")
 
     for metric, value in sorted(parent_run.data.metrics.items()):
-        print(f"{latex_escape(metric)} & {value:.3f} \\\\")
+        if metric.endswith("_mean"):
+            base_name = metric[:-5]
+            std_metric = f"{base_name}_std"
+            std_value = parent_run.data.metrics[std_metric]
+            print(
+                f"{latex_escape(base_name)} & ${value:.3f} \\pm {std_value:.3f}$ \\\\"
+            )
 
     print(r"\hline")
     print(r"\end{tabular}")
