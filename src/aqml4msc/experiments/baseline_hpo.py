@@ -142,3 +142,68 @@ def hpo_baseline_2():
     study = optuna.create_study(direction="maximize")
     study.optimize(objective, n_trials=1000)
     print(study.best_params)
+
+
+def hpo_baseline_3():
+    def objective(trial):
+        model_params = {
+            "lr": trial.suggest_float("lr", 1e-3, 1e-2),
+            "loss_fn": nn.CrossEntropyLoss(),
+            "num_classes": 3,
+            "input_dim": 14,
+            "hidden_dim_part": [trial.suggest_int("hidden_dim_part", 64, 256)],
+            "output_dim_part": trial.suggest_int("output_dim_part", 64, 256),
+            "hidden_dim_class": [trial.suggest_int("hidden_dim_class", 64, 256)],
+        }
+
+        trainer_params = {
+            "max_epochs": 30,
+            "enable_checkpointing": True,
+            "enable_progress_bar": True,
+            "num_sanity_val_steps": 0,
+            "callbacks": [
+                EpochMetricsTracker(),
+                # EarlyStopping(monitor="val_loss", mode="min"),
+            ],
+            "logger": False,
+            "accelerator": "auto",
+            "devices": "auto",
+        }
+        data_params = {
+            "batch_size": trial.suggest_int("batch_size", 32, 128),
+            "num_workers": 14,
+            "digits": [5, 6, 7],
+        }
+
+        experiment_params = {
+            "seed": 42,
+            "n_folds": 5,
+            "parent_run_name": "HPO_classical_MLP_3",
+            "model_name": "Classical_MLP_baseline_3",
+        }
+
+        training = MLPTraining(
+            model_cls=CMLP_1,
+            model_kwargs=model_params,
+            trainer_kwargs=trainer_params,
+            batch_size=data_params["batch_size"],
+        )
+
+        X, y = load_data()
+        X, y = choose_digits(X, y, data_params["digits"])
+        pipeline = ClassificationPipeline()
+        metrics = pipeline.process_data(
+            X=X,
+            y=y,
+            classifier=training,
+            experiment_params=experiment_params,
+            data_params=data_params,
+            model_params=model_params,
+            trainer_params=trainer_params,
+        )
+
+        return mean(metrics["accuracy"])
+
+    study = optuna.create_study(direction="maximize")
+    study.optimize(objective, n_trials=100)
+    print(study.best_params)
