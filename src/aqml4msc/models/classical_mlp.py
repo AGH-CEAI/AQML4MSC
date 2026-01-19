@@ -1,3 +1,5 @@
+from typing import List
+
 import torch
 import torch.nn as nn
 
@@ -7,11 +9,11 @@ from aqml4msc.models.base_mlp_model import BaseMLPModel
 class CMLP_1(BaseMLPModel):
     def __init__(
         self,
-        input_dim,
-        hidden_dim_part,
-        output_dim_part,
-        hidden_dim_class,
-        num_classes,
+        input_dim: int,
+        hidden_dim_part: List[int],
+        output_dim_part: int,
+        hidden_dim_class: List[int],
+        num_classes: int,
         loss_fn,
         lr=1e-3,
     ):
