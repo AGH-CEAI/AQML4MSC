@@ -44,26 +44,40 @@
 \section{Introduction}
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Problem Formulation}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Approach}
+
+\subsection{Dataset and Preprocessing}
+The MNIST (Modified National Institute of Standards and Technology) dataset is a widely used dataset for training and testing image processing systems. It consists of 70,000 images of handwritten digits (0-9), split into a training set of 60,000 images and a test set of 10,000 images. Each image is 28x28 pixels in size.
+
+\subsection{Classical Neural Network Baseline}
+
+\subsection{Hybrid Classical-Quantum Neural Network}
 
 \begin{equation}
 	\langle \sigma_Z^{(j)} \rangle = \bra{\phi(x)}U^\dagger  \sigma_Z^{(j)}  U \ket{\phi(x)}, \qquad j = 1,2,3
 \end{equation}
 
+The measurement results correspond to the expectation values of the $\sigma_Z$ operator acting independently on the first three qubits.
 \begin{equation}
 	\sigma_Z^{(j)} = \mathbb{I}^{\otimes (j-1)} \otimes \sigma_Z \otimes \mathbb{I}^{\otimes (n-j)}
 \end{equation}
 
+State preparation is performed using angle encoding
 \begin{equation}
 	\ket{\phi(x)} = \left( R_X(x_1) \otimes R_X(x_2) \otimes ... \otimes R_X(x_n) \right) \ket{0}
 \end{equation}
 
+
+The ansatz used in the circuit is constructed from $L$ Basic Entangler Layers provided by the PennyLane package.
 \begin{equation}
 	U(\boldsymbol{\theta}) = \prod_{\ell=1}^{L} U_{\mathrm{BEL}}(\boldsymbol{\theta}^{(\ell)})
 \end{equation}
 
+A single Basic Entangler Layer is defined as:
 \begin{equation}
 	U_{\mathrm{BEL}}(\boldsymbol{\theta}) =
 	\mathrm{CNOT}_{n,1}
@@ -71,6 +85,7 @@
 	\left(\bigotimes_{i=1}^{n} R_Y(\theta_i)\right)
 \end{equation}
 
+Where:
 \begin{align*}
 	R_Y(\theta) & = e^{-i \theta \sigma_Y / 2}                     \\
 	            & = \begin{pmatrix}
@@ -88,7 +103,7 @@
 	, \qquad i \neq j
 \end{equation}
 
-
+\subsection{Automated Quantum Machine Learning}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Results}
@@ -99,30 +114,30 @@
 	\caption{Hyperparameters for experiment QMLP\_initial\_run}
 	\begin{tabular}{ll}
 		\hline
-		Parameter               & Mean Value                                                                               \\
+		Parameter               & Mean Value                  \\
 		\hline
-		accelerator             & \texttt{auto}                                                                            \\
-		batch\_size             & \texttt{32}                                                                              \\
-		callbacks               & \texttt{[<aqml4msc.logging.mlflow\_utils.EpochMetricsTracker object at 0x7525b29f4560>]} \\
-		devices                 & \texttt{auto}                                                                            \\
-		digits                  & \texttt{[5, 6, 7]}                                                                       \\
-		enable\_checkpointing   & \texttt{False}                                                                           \\
-		enable\_progress\_bar   & \texttt{True}                                                                            \\
-		hidden\_dim             & \texttt{[128]}                                                                           \\
-		input\_dim              & \texttt{14}                                                                              \\
-		logger                  & \texttt{False}                                                                           \\
-		loss\_fn                & \texttt{CrossEntropyLoss()}                                                              \\
-		lr                      & \texttt{0.001}                                                                           \\
-		max\_epochs             & \texttt{100}                                                                             \\
-		model\_name             & \texttt{QMLP\_1}                                                                         \\
-		n\_folds                & \texttt{5}                                                                               \\
-		n\_layers               & \texttt{3}                                                                               \\
-		n\_qubits               & \texttt{6}                                                                               \\
-		num\_classes            & \texttt{3}                                                                               \\
-		num\_sanity\_val\_steps & \texttt{0}                                                                               \\
-		num\_workers            & \texttt{4}                                                                               \\
-		parent\_run\_name       & \texttt{QMLP\_initial\_run}                                                              \\
-		seed                    & \texttt{42}                                                                              \\
+		accelerator             & \texttt{auto}               \\
+		batch\_size             & \texttt{32}                 \\
+		% callbacks               & \texttt{[<aqml4msc.logging.mlflow\_utils.EpochMetricsTracker object at 0x7525b29f4560>]} \\
+		devices                 & \texttt{auto}               \\
+		digits                  & \texttt{[5, 6, 7]}          \\
+		enable\_checkpointing   & \texttt{False}              \\
+		enable\_progress\_bar   & \texttt{True}               \\
+		hidden\_dim             & \texttt{[128]}              \\
+		input\_dim              & \texttt{14}                 \\
+		logger                  & \texttt{False}              \\
+		loss\_fn                & \texttt{CrossEntropyLoss()} \\
+		lr                      & \texttt{0.001}              \\
+		max\_epochs             & \texttt{100}                \\
+		model\_name             & \texttt{QMLP\_1}            \\
+		n\_folds                & \texttt{5}                  \\
+		n\_layers               & \texttt{3}                  \\
+		n\_qubits               & \texttt{6}                  \\
+		num\_classes            & \texttt{3}                  \\
+		num\_sanity\_val\_steps & \texttt{0}                  \\
+		num\_workers            & \texttt{4}                  \\
+		parent\_run\_name       & \texttt{QMLP\_initial\_run} \\
+		seed                    & \texttt{42}                 \\
 		\hline
 	\end{tabular}
 \end{table}
@@ -213,30 +228,30 @@
 	\caption{Hyperparameters for experiment Classical\_MLP\_best\_hparams}
 	\begin{tabular}{ll}
 		\hline
-		Parameter               & Mean Value                                                                               \\
+		Parameter               & Mean Value                             \\
 		\hline
-		accelerator             & \texttt{auto}                                                                            \\
-		batch\_size             & \texttt{64}                                                                              \\
-		callbacks               & \texttt{[<aqml4msc.logging.mlflow\_utils.EpochMetricsTracker object at 0x7fccd0778b30>]} \\
-		devices                 & \texttt{auto}                                                                            \\
-		digits                  & \texttt{[5, 6, 7]}                                                                       \\
-		enable\_checkpointing   & \texttt{False}                                                                           \\
-		enable\_progress\_bar   & \texttt{True}                                                                            \\
-		hidden\_dim\_class      & \texttt{[64]}                                                                            \\
-		hidden\_dim\_part       & \texttt{[128]}                                                                           \\
-		input\_dim              & \texttt{14}                                                                              \\
-		logger                  & \texttt{False}                                                                           \\
-		loss\_fn                & \texttt{CrossEntropyLoss()}                                                              \\
-		lr                      & \texttt{0.0012191286815755042}                                                           \\
-		max\_epochs             & \texttt{50}                                                                              \\
-		model\_name             & \texttt{Classical\_MLP\_best\_hparams}                                                   \\
-		n\_folds                & \texttt{5}                                                                               \\
-		num\_classes            & \texttt{3}                                                                               \\
-		num\_sanity\_val\_steps & \texttt{0}                                                                               \\
-		num\_workers            & \texttt{8}                                                                               \\
-		output\_dim\_part       & \texttt{128}                                                                             \\
-		parent\_run\_name       & \texttt{Classical\_MLP\_best\_hparams}                                                   \\
-		seed                    & \texttt{42}                                                                              \\
+		accelerator             & \texttt{auto}                          \\
+		batch\_size             & \texttt{64}                            \\
+		% callbacks               & \texttt{[<aqml4msc.logging.mlflow\_utils.EpochMetricsTracker object at 0x7fccd0778b30>]} \\
+		devices                 & \texttt{auto}                          \\
+		digits                  & \texttt{[5, 6, 7]}                     \\
+		enable\_checkpointing   & \texttt{False}                         \\
+		enable\_progress\_bar   & \texttt{True}                          \\
+		hidden\_dim\_class      & \texttt{[64]}                          \\
+		hidden\_dim\_part       & \texttt{[128]}                         \\
+		input\_dim              & \texttt{14}                            \\
+		logger                  & \texttt{False}                         \\
+		loss\_fn                & \texttt{CrossEntropyLoss()}            \\
+		lr                      & \texttt{0.0012191286815755042}         \\
+		max\_epochs             & \texttt{50}                            \\
+		model\_name             & \texttt{Classical\_MLP\_best\_hparams} \\
+		n\_folds                & \texttt{5}                             \\
+		num\_classes            & \texttt{3}                             \\
+		num\_sanity\_val\_steps & \texttt{0}                             \\
+		num\_workers            & \texttt{8}                             \\
+		output\_dim\_part       & \texttt{128}                           \\
+		parent\_run\_name       & \texttt{Classical\_MLP\_best\_hparams} \\
+		seed                    & \texttt{42}                            \\
 		\hline
 	\end{tabular}
 \end{table}
@@ -301,30 +316,30 @@
 	\caption{Hyperparameters for experiment HPO\_classical\_MLP\_3}
 	\begin{tabular}{ll}
 		\hline
-		Parameter               & Mean Value                                                                               \\
+		Parameter               & Mean Value                           \\
 		\hline
-		accelerator             & \texttt{auto}                                                                            \\
-		batch\_size             & \texttt{83}                                                                              \\
-		callbacks               & \texttt{[<aqml4msc.logging.mlflow\_utils.EpochMetricsTracker object at 0x7db4d1777140>]} \\
-		devices                 & \texttt{auto}                                                                            \\
-		digits                  & \texttt{[5, 6, 7]}                                                                       \\
-		enable\_checkpointing   & \texttt{True}                                                                            \\
-		enable\_progress\_bar   & \texttt{True}                                                                            \\
-		hidden\_dim\_class      & \texttt{[95]}                                                                            \\
-		hidden\_dim\_part       & \texttt{[90]}                                                                            \\
-		input\_dim              & \texttt{14}                                                                              \\
-		logger                  & \texttt{False}                                                                           \\
-		loss\_fn                & \texttt{CrossEntropyLoss()}                                                              \\
-		lr                      & \texttt{0.0010213770627238185}                                                           \\
-		max\_epochs             & \texttt{30}                                                                              \\
-		model\_name             & \texttt{Classical\_MLP\_baseline\_3}                                                     \\
-		n\_folds                & \texttt{5}                                                                               \\
-		num\_classes            & \texttt{3}                                                                               \\
-		num\_sanity\_val\_steps & \texttt{0}                                                                               \\
-		num\_workers            & \texttt{14}                                                                              \\
-		output\_dim\_part       & \texttt{196}                                                                             \\
-		parent\_run\_name       & \texttt{HPO\_classical\_MLP\_3}                                                          \\
-		seed                    & \texttt{42}                                                                              \\
+		accelerator             & \texttt{auto}                        \\
+		batch\_size             & \texttt{83}                          \\
+		% callbacks               & \texttt{[<aqml4msc.logging.mlflow\_utils.EpochMetricsTracker object at 0x7db4d1777140>]} \\
+		devices                 & \texttt{auto}                        \\
+		digits                  & \texttt{[5, 6, 7]}                   \\
+		enable\_checkpointing   & \texttt{True}                        \\
+		enable\_progress\_bar   & \texttt{True}                        \\
+		hidden\_dim\_class      & \texttt{[95]}                        \\
+		hidden\_dim\_part       & \texttt{[90]}                        \\
+		input\_dim              & \texttt{14}                          \\
+		logger                  & \texttt{False}                       \\
+		loss\_fn                & \texttt{CrossEntropyLoss()}          \\
+		lr                      & \texttt{0.0010213770627238185}       \\
+		max\_epochs             & \texttt{30}                          \\
+		model\_name             & \texttt{Classical\_MLP\_baseline\_3} \\
+		n\_folds                & \texttt{5}                           \\
+		num\_classes            & \texttt{3}                           \\
+		num\_sanity\_val\_steps & \texttt{0}                           \\
+		num\_workers            & \texttt{14}                          \\
+		output\_dim\_part       & \texttt{196}                         \\
+		parent\_run\_name       & \texttt{HPO\_classical\_MLP\_3}      \\
+		seed                    & \texttt{42}                          \\
 		\hline
 	\end{tabular}
 \end{table}
