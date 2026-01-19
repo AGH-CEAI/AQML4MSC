@@ -1,0 +1,4 @@
+hpo_baseline_3
+
+Best is trial 80 with value: 0.9602930791872144.
+{'lr': 0.0010213770627238185, 'hidden_dim_part': 90, 'output_dim_part': 196, 'hidden_dim_class': 95, 'batch_size': 83}

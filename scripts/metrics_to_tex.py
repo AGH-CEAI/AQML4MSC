@@ -5,7 +5,7 @@ from mlflow.tracking import MlflowClient
 
 from aqml4msc.logging.mlflow_utils import EXPERIMENT_NAME
 
-SEARCHED_RUNS_IDS = {"8dd441d425f844cba9dad329b54c68e3"}
+SEARCHED_RUNS_IDS = {"d2c62d8e25e949da9e6aa32ad90df394"}
 
 
 # -----------------------------
