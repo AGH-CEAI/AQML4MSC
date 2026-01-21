@@ -1,5 +1,6 @@
 import numpy as np
 from matplotlib import pyplot as plt
+from matplotlib.gridspec import GridSpec
 from skimage.measure import block_reduce
 
 train_val_images = "data/train_images.npy"
@@ -24,44 +25,83 @@ X2 = train_val_images[:, 14:, :]
 # plot both pieces
 # show 2x2: left/top original half + its edges, right/bottom other half + its edges
 idx = 100
-# edges1 = cv2.Canny(X1[idx].astype(np.uint8), 50, 150)
-# edges2 = cv2.Canny(X2[idx].astype(np.uint8), 50, 150)
-edges1 = X1[idx] > 127
-edges2 = X2[idx] > 127
+img_original = train_val_images[idx]
 
-reduced1 = block_reduce(edges1, block_size=2, func=np.max)
-reduced2 = block_reduce(edges2, block_size=2, func=np.max)
-# reduced1 = block_reduce(reduced1, block_size=(2, 2), func=np.max)
-# reduced2 = block_reduce(reduced2, block_size=(2, 2), func=np.max)
-# reduced1 = block_reduce(reduced1, block_size=(2, 2), func=np.mean)
-# reduced2 = block_reduce(reduced2, block_size=(2, 2), func=np.mean)
-vertical_projection1 = np.mean(reduced1, axis=0)
-vertical_projection2 = np.mean(reduced2, axis=0)
-print(vertical_projection1)
-print(vertical_projection2)
+img_top = X1[idx]
+img_bottom = X2[idx]
 
-print(vertical_projection1.shape)
+bin_top = img_top > 127
+bin_bottom = img_bottom > 127
 
-fig, axes = plt.subplots(2, 3, figsize=(6, 9))
-axes[0, 0].imshow(X1[idx], cmap="gray")
-axes[0, 0].set_title("X1[%d]" % idx)
-axes[0, 0].axis("off")
-axes[0, 1].imshow(edges1, cmap="gray")
-axes[0, 1].set_title("edges1")
-axes[0, 1].axis("off")
-axes[0, 2].imshow(reduced1, cmap="gray")
-axes[0, 2].set_title("reduced1")
-axes[0, 2].axis("off")
+reduced_top = block_reduce(bin_top, block_size=2, func=np.max)
+reduced_bottom = block_reduce(bin_bottom, block_size=2, func=np.max)
+
+vertical_projection_top = np.mean(reduced_top, axis=0)
+vertical_projection_bottom = np.mean(reduced_bottom, axis=0)
+print(vertical_projection_top)
+print(vertical_projection_bottom)
+
+print(vertical_projection_top.shape)
 
 
-axes[1, 0].imshow(X2[idx], cmap="gray")
-axes[1, 0].set_title("X2[%d]" % idx)
-axes[1, 0].axis("off")
-axes[1, 1].imshow(edges2, cmap="gray")
-axes[1, 1].set_title("edges2")
-axes[1, 1].axis("off")
-axes[1, 2].imshow(reduced2, cmap="gray")
-axes[1, 2].set_title("reduced2")
-axes[1, 2].axis("off")
+# Visualize preprocessing pipeline on example
+
+
+fig = plt.figure(figsize=(4.2, 7.5))  # single-column friendly
+
+gs = GridSpec(5, 2, height_ratios=[2.2, 1.2, 1.2, 1.2, 0.8], hspace=0.35, wspace=0.08)
+
+# (a) Original (span both columns)
+ax_a = fig.add_subplot(gs[0, :])
+ax_a.imshow(img_original, cmap="gray")
+ax_a.set_title("(a) Original", loc="left", fontsize=11, pad=5)
+ax_a.axis("off")
+
+
+# Helper function for paired rows
+def plot_pair(row, title, img_top, img_bottom):
+    ax_t = fig.add_subplot(gs[row, 0])
+    ax_b = fig.add_subplot(gs[row, 1])
+
+    ax_t.imshow(img_top, cmap="gray")
+    ax_b.imshow(img_bottom, cmap="gray")
+
+    ax_t.set_title(title, loc="left", fontsize=11, pad=5)
+    ax_t.axis("off")
+    ax_b.axis("off")
+
+    return ax_t, ax_b
+
+
+# (b) Split
+plot_pair(1, "(b) Split (top / bottom)", img_top, img_bottom)
+
+# (c) Binarized
+plot_pair(2, "(c) Binarized", bin_top, bin_bottom)
+
+# (d) Downsampled
+plot_pair(3, "(d) Downsampled", reduced_top, reduced_bottom)
+
+
+# (e) Vertical projection (annotated heatmap tiles)
+
+ax_e1 = fig.add_subplot(gs[4, 0])
+ax_e2 = fig.add_subplot(gs[4, 1])
+
+for ax, heatmap, label in [
+    (ax_e1, vertical_projection_top, "(e) Vertical mean projection"),
+    (ax_e2, vertical_projection_bottom, None),
+]:
+    heatmap = heatmap[np.newaxis, :]
+    ax.imshow(heatmap, aspect="equal", cmap="gray", vmin=0, vmax=1)
+
+    # for i, v in enumerate(heatmap[0]):
+    #     ax.text(i, 0, f"{v:.2f}", ha="center", va="center", fontsize=7, color="white")
+
+    ax.axis("off")
+    if label:
+        ax.set_title(label, loc="left", fontsize=11, pad=5)
+
 plt.tight_layout()
+# plt.savefig("preprocessing_pipeline.pdf", bbox_inches="tight", dpi=300)
 plt.show()
