@@ -27,3 +27,5 @@ Dockerfile
 *.env
 scripts/run_with_mlflow.sh
 scripts/docker_run.sh
+scripts/test.py
+checkpoints/
