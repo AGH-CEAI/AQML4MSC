@@ -14,7 +14,7 @@ def manual_exp_1():
         "loss_fn": nn.CrossEntropyLoss(),
         "num_classes": 3,
         "input_dim": 14,
-        "hidden_dim": [128],
+        "hidden_dim_part": [128],
         "n_qubits": 6,
         "n_layers": 3,
     }

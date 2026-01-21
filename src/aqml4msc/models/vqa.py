@@ -14,16 +14,19 @@ class QMLP_1(BaseMLPModel):
         loss_fn,
         num_classes: int,
         input_dim: int,
-        hidden_dim: List[int],
+        hidden_dim_part: List[int],
         n_qubits: int,
         n_layers: int,
     ):
         super().__init__(lr=lr, loss_fn=loss_fn, num_classes=num_classes)
+
+        # Set output_dim_part to be equal in both parts and match the n_qubits — which is the input size for angle encoding
+        output_dim_part = n_qubits // 2
         self.model_top = self.make_classical_network(
-            input_dim=input_dim, hidden_dim=hidden_dim, num_classes=num_classes
+            input_dim=input_dim, hidden_dim=hidden_dim_part, output_dim=output_dim_part
         )
         self.model_bottom = self.make_classical_network(
-            input_dim=input_dim, hidden_dim=hidden_dim, num_classes=num_classes
+            input_dim=input_dim, hidden_dim=hidden_dim_part, output_dim=output_dim_part
         )
         self.model_classifier = self.make_quantum_classifier(
             n_qubits=n_qubits, n_layers=n_layers, num_classes=num_classes
@@ -35,11 +38,11 @@ class QMLP_1(BaseMLPModel):
         logits = self.model_classifier(torch.cat([features1, features2], dim=1))
         return logits
 
-    def make_classical_network(self, input_dim, hidden_dim, num_classes):
+    def make_classical_network(self, input_dim, hidden_dim, output_dim):
         return nn.Sequential(
             nn.Linear(input_dim, hidden_dim[0]),
             nn.ReLU(),
-            nn.Linear(hidden_dim[0], num_classes),
+            nn.Linear(hidden_dim[0], output_dim),
         )
 
     def make_quantum_classifier(self, num_classes, n_qubits=6, n_layers=3):
