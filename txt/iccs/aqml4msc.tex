@@ -46,6 +46,33 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Problem Formulation}
+We consider a synthetic multisource classification setting, where multiple input sources
+are derived from a single original sample.
+Specifically, an input image $x$ is partitioned into two complementary views,
+denoted as $x_1$ and $x_2$, which are treated as distinct data sources.
+
+Each source undergoes identical but independent deterministic preprocessing,
+resulting in preprocessed inputs $\tilde{x}_1$ and $\tilde{x}_2$.
+This preprocessing stage is non-trainable and can be interpreted as fixed feature extraction.
+
+The preprocessed inputs are subsequently passed through learnable feature extraction
+functions $f(\cdot,\theta_1)$ and $f(\cdot,\theta_2)$, producing feature vectors
+$v_1$ and $v_2$ of equal dimensionality.
+These features are fused and classified by a function $h(\cdot,\theta_3)$,
+yielding the final classification decision $d$.
+The formulation is given by:
+\begin{align*}
+	\tilde{x}_1 & = g(x_1),                   \\
+	\tilde{x}_2 & = g(x_2),                   \\
+	v_1         & = f(\tilde{x}_1, \theta_1), \\
+	v_2         & = f(\tilde{x}_2, \theta_2), \\
+	d           & = h(v_1, v_2, \theta_3),
+\end{align*}
+where $g(\cdot)$ denotes the fixed preprocessing function.
+
+All learnable parameters $\theta_1$, $\theta_2$, and $\theta_3$ are optimized jointly
+during training.
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Approach}
@@ -79,6 +106,10 @@ spatial downsampling, and computation of the vertical projection, as illustrated
 \end{figure}
 
 \subsection{Classical Neural Network Baseline}
+\subsubsection{Model Architecture}
+
+
+\subsubsection{Hyper-Parameter Optimization}
 
 \subsection{Hybrid Classical-Quantum Neural Network}
 
