@@ -2,6 +2,7 @@
 \documentclass[runningheads]{llncs}
 
 \usepackage[T1]{fontenc}
+\usepackage{pgf} 
 \usepackage{graphicx}
 \usepackage{array}
 \usepackage{ragged2e}
@@ -42,79 +43,124 @@
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
-
+% Multisource
+Data about the observed object can be gathered from multiple complementary sensors. To obtain richer and more accurate decision results, we can perform multisource information fusion.
+In review article~\cite{li_multi-source_2024} authors present many aproaches for information fusion.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Problem Formulation}
+\section{Problem Formulation} \label{sec:problem_formulation}
 We consider a synthetic multisource classification setting, where multiple input sources
 are derived from a single original sample.
-Specifically, an input image $x$ is partitioned into two complementary views,
-denoted as $x_1$ and $x_2$, which are treated as distinct data sources.
+Specifically, an input image is partitioned into two complementary views.
+Each view is independently transformed by a deterministic preprocessing pipeline
+into a vector representation, denoted as $x_{\mathrm{top}}$ and $x_{\mathrm{bottom}}$,
+which constitute the synthetic multisource inputs used for classification.
 
-Each source undergoes identical but independent deterministic preprocessing,
-resulting in preprocessed inputs $\tilde{x}_1$ and $\tilde{x}_2$.
-This preprocessing stage is non-trainable and can be interpreted as fixed feature extraction.
-
-The preprocessed inputs are subsequently passed through learnable feature extraction
+The vector inputs are subsequently passed through learnable feature extraction
 functions $f(\cdot,\theta_1)$ and $f(\cdot,\theta_2)$, producing feature vectors
-$v_1$ and $v_2$ of equal dimensionality.
+$v_{\mathrm{top}}$ and $v_{\mathrm{bottom}}$ of equal dimensionality.
 These features are fused and classified by a function $h(\cdot,\theta_3)$,
 yielding the final classification decision $d$.
-The formulation is given by:
+The resulting formulation is defined as:
 \begin{align*}
-	\tilde{x}_1 & = g(x_1),                   \\
-	\tilde{x}_2 & = g(x_2),                   \\
-	v_1         & = f(\tilde{x}_1, \theta_1), \\
-	v_2         & = f(\tilde{x}_2, \theta_2), \\
-	d           & = h(v_1, v_2, \theta_3),
+	v_{\mathrm{top}}    & = f(x_{\mathrm{top}}, \theta_1),                      \\
+	v_{\mathrm{bottom}} & = f(x_{\mathrm{bottom}}, \theta_2),                   \\
+	d                   & = h(v_{\mathrm{top}}, v_{\mathrm{bottom}}, \theta_3).
 \end{align*}
-where $g(\cdot)$ denotes the fixed preprocessing function.
 
 All learnable parameters $\theta_1$, $\theta_2$, and $\theta_3$ are optimized jointly
 during training.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Approach}
+\section{Synthetic Multisource Data Construction}
+The MNIST (Modified National Institute of Standards and Technology) dataset consists of
+70,000 images of handwritten digits (0--9), each of size $28 \times 28$ pixels.
+The dataset was obtained from Kaggle \cite{kaggle_dataset},
+and we used the predefined training--validation split provided with the dataset without modification.
 
-\subsection{Dataset and Preprocessing}
-The MNIST (Modified National Institute of Standards and Technology) dataset is a widely used dataset for training and testing image processing systems.
-It consists of 70,000 images of handwritten digits (0-9), split into a training set of 60,000 images and a test set of 10,000 images.
-Each image is 28x28 pixels in size.\footnote{https://www.kaggle.com/datasets/hichamachahboun/mnist-handwritten-digits}
-
-
-From the dataset, only three digits are selected arbitrarily. The selected digits are:
+From the dataset, we select only three digit classes:
 \begin{itemize}
-	\item digit "5" (\(5421\) training samples and \(892\) validation samples),
-	\item digit "6" (\(5918\) training samples and \(958\) validation samples),
-	\item digit "7" (\(6265\) training samples and \(1028\) validation samples).
+	\item digit ``5'' (\(5421\) training samples and \(892\) validation samples),
+	\item digit ``6'' (\(5918\) training samples and \(958\) validation samples),
+	\item digit ``7'' (\(6265\) training samples and \(1028\) validation samples).
 \end{itemize}
 
-Images are then preprocessed by vertically splitting them into top and bottom halves, followed by binarization,
-spatial downsampling, and computation of the vertical projection, as illustrated in Fig. \ref{preprocessing}
+Each image is preprocessed to construct synthetic multisource inputs.
+Specifically, images are split horizontally into top and bottom halves,
+which are treated as complementary views.
+Each view is then binarized, spatially downsampled, and transformed into a six-dimensional vector
+by computing the mean pixel intensity along columns.
+These vectors correspond to the synthetic multisource inputs $x_{\mathrm{top}}$ and $x_{\mathrm{bottom}}$ defined in Section~\ref{sec:problem_formulation}.
+
+An overview of the preprocessing pipeline is shown in Fig.~\ref{fig:preprocessing}.
 
 \begin{figure}
 	\centering
-	\includegraphics[width=0.7\textwidth]{fig/preprocessing.pdf}
-	\caption{Overview of the preprocessing pipeline shown from top to bottom.
+	\includegraphics[height=0.8\textheight]{fig/preprocessing.pdf}
+	\caption{Overview of the synthetic multisource preprocessing pipeline.
 		(a) Original input image.
-		(b) The image is vertically split into top and bottom halves.
-		(c) Each half is binarized independently.
-		(d) The binarized halves are spatially downsampled.
-		(e) For each downsampled half, a vertical projection is computed as the mean pixel intensity along the vertical axis and visualized as a discrete, annotated heatmap.
-	} \label{preprocessing}
+		(b) Horizontal splitting into top and bottom halves.
+		(c) Binarization of each half.
+		(d) Spatial downsampling.
+		(e) Computation of column-wise mean pixel intensities, resulting in vector representations
+		that constitute the synthetic multisource inputs $x_{\mathrm{top}}$ and $x_{\mathrm{bottom}}$.
+	}
+	\label{fig:preprocessing}
 \end{figure}
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Approach}
+
 \subsection{Classical Neural Network Baseline}
+
 \subsubsection{Model Architecture}
+As a baseline, we employ a multilayer perceptron (MLP) architecture (Fig.~\ref{fig:mlp_diagram}).
+Two feature extractors independently process $x_{\mathrm{top}}$ and $x_{\mathrm{bottom}}$, and their outputs are concatenated and trained end-to-end with the classifier.
+Each feature extractor is an MLP with six input neurons, corresponding to the dimensionality of the input vectors, and a single hidden layer with ReLU activation.
+
+The classifier consists of an input layer of size equal to the concatenated feature outputs, a hidden layer with ReLU activation, and an output layer with three neurons, corresponding to the number of target classes.
+Training is performed using the cross-entropy loss, and predictions are obtained by selecting the output logit with the maximum value.
+
+\begin{figure}
+	\centering
+	\includegraphics[width=0.9\textwidth]{fig/MLP_diagram.pdf}
+	\caption{hsgf}
+	\label{fig:mlp_diagram}
+\end{figure}
+
+\subsubsection{Hyperparameter Optimization}
+We performed hyperparameter optimization (HPO) to select the optimal architecture for the classical baseline.
+The experimental setup is shown in Table~\ref{tab:baseline_hpo}.
+Other HPO settings were fixed as follows: 100 trials, early stopping disabled, and random seed 42.
 
 
-\subsubsection{Hyper-Parameter Optimization}
+
+% ===== Hyperparameters: MLP_experiment_setup =====
+\begin{table}[t]
+	\centering
+	\caption{Experiment setup for baseline hyper-parameters oprimization}
+	\label{tab:baseline_hpo}
+	\begin{tabular}{p{6cm}p{3cm}p{2cm}}
+		\hline
+		Parameter                              & Range                 & Scale    \\
+		\hline
+		Learning rate                          & $[10^{-3},\,10^{-2}]$ & linear   \\
+		Batch size                             & $[32, 128] (integer)$ & discrete \\
+		Hidden layer size (feature extractors) & $[64, 256] (integer)$ & discrete \\
+		Hidden layer size (classifier)         & $[64, 256] (integer)$ & discrete \\
+		Output layer size (feature extractors) & $[64, 256] (integer)$ & discrete \\
+		\hline
+	\end{tabular}
+\end{table}
+
+
 
 \subsection{Hybrid Classical-Quantum Neural Network}
 
 \begin{equation}
-	\langle \sigma_Z^{(j)} \rangle = \bra{\phi(x)}U^\dagger  \sigma_Z^{(j)}  U \ket{\phi(x)}, \qquad j = 1,2,3
+	\langle \sigma_Z^{(j)} \rangle = \bra{\phi(v)}U^\dagger  \sigma_Z^{(j)}  U \ket{\phi(v)}, \qquad j = 1,2,3
 \end{equation}
 
 The measurement results correspond to the expectation values of the $\sigma_Z$ operator acting independently on the first three qubits.
@@ -126,7 +172,10 @@ State preparation is performed using angle encoding
 \begin{equation}
 	\ket{\phi(x)} = \left( R_X(x_1) \otimes R_X(x_2) \otimes ... \otimes R_X(x_n) \right) \ket{0}
 \end{equation}
-
+Where:
+\begin{equation*}
+	R_X(\theta) = e^{-\mathrm{i} \theta \sigma_X / 2}
+\end{equation*}
 
 The ansatz used in the circuit is constructed from $L$ Basic Entangler Layers provided by the PennyLane package.
 \begin{equation}
@@ -143,21 +192,14 @@ A single Basic Entangler Layer is defined as:
 
 Where:
 \begin{align*}
-	R_Y(\theta) & = e^{-i \theta \sigma_Y / 2}                     \\
-	            & = \begin{pmatrix}
-		                cos(\frac{\theta}{2}) & -sin(\frac{\theta}{2}) \\
-		                sin(\frac{\theta}{2}) & cos(\frac{\theta}{2})
-	                \end{pmatrix}
-\end{align*}
-
-\begin{equation}
+	R_Y(\theta) & = e^{-\mathrm{i} \theta \sigma_Y / 2} \\
 	\mathrm{CNOT}_{i,j}
-	=
-	\ket{0}\!\bra{0}_i \otimes I_{j}
+	            & =
+	\ket{0}\!\bra{0}_i \otimes \mathbb{I}_{j}
 	+
 	\ket{1}\!\bra{1}_i \otimes X_{j}
 	, \qquad i \neq j
-\end{equation}
+\end{align*}
 
 \subsection{Automated Quantum Machine Learning}
 
