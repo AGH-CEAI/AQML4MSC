@@ -46,6 +46,16 @@ print(vertical_projection_top.shape)
 
 # Visualize preprocessing pipeline on example
 
+# Match LLNCS fonts
+plt.rcParams.update(
+    {
+        "text.usetex": True,
+        "pgf.texsystem": "pdflatex",
+        "font.family": "serif",
+        "axes.titlesize": 12,  # LLNCS section heading
+        "axes.labelsize": 10,  # LLNCS main text
+    }
+)
 
 fig = plt.figure(figsize=(4.2, 7.5))  # single-column friendly
 
@@ -75,16 +85,11 @@ def plot_pair(row, title, img_top, img_bottom):
 
 # (b) Split
 plot_pair(1, "(b) Split (top / bottom)", img_top, img_bottom)
-
 # (c) Binarized
 plot_pair(2, "(c) Binarized", bin_top, bin_bottom)
-
 # (d) Downsampled
 plot_pair(3, "(d) Downsampled", reduced_top, reduced_bottom)
-
-
-# (e) Vertical projection (annotated heatmap tiles)
-
+# (e) Column mean
 ax_e1 = fig.add_subplot(gs[4, 0])
 ax_e2 = fig.add_subplot(gs[4, 1])
 
@@ -102,6 +107,28 @@ for ax, heatmap, label in [
     if label:
         ax.set_title(label, loc="left", fontsize=11, pad=5)
 
+
+# Add labels under final steps
+ax_e1.text(
+    0.5,
+    -1.0,
+    r"$x_{\mathrm{top}}$",
+    transform=ax_e1.transAxes,
+    ha="center",
+    va="top",
+    fontsize=13,
+)
+
+ax_e2.text(
+    0.5,
+    -1.0,
+    r"$x_{\mathrm{bottom}}$",
+    transform=ax_e2.transAxes,
+    ha="center",
+    va="top",
+    fontsize=13,
+)
+
 plt.tight_layout()
-# plt.savefig("preprocessing_pipeline.pdf", bbox_inches="tight", dpi=300)
+fig.savefig("txt/iccs/fig/figure.pdf", backend="pgf")
 plt.show()
