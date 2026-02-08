@@ -171,15 +171,15 @@ Other HPO settings were fixed as follows: 100 trials, early stopping disabled, a
 	\centering
 	\caption{Experiment setup for baseline hyper-parameters oprimization}
 	\label{tab:baseline_hpo}
-	\begin{tabular}{p{6cm}p{3cm}p{2cm}}
+	\begin{tabular}{p{6cm}p{2cm}p{1.5cm}l}
 		\hline
-		Parameter                              & Range                 & Scale    \\
+		Parameter                              & Range                 & Scale    & Best value \\
 		\hline
-		Learning rate                          & $[10^{-3},\,10^{-2}]$ & linear   \\
-		Batch size                             & $[32, 128]$           & discrete \\
-		Hidden layer size (feature extractors) & $[64, 256]$           & discrete \\
-		Hidden layer size (classifier)         & $[64, 256]$           & discrete \\
-		Output layer size (feature extractors) & $[64, 256]$           & discrete \\
+		Learning rate                          & $[10^{-3},\,10^{-2}]$ & linear   & $10^{-3}$  \\
+		Batch size                             & $[32, 128]$           & discrete & $83$       \\
+		Hidden layer size (feature extractors) & $[64, 256]$           & discrete & $90$       \\
+		Output layer size (feature extractors) & $[64, 256]$           & discrete & $196$      \\
+		Hidden layer size (classifier)         & $[64, 256]$           & discrete & $95$       \\
 		\hline
 	\end{tabular}
 \end{table}
