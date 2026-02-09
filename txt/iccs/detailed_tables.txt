@@ -1,0 +1,287 @@
+% ===== Hyperparameters: QMLP\_initial\_run =====
+\begin{table}[t]
+	\centering
+	\caption{Hyperparameters for experiment QMLP\_initial\_run}
+	\begin{tabular}{ll}
+		\hline
+		Parameter               & Mean Value                  \\
+		\hline
+		accelerator             & \texttt{auto}               \\
+		batch\_size             & \texttt{32}                 \\
+		% callbacks               & \texttt{[<aqml4msc.logging.mlflow\_utils.EpochMetricsTracker object at 0x7525b29f4560>]} \\
+		devices                 & \texttt{auto}               \\
+		digits                  & \texttt{[5, 6, 7]}          \\
+		enable\_checkpointing   & \texttt{False}              \\
+		enable\_progress\_bar   & \texttt{True}               \\
+		hidden\_dim             & \texttt{[128]}              \\
+		input\_dim              & \texttt{14}                 \\
+		logger                  & \texttt{False}              \\
+		loss\_fn                & \texttt{CrossEntropyLoss()} \\
+		lr                      & \texttt{0.001}              \\
+		max\_epochs             & \texttt{100}                \\
+		model\_name             & \texttt{QMLP\_1}            \\
+		n\_folds                & \texttt{5}                  \\
+		n\_layers               & \texttt{3}                  \\
+		n\_qubits               & \texttt{6}                  \\
+		num\_classes            & \texttt{3}                  \\
+		num\_sanity\_val\_steps & \texttt{0}                  \\
+		num\_workers            & \texttt{4}                  \\
+		parent\_run\_name       & \texttt{QMLP\_initial\_run} \\
+		seed                    & \texttt{42}                 \\
+		\hline
+	\end{tabular}
+\end{table}
+
+% ===== Final Metrics: QMLP\_initial\_run =====
+\begin{table}[t]
+	\centering
+	\caption{Final metrics for QMLP\_initial\_run}
+	\begin{tabular}{lc}
+		\hline
+		Metric              & Value             \\
+		\hline
+		accuracy\_avg       & $0.884 \pm 0.023$ \\
+		accuracy            & $0.886 \pm 0.022$ \\
+		f1\_macro           & $0.885 \pm 0.023$ \\
+		f1\_micro           & $0.886 \pm 0.022$ \\
+		f1\_weighted        & $0.886 \pm 0.023$ \\
+		precision\_macro    & $0.886 \pm 0.024$ \\
+		precision\_micro    & $0.886 \pm 0.022$ \\
+		precision\_weighted & $0.887 \pm 0.023$ \\
+		recall\_macro       & $0.884 \pm 0.023$ \\
+		recall\_micro       & $0.886 \pm 0.022$ \\
+		recall\_weighted    & $0.886 \pm 0.022$ \\
+		\hline
+	\end{tabular}
+\end{table}
+
+% ===== CV Metrics per Fold: QMLP\_initial\_run =====
+\begin{table}[t]
+	\centering
+	\caption{Cross-validation metrics per fold for QMLP\_initial\_run}
+	\begin{tabular}{lccccc}
+		\hline
+		Metric              & Fold 5 & Fold 4 & Fold 3 & Fold 2 & Fold 1 \\
+		\hline
+		accuracy            & 0.880  & 0.855  & 0.880  & 0.905  & 0.911  \\
+		accuracy\_avg       & 0.880  & 0.852  & 0.878  & 0.903  & 0.909  \\
+		f1\_macro           & 0.879  & 0.852  & 0.879  & 0.903  & 0.910  \\
+		f1\_micro           & 0.880  & 0.855  & 0.880  & 0.905  & 0.911  \\
+		f1\_weighted        & 0.880  & 0.855  & 0.880  & 0.905  & 0.911  \\
+		precision\_macro    & 0.879  & 0.852  & 0.882  & 0.903  & 0.913  \\
+		precision\_micro    & 0.880  & 0.855  & 0.880  & 0.905  & 0.911  \\
+		precision\_weighted & 0.881  & 0.854  & 0.881  & 0.905  & 0.912  \\
+		recall\_macro       & 0.880  & 0.852  & 0.878  & 0.903  & 0.909  \\
+		recall\_micro       & 0.880  & 0.855  & 0.880  & 0.905  & 0.911  \\
+		recall\_weighted    & 0.880  & 0.855  & 0.880  & 0.905  & 0.911  \\
+		train\_acc          & 0.890  & 0.863  & 0.892  & 0.913  & 0.923  \\
+		train\_f1           & 0.890  & 0.862  & 0.892  & 0.913  & 0.923  \\
+		train\_loss         & 0.620  & 0.620  & 0.614  & 0.464  & 0.438  \\
+		val\_acc            & 0.880  & 0.852  & 0.878  & 0.903  & 0.908  \\
+		val\_f1             & 0.880  & 0.852  & 0.879  & 0.903  & 0.909  \\
+		val\_loss           & 0.630  & 0.631  & 0.632  & 0.476  & 0.447  \\
+		\hline
+	\end{tabular}
+\end{table}
+
+
+
+
+% ===== Final Metrics: HPO\_classical\_MLP\_2 =====
+\begin{table}[t]
+	\centering
+	\caption{1 random metrics for HPO\_classical\_MLP\_2}
+	\begin{tabular}{lc}
+		\hline
+		Metric              & Value             \\
+		\hline
+		accuracy\_avg       & $0.925 \pm 0.016$ \\
+		accuracy            & $0.925 \pm 0.017$ \\
+		f1\_macro           & $0.924 \pm 0.017$ \\
+		f1\_micro           & $0.925 \pm 0.017$ \\
+		f1\_weighted        & $0.925 \pm 0.017$ \\
+		precision\_macro    & $0.927 \pm 0.015$ \\
+		precision\_micro    & $0.925 \pm 0.017$ \\
+		precision\_weighted & $0.930 \pm 0.013$ \\
+		recall\_macro       & $0.925 \pm 0.016$ \\
+		recall\_micro       & $0.925 \pm 0.017$ \\
+		recall\_weighted    & $0.925 \pm 0.017$ \\
+		\hline
+	\end{tabular}
+\end{table}
+
+
+
+% ===== Hyperparameters: Classical\_MLP\_best\_hparams =====
+\begin{table}[t]
+	\centering
+	\caption{Hyperparameters for experiment Classical\_MLP\_best\_hparams}
+	\begin{tabular}{ll}
+		\hline
+		Parameter               & Mean Value                             \\
+		\hline
+		accelerator             & \texttt{auto}                          \\
+		batch\_size             & \texttt{64}                            \\
+		% callbacks               & \texttt{[<aqml4msc.logging.mlflow\_utils.EpochMetricsTracker object at 0x7fccd0778b30>]} \\
+		devices                 & \texttt{auto}                          \\
+		digits                  & \texttt{[5, 6, 7]}                     \\
+		enable\_checkpointing   & \texttt{False}                         \\
+		enable\_progress\_bar   & \texttt{True}                          \\
+		hidden\_dim\_class      & \texttt{[64]}                          \\
+		hidden\_dim\_part       & \texttt{[128]}                         \\
+		input\_dim              & \texttt{14}                            \\
+		logger                  & \texttt{False}                         \\
+		loss\_fn                & \texttt{CrossEntropyLoss()}            \\
+		lr                      & \texttt{0.0012191286815755042}         \\
+		max\_epochs             & \texttt{50}                            \\
+		model\_name             & \texttt{Classical\_MLP\_best\_hparams} \\
+		n\_folds                & \texttt{5}                             \\
+		num\_classes            & \texttt{3}                             \\
+		num\_sanity\_val\_steps & \texttt{0}                             \\
+		num\_workers            & \texttt{8}                             \\
+		output\_dim\_part       & \texttt{128}                           \\
+		parent\_run\_name       & \texttt{Classical\_MLP\_best\_hparams} \\
+		seed                    & \texttt{42}                            \\
+		\hline
+	\end{tabular}
+\end{table}
+
+% ===== Final Metrics: Classical\_MLP\_best\_hparams =====
+\begin{table}[t]
+	\centering
+	\caption{Final metrics for Classical\_MLP\_best\_hparams}
+	\begin{tabular}{lc}
+		\hline
+		Metric              & Value             \\
+		\hline
+		accuracy\_avg       & $0.956 \pm 0.005$ \\
+		accuracy            & $0.956 \pm 0.005$ \\
+		f1\_macro           & $0.956 \pm 0.005$ \\
+		f1\_micro           & $0.956 \pm 0.005$ \\
+		f1\_weighted        & $0.957 \pm 0.005$ \\
+		precision\_macro    & $0.956 \pm 0.005$ \\
+		precision\_micro    & $0.956 \pm 0.005$ \\
+		precision\_weighted & $0.957 \pm 0.005$ \\
+		recall\_macro       & $0.956 \pm 0.005$ \\
+		recall\_micro       & $0.956 \pm 0.005$ \\
+		recall\_weighted    & $0.956 \pm 0.005$ \\
+		\hline
+	\end{tabular}
+\end{table}
+
+% ===== CV Metrics per Fold: Classical\_MLP\_best\_hparams =====
+\begin{table}[t]
+	\centering
+	\caption{Cross-validation metrics per fold for Classical\_MLP\_best\_hparams}
+	\begin{tabular}{lccccc}
+		\hline
+		Metric              & Fold 5 & Fold 4 & Fold 3 & Fold 2 & Fold 1 \\
+		\hline
+		accuracy            & 0.962  & 0.952  & 0.954  & 0.953  & 0.962  \\
+		accuracy\_avg       & 0.961  & 0.951  & 0.954  & 0.952  & 0.960  \\
+		f1\_macro           & 0.961  & 0.951  & 0.954  & 0.952  & 0.961  \\
+		f1\_micro           & 0.962  & 0.952  & 0.954  & 0.953  & 0.962  \\
+		f1\_weighted        & 0.962  & 0.952  & 0.955  & 0.953  & 0.962  \\
+		precision\_macro    & 0.961  & 0.951  & 0.953  & 0.952  & 0.961  \\
+		precision\_micro    & 0.962  & 0.952  & 0.954  & 0.953  & 0.962  \\
+		precision\_weighted & 0.962  & 0.952  & 0.955  & 0.953  & 0.962  \\
+		recall\_macro       & 0.961  & 0.951  & 0.954  & 0.952  & 0.960  \\
+		recall\_micro       & 0.962  & 0.952  & 0.954  & 0.953  & 0.962  \\
+		recall\_weighted    & 0.962  & 0.952  & 0.954  & 0.953  & 0.962  \\
+		train\_acc          & 0.980  & 0.982  & 0.981  & 0.985  & 0.982  \\
+		train\_f1           & 0.980  & 0.982  & 0.981  & 0.985  & 0.982  \\
+		train\_loss         & 0.052  & 0.047  & 0.049  & 0.044  & 0.051  \\
+		val\_acc            & 0.961  & 0.956  & 0.958  & 0.953  & 0.961  \\
+		val\_f1             & 0.962  & 0.955  & 0.958  & 0.952  & 0.961  \\
+		val\_loss           & 0.140  & 0.138  & 0.193  & 0.201  & 0.141  \\
+		\hline
+	\end{tabular}
+\end{table}
+
+
+
+% ===== Hyperparameters: HPO\_classical\_MLP\_3 =====
+\begin{table}[t]
+	\centering
+	\caption{Hyperparameters for experiment HPO\_classical\_MLP\_3}
+	\begin{tabular}{ll}
+		\hline
+		Parameter               & Mean Value                           \\
+		\hline
+		accelerator             & \texttt{auto}                        \\
+		batch\_size             & \texttt{83}                          \\
+		% callbacks               & \texttt{[<aqml4msc.logging.mlflow\_utils.EpochMetricsTracker object at 0x7db4d1777140>]} \\
+		devices                 & \texttt{auto}                        \\
+		digits                  & \texttt{[5, 6, 7]}                   \\
+		enable\_checkpointing   & \texttt{True}                        \\
+		enable\_progress\_bar   & \texttt{True}                        \\
+		hidden\_dim\_class      & \texttt{[95]}                        \\
+		hidden\_dim\_part       & \texttt{[90]}                        \\
+		input\_dim              & \texttt{14}                          \\
+		logger                  & \texttt{False}                       \\
+		loss\_fn                & \texttt{CrossEntropyLoss()}          \\
+		lr                      & \texttt{0.0010213770627238185}       \\
+		max\_epochs             & \texttt{30}                          \\
+		model\_name             & \texttt{Classical\_MLP\_baseline\_3} \\
+		n\_folds                & \texttt{5}                           \\
+		num\_classes            & \texttt{3}                           \\
+		num\_sanity\_val\_steps & \texttt{0}                           \\
+		num\_workers            & \texttt{14}                          \\
+		output\_dim\_part       & \texttt{196}                         \\
+		parent\_run\_name       & \texttt{HPO\_classical\_MLP\_3}      \\
+		seed                    & \texttt{42}                          \\
+		\hline
+	\end{tabular}
+\end{table}
+
+% ===== Final Metrics: HPO\_classical\_MLP\_3 =====
+\begin{table}[t]
+	\centering
+	\caption{Final metrics for HPO\_classical\_MLP\_3}
+	\begin{tabular}{lc}
+		\hline
+		Metric              & Value             \\
+		\hline
+		accuracy\_avg       & $0.960 \pm 0.001$ \\
+		accuracy            & $0.960 \pm 0.001$ \\
+		f1\_macro           & $0.959 \pm 0.001$ \\
+		f1\_micro           & $0.960 \pm 0.001$ \\
+		f1\_weighted        & $0.960 \pm 0.001$ \\
+		precision\_macro    & $0.959 \pm 0.001$ \\
+		precision\_micro    & $0.960 \pm 0.001$ \\
+		precision\_weighted & $0.960 \pm 0.001$ \\
+		recall\_macro       & $0.960 \pm 0.001$ \\
+		recall\_micro       & $0.960 \pm 0.001$ \\
+		recall\_weighted    & $0.960 \pm 0.001$ \\
+		\hline
+	\end{tabular}
+\end{table}
+
+% ===== CV Metrics per Fold: HPO\_classical\_MLP\_3 =====
+\begin{table}[t]
+	\centering
+	\caption{Cross-validation metrics per fold for HPO\_classical\_MLP\_3}
+	\begin{tabular}{lccccc}
+		\hline
+		Metric              & Fold 5 & Fold 4 & Fold 3 & Fold 2 & Fold 1 \\
+		\hline
+		accuracy            & 0.960  & 0.960  & 0.960  & 0.959  & 0.962  \\
+		accuracy\_avg       & 0.959  & 0.959  & 0.959  & 0.958  & 0.962  \\
+		f1\_macro           & 0.959  & 0.959  & 0.959  & 0.959  & 0.961  \\
+		f1\_micro           & 0.960  & 0.960  & 0.960  & 0.959  & 0.962  \\
+		f1\_weighted        & 0.960  & 0.960  & 0.960  & 0.959  & 0.962  \\
+		precision\_macro    & 0.959  & 0.959  & 0.959  & 0.959  & 0.961  \\
+		precision\_micro    & 0.960  & 0.960  & 0.960  & 0.959  & 0.962  \\
+		precision\_weighted & 0.960  & 0.960  & 0.960  & 0.959  & 0.962  \\
+		recall\_macro       & 0.959  & 0.959  & 0.959  & 0.958  & 0.962  \\
+		recall\_micro       & 0.960  & 0.960  & 0.960  & 0.959  & 0.962  \\
+		recall\_weighted    & 0.960  & 0.960  & 0.960  & 0.959  & 0.962  \\
+		train\_acc          & 0.969  & 0.971  & 0.971  & 0.971  & 0.971  \\
+		train\_f1           & 0.969  & 0.971  & 0.971  & 0.971  & 0.971  \\
+		train\_loss         & 0.081  & 0.076  & 0.081  & 0.081  & 0.077  \\
+		val\_acc            & 0.958  & 0.958  & 0.956  & 0.958  & 0.961  \\
+		val\_f1             & 0.958  & 0.958  & 0.956  & 0.959  & 0.961  \\
+		val\_loss           & 0.108  & 0.105  & 0.132  & 0.132  & 0.111  \\
+		\hline
+	\end{tabular}
+\end{table}
