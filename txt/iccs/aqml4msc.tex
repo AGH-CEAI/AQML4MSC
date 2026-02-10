@@ -190,56 +190,94 @@ Other HPO settings were fixed as follows: 100 trials, early stopping disabled, a
 
 
 
-\subsection{Hybrid Classical-Quantum Neural Network}
-For the hybrid approach, we replace the classifier from the classical neural network architecture,
-and add variational quantum circuit instead. Feature extractors are kept the same.
-Extracted features are concatenated $v = [v_{\mathrm{top}}, v_{\mathrm{bottom}}]$
-and used as input into quantum cicruit using angle embedding.
-Angle embedding is shown in equation~\ref{eq:embedding}, where $n$ is number of qubits --- equal to number of features fed into classifier ---
-and $v_i$ is the i-th feature of feature vector $v$.
+\subsection{Hybrid Classical--Quantum Neural Network}
+
+In the hybrid approach, the classifier in the classical neural network architecture is replaced by a variational quantum circuit, while the feature extractors are kept unchanged.
+The extracted features are concatenated into a single feature vector
+\(
+v = [v_{\mathrm{top}}, v_{\mathrm{bottom}}],
+\)
+which is then used as the input to the quantum circuit via angle embedding.
+
+The angle embedding is defined in Eq.~\ref{eq:embedding}, where \(n\) denotes the number of qubits—equal to the number of features fed into the classifier—and \(v_i\) is the \(i\)-th component of the feature vector \(v\).
 
 \begin{align}\label{eq:embedding}
-	\ket{\phi(v)} & = U_{\mathrm{emb}}(v)\ket{0}                                                              \\
-	              & = \left( R_X(v_1) \otimes R_X(v_2) \otimes ... \otimes R_X(v_n) \right) \ket{0} \nonumber
+	\ket{\phi(v)} & = U_{\mathrm{emb}}(v)\ket{0}                                                                  \\
+	              & = \left( R_X(v_1) \otimes R_X(v_2) \otimes \cdots \otimes R_X(v_n) \right) \ket{0}. \nonumber
 \end{align}
-Where:
+
+Here,
 \begin{equation*}
-	R_X(\alpha) = e^{-\mathrm{i} \alpha \sigma_X / 2}
+	R_X(\alpha) = e^{-\mathrm{i} \alpha \sigma_X / 2}.
 \end{equation*}
 
-Embedded features go through parametrized evolution called ansatz.
-The ansatz used in the circuit is constructed from $L$ Basic Entangler Layers provided by the PennyLane package.
-Trainable parameters used in ansatz are labeld as $\theta$.
+The embedded quantum state is then processed by a parametrized unitary, referred to as the ansatz.
+The ansatz used in this work consists of \(L\) Basic Entangler Layers provided by the PennyLane package.
+The trainable parameters of the ansatz are denoted by \(\boldsymbol{\Theta}\).
+
+The full parameter set of the variational circuit is defined as
 \begin{equation}
-	U_{\mathrm{ansatz}}(\boldsymbol{\theta}) = \prod_{\ell=1}^{L} U_{\mathrm{BEL}}(\boldsymbol{\theta}^{(\ell)})
+	\boldsymbol{\Theta}
+	=
+	\left\{
+	\boldsymbol{\theta}^{(1)}, \boldsymbol{\theta}^{(2)}, \ldots, \boldsymbol{\theta}^{(L)}
+	\right\},
+	\qquad
+	\boldsymbol{\theta}^{(\ell)} \in \mathbb{R}^{n},
+\end{equation}
+where \(L\) denotes the number of entangler layers and \(n\) is the number of qubits.
+The overall ansatz unitary is given by
+\begin{equation}
+	U_{\mathrm{ansatz}}(\boldsymbol{\Theta})
+	=
+	\prod_{\ell=1}^{L}
+	U_{\mathrm{BEL}}(\boldsymbol{\theta}^{(\ell)}).
 \end{equation}
 
-A single Basic Entangler Layer is defined as:
+A single Basic Entangler Layer is defined as
 \begin{equation}
-	U_{\mathrm{BEL}}(\boldsymbol{\theta}) =
-	\mathrm{CNOT}_{n,1}
-	\left(\prod_{i=1}^{n-1} \mathrm{CNOT}_{i,i+1}\right)
-	\left(\bigotimes_{i=1}^{n} R_Y(\theta_i)\right)
+	U_{\mathrm{BEL}}(\boldsymbol{\theta}^{(\ell)})
+	=
+	\left(
+	\prod_{i=1}^{n}
+	\mathrm{CNOT}_{i,\,i+1 \bmod n}
+	\right)
+	\left(
+	\bigotimes_{i=1}^{n}
+	R_Y(\theta^{(\ell)}_i)
+	\right),
 \end{equation}
-
-Where:
+where
 \begin{align*}
-	R_Y(\theta) & = e^{-\mathrm{i} \theta \sigma_Y / 2} \\
-	\mathrm{CNOT}_{i,j}
+	R_Y(\theta) & = e^{-\mathrm{i} \theta \sigma_Y / 2}, \\
+	\mathrm{CNOT}
 	            & =
-	\ket{0}\!\bra{0}_i \otimes \mathbb{I}_{j}
+	\ket{0}\!\bra{0} \otimes \mathbb{I}
 	+
-	\ket{1}\!\bra{1}_i \otimes \sigma_{X_j}
-	, \qquad i \neq j
+	\ket{1}\!\bra{1} \otimes \sigma_X.
 \end{align*}
 
+Applying the ansatz unitary to the embedded quantum state yields
 \begin{equation}
-	\langle \sigma_Z^{(j)} \rangle = \bra{\phi(v)}U^\dagger  \sigma_Z^{(j)}  U \ket{\phi(v)}, \qquad j = 1,2,3
+	\ket{\gamma}
+	=
+	U_{\mathrm{ansatz}}(\boldsymbol{\Theta}) \ket{\phi}.
 \end{equation}
 
-The measurement results correspond to the expectation values of the $\sigma_Z$ operator acting independently on the first three qubits.
+At the output of the circuit, a vector of expectation values is obtained by measuring the Pauli-\(Z\) operator on the first three qubits.
+Each expectation value corresponds to the expectation of an ideal (projective) measurement of \(\sigma_Z\) acting on the respective qubit.
+The expectation value for qubit \(j\) is given by
 \begin{equation}
-	\sigma_Z^{(j)} = \mathbb{I}^{\otimes (j-1)} \otimes \sigma_Z \otimes \mathbb{I}^{\otimes (n-j)}
+	\langle \sigma_Z \rangle_{\gamma, j}
+	=
+	\bra{\gamma} \sigma_Z^{[j]} \ket{\gamma},
+	\qquad j = 1,2,3,
+\end{equation}
+where
+\begin{equation}
+	\sigma_Z^{[j]}
+	=
+	\mathbb{I}^{\otimes (j-1)} \otimes \sigma_Z \otimes \mathbb{I}^{\otimes (n-j)}.
 \end{equation}
 
 
