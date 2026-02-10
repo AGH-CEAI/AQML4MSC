@@ -154,7 +154,7 @@ Training is performed using the cross-entropy loss, and predictions are obtained
 
 \begin{figure}
 	\centering
-	\includegraphics[width=0.9\textwidth]{fig/MLP_diagram.pdf}
+	\includegraphics[width=0.6\textwidth]{fig/MLP_diagram.pdf}
 	\caption{Diagram of the classical MLP architecture for multisource classification baseline model.
 		Particular parts of the diagram are labeled with colors: \textbf{yellow} --- feature extractors input layer,
 		\textbf{orange} --- feature extractors,
@@ -193,6 +193,7 @@ Other HPO settings were fixed as follows: 100 trials, early stopping disabled, a
 \subsection{Hybrid Classical--Quantum Neural Network}
 
 In the hybrid approach, the classifier in the classical neural network architecture is replaced by a variational quantum circuit, while the feature extractors are kept unchanged.
+Diagram of our hybrid architecture is shown on figure~\ref{fig:vqa_diagram}.
 The extracted features are concatenated into a single feature vector
 \(
 v = [v_{\mathrm{top}}, v_{\mathrm{bottom}}],
@@ -212,7 +213,7 @@ Here,
 \end{equation*}
 
 The embedded quantum state is then processed by a parametrized unitary, referred to as the ansatz.
-The ansatz used in this work consists of \(L\) Basic Entangler Layers provided by the PennyLane package.
+The ansatz used in this work consists of \(L\) Basic Entangler Layers provided by the \texttt{pennylane version 0.43.1} package.
 The trainable parameters of the ansatz are denoted by \(\boldsymbol{\Theta}\).
 
 The full parameter set of the variational circuit is defined as
@@ -282,6 +283,12 @@ where
 
 
 
+\begin{figure}
+	\centering
+	\includegraphics[width=0.9\textwidth]{fig/VQA_diagram.pdf}
+	\caption{ }
+	\label{fig:vqa_diagram}
+\end{figure}
 
 
 
@@ -290,8 +297,35 @@ where
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Results}
+For evaluation  we look at mean metric values from five cross-validation folds.
+Metrics we look at are accuracy and macro averaged f1-score
+--- \texttt{accuracy\_score} and \texttt{f1\_score} with argument \texttt{average="macro"} from \texttt{scikit-learn version 1.8}.
+Results are shown in the table~\ref{tab:results}.
 
 
+
+% ===== CV Metrics per Fold: HPO\_classical\_MLP\_3 =====
+\begin{table}[t]
+	\centering
+	\caption{Accuracy and macro averaged f1-score metrics for classical MLP found by hyperparameter optimization
+		and VQA found by AQMlator}
+	\label{tab:results}
+	\begin{tabular}{l|ccccc|c}
+		\hline
+		Metric    & Fold 1 & Fold 2 & Fold 3 & Fold 4 & Fold 5 & Mean              \\
+		\hline
+		\multicolumn{7}{c}{MLP}                                                    \\
+		\hline
+		accuracy  & 0.962  & 0.959  & 0.960  & 0.960  & 0.960  & $0.960 \pm 0.001$ \\
+		f1\_macro & 0.961  & 0.959  & 0.959  & 0.959  & 0.959  & $0.959 \pm 0.001$ \\
+		\hline
+		\multicolumn{7}{c}{VQA}                                                    \\
+		\hline
+		accuracy  & 0.0    & 0.0    & 0.0    & 0.0    & 0.0    & $0.0 \pm 0.0$     \\
+		f1\_macro & 0.0    & 0.0    & 0.0    & 0.0    & 0.0    & $0.0 \pm 0.0$     \\
+		\hline
+	\end{tabular}
+\end{table}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Conclusion}
