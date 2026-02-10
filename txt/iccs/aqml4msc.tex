@@ -46,31 +46,31 @@
 % Multisource
 Data about an observed object can be gathered from multiple complementary sensors.
 To obtain richer and more accurate decision outcomes, multisource information fusion (MSIF) can be employed.
-A comprehensive review of information fusion approaches is provided by Li et al.~\cite{li_multi-source_2024}.
+A comprehensive review of information fusion approaches is provided by Li et al.~\cite{liMultisourceInformationFusion2024}.
 In this work, we focus on feature-level fusion, in which the fusion model operates on extracted feature representations.
-MSIF has found widespread application in machine learning, particularly in classification tasks, as surveyed in~\cite{baltrusaitis_multimodal_2019}.
-Representative applications include remote sensing~\cite{li_a3clnn_2022}, military systems~\cite{sycara_integrated_2009}, and human action recognition~\cite{fortino_advances_2019},
-among others~\cite{li_multi-source_2024}.
+MSIF has found widespread application in machine learning, particularly in classification tasks, as surveyed in~\cite{baltrusaitisMultimodalMachineLearning2019}.
+Representative applications include remote sensing~\cite{liA3CLNNSpatialSpectral2022}, military systems~\cite{sycaraIntegratedApproachHighlevel2009},
+and human action recognition~\cite{fortinoAdvancesMultisensorFusion2019}, among others~\cite{liMultisourceInformationFusion2024}.
 
 % Transition: MSIF -> QML
 Despite the success of classical machine learning models for feature-level fusion, their performance can be limited by model capacity and scaling issues in high-dimensional feature spaces.
 This motivates the exploration of alternative computational paradigms for multisource learning.
 
 % QML
-Quantum machine learning (QML) leverages principles of quantum mechanics to process information in ways that differ fundamentally from classical machine learning~\cite{biamonte_quantum_2017}.
+Quantum machine learning (QML) leverages principles of quantum mechanics to process information in ways that differ fundamentally from classical machine learning~\cite{biamonteQuantumMachineLearning2017a}.
 Several works have demonstrated that quantum models can represent complex functions using comparatively shallow circuits or fewer parameters than their classical counterparts,
-suggesting potential advantages for learning tasks involving structured or high-dimensional data~\cite{havlicek_supervised_2019,schuld_quantum_2019,abbas_power_2021}.
-Moreover, theoretical work has identified learning scenarios in which quantum models offer data-dependent advantages~\cite{huang_power_2021}.
+suggesting potential advantages for learning tasks involving structured or high-dimensional data~\cite{havlicekSupervisedLearningQuantumenhanced2019,schuldQuantumMachineLearning2019,abbasPowerQuantumNeural2021}.
+Moreover, theoretical work has identified learning scenarios in which quantum models offer data-dependent advantages~\cite{huangPowerDataQuantum2021a}.
 
 % VQA on NISQ 
-As fault-tolerant quantum computers have not yet been realized, practical QML research focuses on algorithms compatible with current noisy intermediate-scale quantum (NISQ) devices~\cite{chen_complexity_2023}.
-Among these, variational quantum algorithms (VQAs)~\cite{cerezo_variational_2021} are particularly prominent.
+As fault-tolerant quantum computers have not yet been realized, practical QML research focuses on algorithms compatible with current noisy intermediate-scale quantum (NISQ) devices~\cite{chenComplexityNISQ2023}.
+Among these, variational quantum algorithms (VQAs)~\cite{cerezoVariationalQuantumAlgorithms2021} are particularly prominent.
 VQAs are hybrid quantum--classical methods that employ a classical optimizer to train a parameterized quantum circuit.
-Importantly, Schuld et al.~\cite{schuld_circuit-centric_2020} have shown that such models exhibit robustness to noise in both input data and circuit parameters, making them suitable for near-term quantum hardware.
+Importantly, Schuld et al.~\cite{schuldCircuitcentricQuantumClassifiers2020a} have shown that such models exhibit robustness to noise in both input data and circuit parameters, making them suitable for near-term quantum hardware.
 
 % QMSC
 Recently, several works have begun to explore the application of quantum machine learning methods to multisource or multimodal data fusion.
-Feature-level multimodal quantum fusion presented in pre-print from 2026~\cite{wu_feature_2026} takes features extracted by sperate unimodal classical neural networks.
+Feature-level multimodal quantum fusion presented in pre-print from 2026~\cite{wuFeatureEntanglementbasedQuantum2026} takes features extracted by sperate unimodal classical neural networks.
 Extracted features are embedded into quantum fusion circuit and entangled between multiple modalities and target qubits, with trainable parameters.
 Their model showed consistent stability and high accuracy for high-dimensional data.
 
@@ -105,7 +105,7 @@ during training.
 \section{Synthetic Multisource Data Construction}
 The MNIST (Modified National Institute of Standards and Technology) dataset consists of
 70,000 images of handwritten digits (0--9), each of size $28 \times 28$ pixels.
-The dataset was obtained from Kaggle \cite{kaggle_dataset},
+The dataset was obtained from Kaggle \cite{lecunMNISTHandwrittenDigits2025},
 and we used the predefined training--validation split provided with the dataset without modification.
 
 From the dataset, we select only three digit classes:
@@ -280,6 +280,7 @@ The measurement results correspond to the expectation values of the $\sigma_Z$ o
 % BibTeX users should specify bibliography style 'splncs04'.
 % References will then be sorted and formatted in the correct style.
 %
+\setlength{\emergencystretch}{5em}
 \bibliographystyle{splncs04}
 \bibliography{bibliography.bib}
 %
