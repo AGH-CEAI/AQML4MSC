@@ -10,6 +10,12 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 
+% Internal review packages
+\usepackage{soul}
+\usepackage{todonotes}
+\renewcommand{\tr}[1]{{\color{blue} #1}}
+\newcommand{\trst}[1]{{\color{blue} \st{#1}}}
+
 
 \begin{document}
 %
@@ -34,273 +40,364 @@
 \maketitle              % typeset the header of the contribution
 %
 \begin{abstract}
+	
+	
 	The abstract should briefly summarize the contents of the paper in
-	150--250 words.
+	150--250 words. \todo{TR: Do uzupełnienia}
 
+	
 	\keywords{First keyword  \and Second keyword \and Another keyword.}
+	
+	
 \end{abstract}
 %
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
-% Multisource
-Data about an observed object can be gathered from multiple complementary sensors.
-To obtain richer and more accurate decision outcomes, multisource information fusion (MSIF) can be employed.
-A comprehensive review of information fusion approaches is provided by Li et al.~\cite{liMultisourceInformationFusion2024}.
-In this work, we focus on feature-level fusion, in which the fusion model operates on extracted feature representations.
-MSIF has found widespread application in machine learning, particularly in classification tasks, as surveyed in~\cite{baltrusaitisMultimodalMachineLearning2019}.
-Representative applications include remote sensing~\cite{liA3CLNNSpatialSpectral2022}, military systems~\cite{sycaraIntegratedApproachHighlevel2009},
-and human action recognition~\cite{fortinoAdvancesMultisensorFusion2019}, among others~\cite{liMultisourceInformationFusion2024}.
 
-% Transition: MSIF -> QML
-Despite the success of classical machine learning models for feature-level fusion, their performance can be limited by model capacity and scaling issues in high-dimensional feature spaces.
-This motivates the exploration of alternative computational paradigms for multisource learning.
 
-% QML
-Quantum machine learning (QML) leverages principles of quantum mechanics to process information in ways that differ fundamentally from classical machine learning~\cite{biamonteQuantumMachineLearning2017a}.
-Several works have demonstrated that quantum models can represent complex functions using comparatively shallow circuits or fewer parameters than their classical counterparts,
-suggesting potential advantages for learning tasks involving structured or high-dimensional data~\cite{havlicekSupervisedLearningQuantumenhanced2019,schuldQuantumMachineLearning2019,abbasPowerQuantumNeural2021}.
-Moreover, theoretical work has identified learning scenarios in which quantum models offer data-dependent advantages~\cite{huangPowerDataQuantum2021a}.
 
-% VQA on NISQ 
-As fault-tolerant quantum computers have not yet been realized, practical QML research focuses on algorithms compatible with current noisy intermediate-scale quantum (NISQ) devices~\cite{chenComplexityNISQ2023}.
-Among these, variational quantum algorithms (VQAs)~\cite{cerezoVariationalQuantumAlgorithms2021} are particularly prominent.
-VQAs are hybrid quantum--classical methods that employ a classical optimizer to train a parameterized quantum circuit.
-Importantly, Schuld et al.~\cite{schuldCircuitcentricQuantumClassifiers2020a} have shown that such models exhibit robustness to noise in both input data and circuit parameters, making them suitable for near-term quantum hardware.
-
-% QMSC
-Recently, several works have begun to explore the application of quantum machine learning methods to multisource or multimodal data fusion.
-Feature-level multimodal quantum fusion presented in pre-print from 2026~\cite{wuFeatureEntanglementbasedQuantum2026} takes features extracted by sperate unimodal classical neural networks.
-Extracted features are embedded into quantum fusion circuit and entangled between multiple modalities and target qubits, with trainable parameters.
-Their model showed consistent stability and high accuracy for high-dimensional data.
-
+	% Multisource
+	Data about an observed object can be gathered from multiple complementary sensors.
+	To obtain richer and more accurate decision outcomes, multisource information fusion (MSIF) can be employed.
+	A comprehensive review of information fusion approaches is provided by Li et
+	al.~\cite{liMultisourceInformationFusion2024}.\todo{TR: To chyba lepiej na koniec.} In this work, we focus on
+	feature-level fusion, in which the fusion model operates on extracted feature representations.
+	MSIF has found widespread application in machine learning, particularly in classification tasks, as surveyed
+	in~\cite{baltrusaitisMultimodalMachineLearning2019}.
+	Representative applications include remote sensing~\cite{liA3CLNNSpatialSpectral2022}, military
+	systems~\cite{sycaraIntegratedApproachHighlevel2009},
+	and human action recognition~\cite{fortinoAdvancesMultisensorFusion2019}, among
+	others~\cite{liMultisourceInformationFusion2024}.\todo{TR: Wstęp bardzo do rzeczy, ale ok.}
+	
+	
+	% Transition: MSIF -> QML
+	Despite the success of classical machine learning models for feature-level fusion, their performance can be limited
+	by model capacity and scaling issues in high-dimensional feature spaces.\todo{TR: Mamy źródło?}  This motivates the
+	exploration of alternative computational paradigms for multisource learning.
+	
+	
+	% QML
+	Quantum machine learning (QML) leverages principles of quantum mechanics to process information in ways that differ
+	fundamentally from classical machine learning~\cite{biamonteQuantumMachineLearning2017a}. \todo{TR: Tutaj zdanie o
+	tym jak QML wygląda: że używa obwodów kwantowych do wyrażania obliczeń.}
+	Several works have demonstrated that quantum models can represent complex functions using comparatively shallow
+	circuits or fewer parameters than their classical counterparts, suggesting potential advantages for learning tasks
+	involving structured or high-dimensiona data~\cite{havlicekSupervisedLearningQuantumenhanced2019,
+	schuldQuantumMachineLearning2019,abbasPowerQuantumNeural2021}. Moreover, theoretical work has identified learning
+	scenarios in which quantum models offer data-dependent advantages~\cite{huangPowerDataQuantum2021a}.
+	
+	
+	% VQA on NISQ 
+	As fault-tolerant quantum computers have not yet been realized \todo{TR: Ale są całkiem mocne ambicje i prace z
+	ostatniego czasu. Można wspomnieć.}, practical QML research focuses on algorithms compatible with current noisy
+	intermediate-scale quantum (NISQ) devices~\cite{chenComplexityNISQ2023}. Among these, variational quantum
+	algorithms (VQAs)~\cite{cerezoVariationalQuantumAlgorithms2021} are particularly prominent. VQAs are hybrid
+	quantum--classical methods that employ a classical optimizer to train a parameterized quantum circuit. Importantly,
+	Schuld et al.~\cite{schuldCircuitcentricQuantumClassifiers2020a} have shown that such models exhibit robustness to
+	noise in both input data and circuit parameters, making them suitable for near-term quantum hardware.
+	
+	
+	% QMSC
+	Recently, several works have begun to explore the application of quantum machine learning methods to multisource or
+	multimodal data fusion. Feature-level multimodal quantum fusion presented in pre-print from
+	2026~\cite{wuFeatureEntanglementbasedQuantum2026} takes features extracted by sperate unimodal classical neural
+	networks. Extracted features are embedded into quantum fusion circuit and entangled between multiple modalities and
+	target qubits, with trainable parameters. Their model showed consistent stability and high accuracy for
+	high-dimensional data.
+	
+	% AQML
+	\todo[inline]{Tutaj paragraf o AQML}
+	
+	% Summary
+	\todo[inline]{This paper is organized as follows...}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Problem Formulation} \label{sec:problem_formulation}
-We consider a synthetic multisource classification setting, where multiple input sources
-are derived from a single original sample.
-Specifically, an input image is partitioned into two complementary views.
-Each view is independently transformed by a deterministic preprocessing pipeline
-into a vector representation, denoted as $x_{\mathrm{top}}$ and $x_{\mathrm{bottom}}$,
-which constitute the synthetic multisource inputs used for classification.
 
-The vector inputs are subsequently passed through learnable feature extraction
-functions $f(\cdot,\theta_1)$ and $f(\cdot,\theta_2)$, producing feature vectors
-$v_{\mathrm{top}}$ and $v_{\mathrm{bottom}}$ of equal dimensionality.
-These features are fused and classified by a function $h(\cdot,\theta_3)$,
-yielding the final classification decision $d$.
-The resulting formulation is defined as:
-\begin{align*}
-	v_{\mathrm{top}}    & = f(x_{\mathrm{top}}, \theta_1),                      \\
-	v_{\mathrm{bottom}} & = f(x_{\mathrm{bottom}}, \theta_2),                   \\
-	d                   & = h(v_{\mathrm{top}}, v_{\mathrm{bottom}}, \theta_3).
-\end{align*}
 
-All learnable parameters $\theta_1$, $\theta_2$, and $\theta_3$ are optimized jointly
-during training.
+	We consider a synthetic multisource classification setting, where multiple input sources are derived from a single
+	original sample.\todo{TR: To jeszcze się okaże.}  Specifically, an input image is partitioned into two
+	complementary views. Each view is independently transformed by a deterministic preprocessing pipeline into a vector
+	representation, denoted as $x_{\mathrm{top}}$ and $x_{\mathrm{bottom}}$, which constitute the synthetic multisource
+	inputs used for classification.
+	
+	The vector inputs are subsequently passed through learnable feature extraction functions $f(\cdot,\theta_1)$ and
+	$f(\cdot,\theta_2)$, producing feature vectors $v_{\mathrm{top}}$ and $v_{\mathrm{bottom}}$ of equal dimensionality.
+	These features are fused and classified by a function $h(\cdot,\theta_3)$, yielding the final classification
+	decision $d$. The resulting formulation is defined as:
+	\begin{align*}
+		v_{\mathrm{top}}    & = f(x_{\mathrm{top}}, \theta_1),                      \\
+		v_{\mathrm{bottom}} & = f(x_{\mathrm{bottom}}, \theta_2),                   \\
+		d                   & = h(v_{\mathrm{top}}, v_{\mathrm{bottom}}, \theta_3).
+	\end{align*}
+	All learnable parameters $\theta_1$, $\theta_2$, and $\theta_3$ are optimized jointly
+	during training.
+	
+	\todo[inline]{TR: Trochę krótka sekcja. Możnaby ją rozszerzyć o jakieś do literature overview. Wtedy, po
+	sformułowaniu problemu, możnaby przeanalizować jakie podejścia ludzie mają i dlaczego one są ograniczone. I gdzie
+	użycie kwantów może pomóc.}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Synthetic Multisource Data Construction}
-The MNIST (Modified National Institute of Standards and Technology) dataset consists of
-70,000 images of handwritten digits (0--9), each of size $28 \times 28$ pixels.
-The dataset was obtained from Kaggle \cite{lecunMNISTHandwrittenDigits2025},
-and we used the predefined training--validation split provided with the dataset without modification.
 
-From the dataset, we select only three digit classes:
-\begin{itemize}
-	\item digit ``5'' (\(5421\) training samples and \(892\) validation samples),
-	\item digit ``6'' (\(5918\) training samples and \(958\) validation samples),
-	\item digit ``7'' (\(6265\) training samples and \(1028\) validation samples).
-\end{itemize}
+	\todo{TR: Mniej ostry wstęp. Najpierw zacznij, że używasz syntetycznych, wyjaśnij dlaczego. Możesz wspomnieć
+	o rozważanych alternatywach.}
 
-Each image is preprocessed to construct synthetic multisource inputs.
-Specifically, images are split horizontally into top and bottom halves,
-which are treated as complementary views.
-Each view is then binarized, spatially downsampled, and transformed into a six-dimensional vector
-by computing the mean pixel intensity along columns.
-These vectors correspond to the synthetic multisource inputs $x_{\mathrm{top}}$ and $x_{\mathrm{bottom}}$ defined in Section~\ref{sec:problem_formulation}.
-
-An overview of the preprocessing pipeline is shown in Fig.~\ref{fig:preprocessing}.
-
-\begin{figure}
-	\centering
-	\includegraphics[height=0.8\textheight]{fig/preprocessing.pdf}
-	\caption{Overview of the synthetic multisource preprocessing pipeline.
-		(a) Original input image.
-		(b) Horizontal splitting into top and bottom halves.
-		(c) Binarization of each half.
-		(d) Spatial downsampling.
-		(e) Computation of column-wise mean pixel intensities, resulting in vector representations
-		that constitute the synthetic multisource inputs $x_{\mathrm{top}}$ and $x_{\mathrm{bottom}}$.
-	}
-	\label{fig:preprocessing}
-\end{figure}
+	The MNIST dataset consists of 70,000 images of handwritten digits (0--9), each of size $28 \times 28$ pixels.
+	The dataset was obtained from Kaggle \cite{lecunMNISTHandwrittenDigits2025}, and we used the predefined
+	training--validation split provided with the dataset without modification.
+	
+	From the dataset, we select only three digit classes:\todo{TR: Dlaczeo akurat te? Arbitralnie też jest powodem.
+	Różnorodność jest ok. Ale coś powiedzieć trzeba.}
+	\begin{itemize}
+		\item digit ``5'' (\(5421\) training samples and \(892\) validation samples),
+		\item digit ``6'' (\(5918\) training samples and \(958\) validation samples),
+		\item digit ``7'' (\(6265\) training samples and \(1028\) validation samples).
+	\end{itemize}
+	Each image is preprocessed to construct synthetic multisource inputs. Specifically, images are split horizontally
+	into top and bottom halves, which are treated as complementary views. Each view is then binarized, spatially
+	downsampled, and transformed into a six-dimensional vector by computing the mean pixel intensity along columns.
+	These vectors correspond to the synthetic multisource inputs $x_{\mathrm{top}}$ and $x_{\mathrm{bottom}}$ defined
+	in Section~\ref{sec:problem_formulation}.\todo{TR: Jeśli umiesz dodać uzasadnienie, to byłoby wskazane.}
+	
+	An overview of the preprocessing pipeline is shown in Fig.~\ref{fig:preprocessing}.
+	\begin{figure}
+		\centering
+		\includegraphics[height=0.8\textheight]{fig/preprocessing.pdf}
+		\caption{Overview of the synthetic multisource preprocessing pipeline.
+			(a) Original input image.
+			(b) Horizontal splitting into top and bottom halves.
+			(c) Binarization of each half.
+			(d) Spatial downsampling.
+			(e) Computation of column-wise mean pixel intensities, resulting in vector representations
+			that constitute the synthetic multisource inputs $x_{\mathrm{top}}$ and $x_{\mathrm{bottom}}$.
+		}
+		\label{fig:preprocessing}
+	\end{figure}
+	
+	\todo[inline]{TR: To też jest trochę krótka sekcja. To nie jest nic strasznego, ale może warto by ją dać jako
+	podsekcję Approach? Zobaczymy jak to poukładać kiedy będziemy mieli pełną treść.}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Approach}
 
-\subsection{Classical Neural Network Baseline}
+	\todo[inline]{TR: Osobiście nie lubię, kiedy sekcja zaczyna się od podsekcji, bez żadnego wstępu, ale niektórzy tak
+	robią. Jak będzie czas, proponowałbym uzupełnić.}
 
-\subsubsection{Model Architecture}
-As a baseline, we employ a multilayer perceptron (MLP) architecture (Fig.~\ref{fig:mlp_diagram}).
-Two feature extractors independently process $x_{\mathrm{top}}$ and $x_{\mathrm{bottom}}$, and their outputs are concatenated and trained end-to-end with the classifier.
-Each feature extractor is an MLP with six input neurons, corresponding to the dimensionality of the input vectors, and a single hidden layer with ReLU activation.
-
-The classifier consists of an input layer of size equal to the concatenated feature outputs, a hidden layer with ReLU activation, and an output layer with three neurons, corresponding to the number of target classes.
-Training is performed using the cross-entropy loss, and predictions are obtained by selecting the output logit with the maximum value.
-
-\begin{figure}
-	\centering
-	\includegraphics[width=0.6\textwidth]{fig/MLP_diagram.pdf}
-	\caption{Diagram of the classical MLP architecture for multisource classification baseline model.
-		Particular parts of the diagram are labeled with colors: \textbf{yellow} --- feature extractors input layer,
-		\textbf{orange} --- feature extractors,
-		\textbf{blue} --- classifier (here the fusion takes place),
-		\textbf{green} --- output logits }
-	\label{fig:mlp_diagram}
-\end{figure}
-
-\subsubsection{Hyperparameter Optimization}
-We performed hyperparameter optimization (HPO) to select the optimal architecture for the classical baseline.
-The experimental setup is shown in Table~\ref{tab:baseline_hpo}.
-Other HPO settings were fixed as follows: 100 trials, early stopping disabled, and random seed 42.
-
-
-
-% ===== Hyperparameters: MLP_experiment_setup =====
-\begin{table}[t]
-	\centering
-	\caption{Experiment setup for baseline hyper-parameters optimization}
-	\label{tab:baseline_hpo}
-	\begin{tabular}{p{6cm}p{2cm}p{1.5cm}l}
-		\hline
-		Parameter                              & Range                 & Scale    & Best value \\
-		\hline
-		Learning rate                          & $[10^{-3},\,10^{-2}]$ & linear   & $10^{-3}$  \\
-		Batch size                             & $[32, 128]$           & discrete & $83$       \\
-		Hidden layer size (feature extractors) & $[64, 256]$           & discrete & $90$       \\
-		Output layer size (feature extractors) & $[64, 256]$           & discrete & $196$      \\
-		Hidden layer size (classifier)         & $[64, 256]$           & discrete & $95$       \\
-		\hline
-	\end{tabular}
-\end{table}
-
-
-
-\subsection{Hybrid Classical--Quantum Neural Network}
-
-In the hybrid approach, the classifier in the classical neural network architecture is replaced by a variational quantum circuit, while the feature extractors are kept unchanged.
-Diagram of our hybrid architecture is shown on figure~\ref{fig:vqa_diagram}.
-The extracted features are concatenated into a single feature vector
-\(
-v = [v_{\mathrm{top}}, v_{\mathrm{bottom}}],
-\)
-which is then used as the input to the quantum circuit via angle embedding.
-
-The angle embedding is defined in Eq.~\ref{eq:embedding}, where \(n\) denotes the number of qubits—equal to the number of features fed into the classifier—and \(v_i\) is the \(i\)-th component of the feature vector \(v\).
-
-\begin{align}\label{eq:embedding}
-	\ket{\phi(v)} & = U_{\mathrm{emb}}(v)\ket{0}                                                                  \\
-	              & = \left( R_X(v_1) \otimes R_X(v_2) \otimes \cdots \otimes R_X(v_n) \right) \ket{0}. \nonumber
-\end{align}
-
-Here,
-\begin{equation*}
-	R_X(\alpha) = e^{-\mathrm{i} \alpha \sigma_X / 2}.
-\end{equation*}
-
-The embedded quantum state is then processed by a parametrized unitary, referred to as the ansatz.
-The ansatz used in this work consists of \(L\) Basic Entangler Layers provided by the \texttt{pennylane version 0.43.1} package.
-The trainable parameters of the ansatz are denoted by \(\boldsymbol{\Theta}\).
-
-The full parameter set of the variational circuit is defined as
-\begin{equation}
-	\boldsymbol{\Theta}
-	=
-	\left\{
-	\boldsymbol{\theta}^{(1)}, \boldsymbol{\theta}^{(2)}, \ldots, \boldsymbol{\theta}^{(L)}
-	\right\},
-	\qquad
-	\boldsymbol{\theta}^{(\ell)} \in \mathbb{R}^{n},
-\end{equation}
-where \(L\) denotes the number of entangler layers and \(n\) is the number of qubits.
-The overall ansatz unitary is given by
-\begin{equation}
-	U_{\mathrm{ansatz}}(\boldsymbol{\Theta})
-	=
-	\prod_{\ell=1}^{L}
-	U_{\mathrm{BEL}}(\boldsymbol{\theta}^{(\ell)}).
-\end{equation}
-
-A single Basic Entangler Layer is defined as
-\begin{equation}
-	U_{\mathrm{BEL}}(\boldsymbol{\theta}^{(\ell)})
-	=
-	\left(
-	\prod_{i=1}^{n}
-	\mathrm{CNOT}_{i,\,i+1 \bmod n}
-	\right)
-	\left(
-	\bigotimes_{i=1}^{n}
-	R_Y(\theta^{(\ell)}_i)
-	\right),
-\end{equation}
-where
-\begin{align*}
-	R_Y(\theta) & = e^{-\mathrm{i} \theta \sigma_Y / 2}, \\
-	\mathrm{CNOT}
-	            & =
-	\ket{0}\!\bra{0} \otimes \mathbb{I}
-	+
-	\ket{1}\!\bra{1} \otimes \sigma_X.
-\end{align*}
-
-Applying the ansatz unitary to the embedded quantum state yields
-\begin{equation}
-	\ket{\gamma}
-	=
-	U_{\mathrm{ansatz}}(\boldsymbol{\Theta}) \ket{\phi}.
-\end{equation}
-
-At the output of the circuit, a vector of expectation values is obtained by measuring the Pauli-\(Z\) operator on the first three qubits.
-Each expectation value corresponds to the expectation of an ideal (projective) measurement of \(\sigma_Z\) acting on the respective qubit.
-The expectation value for qubit \(j\) is given by
-\begin{equation}
-	\langle \sigma_Z \rangle_{\gamma, j}
-	=
-	\bra{\gamma} \sigma_Z^{[j]} \ket{\gamma},
-	\qquad j = 1,2,3,
-\end{equation}
-where
-\begin{equation}
-	\sigma_Z^{[j]}
-	=
-	\mathbb{I}^{\otimes (j-1)} \otimes \sigma_Z \otimes \mathbb{I}^{\otimes (n-j)}.
-\end{equation}
-
-
-
-\begin{figure}
-	\centering
-	\includegraphics[width=0.9\textwidth]{fig/VQA_diagram.pdf}
-	\caption{ }
-	\label{fig:vqa_diagram}
-\end{figure}
-
-
-
-
-\subsection{Automated Quantum Machine Learning}
-
+	\subsection{Classical Neural Network Baseline}
+	
+		\todo[inline]{TR: j/w}
+	
+		\subsubsection{Model Architecture}
+		
+			\todo[inline]{Znowu, zacznij bardziej miękko, może od takiego ogólnego wysoko-poziomiego pomysłu na
+			architekturę. Model ma 2 części ... jedna robi to... Druga tamto... W efekcie... Output sieci jest taki...
+			Robię tak, bo ...}
+		
+			As a baseline, we employ a \tr{standard / basic / classic}\todo{Podkreślaj, że chodzi o podstawowe
+			techniki, bo to stanowi uzasadnienia!} multilayer perceptron (MLP) architecture \todo{TR: Referencja.}
+			(Fig.~\ref{fig:mlp_diagram})\todo{TR: Ładny rysunek. Dobrze będzie sprawdzić później pracę w
+			\texttt{Coblis}.}. Two feature extractors\todo{TR: Zła kolejność.
+			Najpierw utwórz (dookreśl) extractory, a potem pisz co i jak robią.} independently process
+			$x_{\mathrm{top}}$ and $x_{\mathrm{bottom}}$, and their
+			outputs are concatenated and trained end-to-end with the classifier. Each feature extractor is an MLP with
+			six input neurons, corresponding to the dimensionality of the input vectors, and a single hidden layer with
+			ReLU activation. \todo{TR: Patrzyłeś, czy multilayer nie jest lepszy? Jeśli nie, to sprawdź proszę, to
+			chyba się przeliczy w kilka sekund, a podniesie jakość badań.}
+			
+			The classifier consists of an input layer of size equal to the concatenated feature \tr{extractors}
+			outputs \todo{TR: Nie ma czegoś takiego jak feature output. Może chodziło o output feature? Extractor
+			output jest moim zdaniem najsensowniej.}, a hidden layer with ReLU activation \todo{TR: Jestem po
+			50 stronach raportu, więc może straciłem wyczucie. Czy activation zamiast activation function jest używane
+			i akceptowane w literaturze? Jeśli tak, to ok. Wiadomo o co chodzi, ale bezpieczniej trzymać się
+			standardów}, and an output layer with three neurons, corresponding to the number of target
+			classes.\todo{TR: To połączyć z informacją, że stosujesz one-hot encoding (i dlaczego tak robisz).}
+			Training is performed using the cross-entropy loss, and predictions are obtained by selecting the output
+			logit\todo{TR: Tak się mówi? Nie output neuron? A w zasadzie nawet bardziej ściśle, indeks output neuronu?}
+			with the maximum value.
+			\begin{figure}
+				\centering
+				\includegraphics[width=0.6\textwidth]{fig/MLP_diagram.pdf}
+				\caption{Diagram of the classical MLP architecture for multisource classification baseline model.
+					Particular parts of the diagram are labeled with colors: \textbf{yellow} --- feature extractors
+					input layer, \textbf{orange} --- feature extractors, \textbf{blue} --- classifier (here the fusion
+					takes place), \textbf{green} --- output logits.}
+				\label{fig:mlp_diagram}
+			\end{figure}
+		
+		\subsubsection{Hyperparameter Optimization}
+		
+			\todo[inline]{TR: Chyba lepiej będzie dać HPO jako sekcję, w której podsumujemy optymalizację dla
+			wszystkich testowanych modeli. Zredukujemy wtedy poziom zagnieżdżenia, co zawsze jest na plus.}
+			
+			We performed hyperparameter\todo{TR: W tabeli masz hyper-paramerter. Wybierz jeden sposób zapisu i
+				ujednolić, proszę.} optimization (HPO) to select the optimal architecture for the classical
+			baseline.\todo{Nie napisałeś jak. Strzelam, że optuna, więc niech się pojawi. Bez wchodzenia w szczegóły,
+			default optuna optimization algorithm, może nazwa. Powiedzieć, że standard.} The experimental setup is
+			shown in Table~\ref{tab:baseline_hpo}. Other HPO settings were fixed as
+			follows: 100 trials \todo{Mało. Były ograniczenia czasowe / resourcowe?}, early stopping disabled, and
+			random seed 42. \todo{TR: W przypadku HPO i ML, random seed występuje w wielu miejscach. Dobrze by było
+				dookreślić co nim inicjalizowałeś. Możemy się nad tym zastanowić razem.}
+			\todo[inline]{TR: Słowo uzasadnienia nt. zakresów.}
+		
+		
+			% ===== Hyperparameters: MLP_experiment_setup =====
+			\begin{table}[t]
+				\centering
+				\caption{Experiment setup for baseline hyper-parameters optimization\tr{.}}
+				\label{tab:baseline_hpo}
+				\begin{tabular}{p{6cm}p{2cm}p{1.5cm}l}
+					\hline
+					Parameter                              & Range                 & \tr{Type}\trst{Scale}    & Best value \\
+					\hline
+					Learning rate                          & $[10^{-3},\,10^{-2}]$ & linear   & $10^{-3}$  \\
+					Batch size                             & $[32, 128]$           & discrete & $83$       \\
+					Hidden layer size (feature extractors) & $[64, 256]$           & discrete & $90$       \\
+					Output layer size (feature extractors) & $[64, 256]$           & discrete & $196$      \\
+					Hidden layer size (classifier)         & $[64, 256]$           & discrete & $95$       \\
+					\hline
+				\end{tabular}
+			\end{table}
+		
+		
+		
+		
+		\subsection{Hybrid Classical--Quantum Neural Network}
+		
+			\todo[inline]{TR: Chyba nie wprowadzałeś architektur hybrydowych, więc paragraf wstępu jest na miejscu.} 
+			\todo[inline]{PG ma dobre rysunki przedstawiające ogólne schematy modeli QML. Możesz go poprosić, żeby
+			Ci je udostępnił (ja też gdzieś je mam, ale formalnie wypada zapytać).}
+		
+			In the hybrid approach, the classifier in the classical neural network architecture is replaced by a
+			variational quantum circuit, while the feature extractors are kept unchanged. \todo{TR: Uzasadnienie
+			dlaczego akurat tak.} Diagram of our hybrid architecture is shown on figure~\ref{fig:vqa_diagram}. The
+			extracted features are concatenated into a single feature vector
+			\(
+			v = [v_{\mathrm{top}}, v_{\mathrm{bottom}}],
+			\)\todo{TR: To się chyba nie różni od tego co w architekturze klasycznej? Dlaczego pojawia się dopiero
+				w tej sekcji?}
+			which is then used as the input to the quantum circuit via angle embedding.\todo{TR: Tutaj, znowu,
+				lepiej nakreślić bardziej na miękko, że generalnie danych klasycznych nie można na surowo używać z
+				QML, trzeba je transformować w stany (embedować). Następny akapit zacząć, że embedowanie to problem
+				sam w sobie, cały czas aktywnie badany [ref. nowa praca xanadu o tym]. Są standardowe metody. W tej
+				pracy używamy...}
+			
+			The angle embedding is defined in Eq.~\ref{eq:embedding}, where \(n\) denotes the number of qubits—equal to
+			the number of features fed into the classifier, and \(v_i\) is the \(i\)-th component of the feature vector
+			\(v\).
+			\begin{align}\label{eq:embedding}
+				\ket{\phi(v)} & = 	
+					U_{\mathrm{emb}}(v)\ket{0}    \\
+     	         & = \left( R_X(v_1) \otimes R_X(v_2) \otimes \cdots \otimes R_X(v_n) \right) \ket{0}. \nonumber
+			\end{align}
+			Here,
+			\begin{equation*}
+				R_X(\alpha) = e^{-\mathrm{i} \alpha \sigma_X / 2}.
+			\end{equation*}\todo{Jeszcze nie zdefiniowałeś (chyba), że $\sigma_\square$ to macierze Pauliego. W tym
+			miejscu dobrze jest też explicite zauważyć, że bez odpowiedniej normalizacji inputu, wyniki mogą być
+			chaotyczne. Wynika to z intuicji stojącej za angle embeddingiem --- większe wartości, powinny być bardziej
+			odchylone od stanu wyjściowego (czyli zazwyczaj |0>). Jeśli wartości nie zostaną znormalizowane, albo będą
+			znormalizowane źle, to możliwe jest "przekręcenie stanu" i zrównanie (na sferze blocha) istotnie różnych
+			wartości.} The embedded quantum state is then processed by a parametrized unitary \todo{TR: Wiem co chcesz
+			powiedzieć, ale to znowu nieściśle. Taki stan, przetwarza OBWÓD, który matematycznie wyraża się przez
+			unitarkę.} , referred to as the ansatz. The ansatz used in this work consists of \(L\) Basic Entangler
+			Layers provided by the \texttt{pennylane version 0.43.1} package. The trainable parameters of the ansatz
+			are denoted by \(\boldsymbol{\Theta}\).
+			
+			The full parameter set of the variational circuit\todo{TR: Nitpick. Czy było już mówione o obwodzie? :P}
+			\tr{we used} is defined as
+			\begin{equation}
+				\boldsymbol{\Theta}
+				=
+				\left\{
+				\boldsymbol{\theta}^{(1)}, \boldsymbol{\theta}^{(2)}, \ldots, \boldsymbol{\theta}^{(L)}
+				\right\},
+				\qquad
+				\boldsymbol{\theta}^{(\ell)} \in \mathbb{R}^{n},
+			\end{equation}
+			where \(L\) denotes the number of entangler layers and \(n\) is the number of qubits. The overall ansatz
+			unitary is given by
+			\begin{equation}
+				U_{\mathrm{ansatz}}(\boldsymbol{\Theta})
+				=
+				\prod_{\ell=1}^{L}
+				U_{\mathrm{BEL}}(\boldsymbol{\theta}^{(\ell)}),
+			\end{equation}
+			\tr{where $U_{BEL}$ is a unitary matrix representing} a single Basic Entangler Layer\tr{. It's} defined as
+			\begin{equation}
+				U_{\mathrm{BEL}}(\boldsymbol{\theta}^{(\ell)})
+				=
+				\left(
+				\prod_{i=1}^{n}
+				\mathrm{CNOT}_{i,\,i+1 \bmod n}
+				\right)
+				\left(
+				\bigotimes_{i=1}^{n}
+				R_Y(\theta^{(\ell)}_i)
+				\right),
+			\end{equation}
+			where
+			\begin{align*}
+				R_Y(\theta) & = e^{-\mathrm{i} \theta \sigma_Y / 2}, \\
+				\mathrm{CNOT}
+				            & =
+				\ket{0}\!\bra{0} \otimes \mathbb{I}
+				+
+				\ket{1}\!\bra{1} \otimes \sigma_X.
+			\end{align*}
+			Applying the ansatz unitary to the embedded quantum state yields
+			\begin{equation}
+				\ket{\gamma}
+				=
+				U_{\mathrm{ansatz}}(\boldsymbol{\Theta}) \ket{\phi}.
+			\end{equation}
+			At the output of the circuit, a vector of expectation values \tr{of the Pauli-\(Z\) operator on the first
+			three qubits are obtained by the final state measurement}. Each expectation value corresponds to the
+			expectation of an ideal projective measurement of \(\sigma_Z\) acting on the respective qubit. The
+			expectation value for qubit \(j\) is given by
+			\begin{equation}
+				\langle \sigma_Z \rangle_{\gamma, j}
+				=
+				\bra{\gamma} \sigma_Z^{[j]} \ket{\gamma},
+				\qquad j = 1,2,3,
+			\end{equation}
+			where
+			\begin{equation}
+				\sigma_Z^{[j]}
+				=
+				\mathbb{I}^{\otimes (j-1)} \otimes \sigma_Z \otimes \mathbb{I}^{\otimes (n-j)}.
+			\end{equation}
+			
+			\begin{figure}
+				\centering
+				\includegraphics[width=0.9\textwidth]{fig/VQA_diagram.pdf}
+				\caption{ }
+				\label{fig:vqa_diagram}
+			\end{figure}
+		
+	
+	
+	
+	\subsection{Automated Quantum Machine Learning}
+	\todo[inline]{TR: Fill this!}
+	
+	
+	
+	
+	
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Results}
-For evaluation  we look at mean metric values from five cross-validation folds.
-Metrics we look at are accuracy and macro averaged f1-score
---- \texttt{accuracy\_score} and \texttt{f1\_score} with argument \texttt{average="macro"} from \texttt{scikit-learn version 1.8}.
-Results are shown in the table~\ref{tab:results}.
+
+	\todo[inline]{TR: Najpierw zacznij od określenia użytych metryk i uzasadnienia. Potem przejdź od sposobu ich
+		 agregacji i przedstawienia.}
+	For evaluation  we look at mean metric values from five cross-validation folds.
+	Metrics we look at are accuracy and macro averaged f1-score
+	--- \texttt{accuracy\_score} and \texttt{f1\_score} with argument \texttt{average="macro"} from
+	\texttt{scikit-learn version 1.8}. Results are shown in the table~\ref{tab:results}.
 
 
 
@@ -308,7 +405,7 @@ Results are shown in the table~\ref{tab:results}.
 \begin{table}[t]
 	\centering
 	\caption{Accuracy and macro averaged f1-score metrics for classical MLP found by hyperparameter optimization
-		and VQA found by AQMlator}
+		and VQA found by AQMlator.}
 	\label{tab:results}
 	\begin{tabular}{l|ccccc|c}
 		\hline
@@ -325,12 +422,12 @@ Results are shown in the table~\ref{tab:results}.
 		f1\_macro & 0.0    & 0.0    & 0.0    & 0.0    & 0.0    & $0.0 \pm 0.0$     \\
 		\hline
 	\end{tabular}
-\end{table}
+\end{table}\todo{TR: Pamiętaj, żeby dodać też ręcznie znalezione modele.}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Conclusion}
 
-
+	\todo[inline]{Do uzupełnienia, ale chyba faktycznie po eksperymentach.}
 
 
 
@@ -338,13 +435,15 @@ Results are shown in the table~\ref{tab:results}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{credits}
+	
 	\subsubsection{\ackname} A bold run-in heading in small font size at the end of the paper is
 	used for general acknowledgments, for example: This study was funded
-	by X (grant number Y).
+	by X (grant number Y). \todo{TR: Sebastianie, uzupełnij prosze ARTIQową klauzulą.}
 
 	\subsubsection{\discintname}
 	The authors have no competing interests to declare that are
 	relevant to the content of this article.
+	
 \end{credits}
 %
 % ---- Bibliography ----
