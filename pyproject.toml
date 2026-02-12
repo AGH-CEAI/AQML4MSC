@@ -3,8 +3,9 @@ name = "aqml4msc"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">=3.13"
 dependencies = [
+    "aqmlator",
     "boto3>=1.42.23",
     "lightning>=2.6.0",
     "matplotlib>=3.10.8",
@@ -27,3 +28,6 @@ package-dir = {"" = "src"}
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.uv.sources]
+aqmlator = { git = "ssh://git@github.com/Tomev/AQMLator.git", branch = "tr_ansatze_finder" }
