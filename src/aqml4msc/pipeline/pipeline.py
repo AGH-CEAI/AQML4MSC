@@ -55,6 +55,8 @@ class ClassificationPipeline:
 
                     preds = label_encoder.inverse_transform(preds)
                     true_labels = label_encoder.inverse_transform(val_y)
+                    
+                    # TODO(SD): Separete method for metrics logging.
                     metrics.append(
                         compute_classification_metrics(y_true=true_labels, y_pred=preds)
                     )

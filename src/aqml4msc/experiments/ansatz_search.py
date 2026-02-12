@@ -91,7 +91,7 @@ def get_vqc_metrics(
     metrics: dict[str, float] = {}
 
     tape: qml.tape.QuantumScript = qml.tape.make_qscript(pennylane_circuit)(
-        n_qubits, np.arrayweights
+        n_qubits, np.array(weights)
     )
     qiskit_cirtuit: qiskit.QuantumCircuit = circuit_to_qiskit(tape, n_qubits)
     qiskit_cirtuit.remove_final_measurements()
@@ -167,7 +167,11 @@ def optuna_aqml_objective(trial: optuna.Trial) -> float:
             qml.expval(qml.PauliZ(wires=i)) for i in range(model_params["num_classes"])
         ]
 
+    
+
     # TODO(SD): The object that you want to put in the model is ``circuit``.
+    training.model.model_classifier.apply_ansatz(circuit)  # Weights!
+
     metrics = pipeline.process_data(
         X=X,
         y=y,
@@ -176,10 +180,14 @@ def optuna_aqml_objective(trial: optuna.Trial) -> float:
         data_params=data_params,
         model_params=model_params,
         trainer_params=trainer_params,
+        # Albo
+        # ansatz=ansatz,
     )
 
     # TODO(SD): Once trained, if you could extract the VQC and it's weights, from the ``trainer`` or the ``pipeline``
     #           you can compute the quantum circuit metrics (qcm) that you wanted, like so:
+    # vqc = pipeline.model
+    # weights = vqc.weights
     # qcm: dict[str, float] = get_vqc_metrics(vqc, model_params["n_qubits"], vqc_weights)
     # TODO(SD) Remeber to store them somewhere!
 
