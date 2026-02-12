@@ -195,7 +195,7 @@ requires-dist = [
 [[package]]
 name = "aqmlator"
 version = "1.1.0"
-source = { git = "ssh://git@github.com/Tomev/AQMLator.git?branch=tr_ansatze_finder#a22d7ce002a49d6f0fc0cfcfb51459fa1be74f17" }
+source = { git = "ssh://git@github.com/Tomev/AQMLator.git?branch=tr_ansatze_finder#22d63101ac4d919a0f88bd71e5c2e3bc664c3db6" }
 dependencies = [
     { name = "dill" },
     { name = "dwave-ocean-sdk" },
