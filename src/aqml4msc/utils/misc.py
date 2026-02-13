@@ -120,10 +120,10 @@ def probe_inputs_and_weight_shapes(
     weights: NDArray[int] = np.zeros(n_weights)  # type: ignore
     while True:
         try:
-            # print(f"Trying: {weights}")
+            print(f"Trying: {weights}")
             qml.specs(circuit)(np.zeros(shapes["inputs"]), weights)
             shapes["weights"] = (n_weights,)
-            # print(shapes)
+            print(shapes)
             return shapes
         except ValueError as e:
             if "into shape" in str(e):  # This solves `aqmlator`-models problems.
@@ -144,3 +144,10 @@ def probe_inputs_and_weight_shapes(
             if "must be 2-dimensional or 3-dimensional" in str(e):
                 # Assume 1 layer per layer call.
                 weights = np.zeros((1, n_weights))
+            if "Features must be of length" in str(e):
+                # e reads:
+                #
+                # Features must be of length X or less; got length Y.
+                shapes["inputs"] = (int(str(e).split(" ")[5]),)
+
+            print(e)

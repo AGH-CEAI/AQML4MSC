@@ -8,35 +8,23 @@ This module implements AQML approach for ansatz finding using :mod:`aqmlator` pa
     common part of the code.
 """
 
-from aqmlator.qml import AnsatzBuilder
-from aqmlator.tuner import AnsatzFinder
-from numpy.typing import NDArray
-import numpy as np
+from statistics import mean
+from typing import Any
+
 import optuna
 import pennylane as qml
-
-from qmetric.quantum_circuit_metrics import (
-    quantum_locality_ratio,
-    effective_entanglement_entropy,
-    quantum_mutual_information,
-)
-
-from pennylane_qiskit.converter import circuit_to_qiskit
-from qiskit.quantum_info import Statevector
-
+from aqmlator.qml import AnsatzBuilder
+from aqmlator.tuner import AnsatzFinder
+from pennylane.measurements import ExpectationMP
 from torch import nn
-
-from aqml4msc.logging.mlflow_utils import EpochMetricsTracker
-from aqml4msc.models.vqa import QMLP_1
-from aqml4msc.training.mlp_training import MLPTraining
-from statistics import mean
 
 # TODO(SD): Module :mod:`aqml4msc.data.loading`, which I copied from `src.aqml4msc.experiments.quantum_hpo`
 #           Does not exsist. Adjust it adequately.
 from aqml4msc.data.loading import choose_digits, load_data
+from aqml4msc.logging.mlflow_utils import EpochMetricsTracker
+from aqml4msc.models.vqa import QMLP_1
 from aqml4msc.pipeline.pipeline import ClassificationPipeline
-import qiskit
-from typing import Any
+from aqml4msc.training.mlp_training import MLPTraining
 
 
 def suggest_ansatz(
@@ -65,50 +53,6 @@ def suggest_ansatz(
     ansatz_recipe: dict[str, Any] = ansatz_finder.suggest_ansatz(trial)
 
     return AnsatzBuilder.from_recipe(ansatz_recipe)
-
-
-def get_vqc_metrics(
-    pennylane_circuit: qml.QNode, n_qubits: int, model_weights: NDArray[np.floating]
-) -> dict[str, float]:
-    """Compute selected metrics (quantum locality ratio, effective entanglement entropy, quantum mutual information)
-    for the given ``pennylane_circuit``, and given ``n_qubits`` and ``weights``. In the process, the circuit will
-    be transformed into ``qiskit.QuantumCircuit`` so that :mod:`qmetric` can be used.
-
-    :param pennylane_circuit:
-        A :class:`pennylane.QNode` representing the VQC, for which the metrics are to be computed.
-    :type pennylane_circuit: qml.QNode
-    :param n_qubits:
-        The number of qubits used in ``pennylane_circuit``. Perhaps redundant.
-    :type n_qubits: int
-    :param model_weights:
-        Trained weights of the ``pennylane_circuit``.
-    :type model_weights: NDarray[np.floating]
-
-    :return:
-        The values of selected QC metrics in the form of a :class:`dict`.
-    :rtype: dict[str, float]
-    """
-    metrics: dict[str, float] = {}
-
-    tape: qml.tape.QuantumScript = qml.tape.make_qscript(pennylane_circuit)(
-        n_qubits, np.array(weights)
-    )
-    qiskit_cirtuit: qiskit.QuantumCircuit = circuit_to_qiskit(tape, n_qubits)
-    qiskit_cirtuit.remove_final_measurements()
-
-    final_state = Statevector.from_instruction(qiskit_cirtuit)
-    subsystem_a: list[int] = list(range(n_qubits // 2))
-    subsystem_b: list[int] = list(range(n_qubits // 2, n_qubits))
-
-    metrics["qlr"] = float(quantum_locality_ratio(qiskit_cirtuit))
-    metrics["eee"] = float(
-        effective_entanglement_entropy(final_state, subsystem_qubits=subsystem_a)
-    )
-    metrics["qmi"] = float(
-        quantum_mutual_information(final_state, subsystem_a, subsystem_b)
-    )
-
-    return metrics
 
 
 def optuna_aqml_objective(trial: optuna.Trial) -> float:
@@ -143,7 +87,7 @@ def optuna_aqml_objective(trial: optuna.Trial) -> float:
     experiment_params = {
         "seed": 42,
         "n_folds": 5,
-        "parent_run_name": "QMLP_HPO_1",
+        "parent_run_name": "QMLP_AQML_test",
         "model_name": "QMLP_1",
     }
 
@@ -161,16 +105,14 @@ def optuna_aqml_objective(trial: optuna.Trial) -> float:
     # TODO(SD):  Refactor the code, so that quantum circuit can be applied to the model PRIOR to the training.
     ansatz: callable = suggest_ansatz(trial)
 
-    def circuit(inputs, weights) -> list[float]:
+    def circuit(inputs, weights) -> list[ExpectationMP]:
         ansatz(inputs, weights)
         return [
             qml.expval(qml.PauliZ(wires=i)) for i in range(model_params["num_classes"])
         ]
 
-    
-
     # TODO(SD): The object that you want to put in the model is ``circuit``.
-    training.model.model_classifier.apply_ansatz(circuit)  # Weights!
+    # training.model.apply_ansatz(circuit)  # Weights!
 
     metrics = pipeline.process_data(
         X=X,
@@ -180,8 +122,9 @@ def optuna_aqml_objective(trial: optuna.Trial) -> float:
         data_params=data_params,
         model_params=model_params,
         trainer_params=trainer_params,
-        # Albo
-        # ansatz=ansatz,
+        flag=trial.params["embedding_method"]
+        != "AMPLITUDE",  # TODO(SD) check if correct
+        ansatz=circuit,
     )
 
     # TODO(SD): Once trained, if you could extract the VQC and it's weights, from the ``trainer`` or the ``pipeline``
