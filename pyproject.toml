@@ -30,4 +30,4 @@ package-dir = {"" = "src"}
 where = ["src"]
 
 [tool.uv.sources]
-aqmlator = { git = "ssh://git@github.com/Tomev/AQMLator.git", branch = "tr_ansatze_finder" }
+aqmlator = { git = "https://github.com/Tomev/AQMLator.git", branch = "tr_ansatze_finder" }
