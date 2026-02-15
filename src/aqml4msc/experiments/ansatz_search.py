@@ -4,22 +4,21 @@ This module implements AQML approach for ansatz finding using :mod:`aqmlator` pa
 .. note::
 
     Bases heavily on ``src.aqml4msc.experiments``.
+
+.. hint::
+
     TODO(SD): Consider refactoring the code, so that both are using single implementation of the
     common part of the code.
 """
 
 from statistics import mean
-from typing import Any
+from typing import Any, Callable
 
 import optuna
-import pennylane as qml
 from aqmlator.qml import AnsatzBuilder
 from aqmlator.tuner import AnsatzFinder
-from pennylane.measurements import ExpectationMP
 from torch import nn
 
-# TODO(SD): Module :mod:`aqml4msc.data.loading`, which I copied from `src.aqml4msc.experiments.quantum_hpo`
-#           Does not exsist. Adjust it adequately.
 from aqml4msc.data.loading import choose_digits, load_data
 from aqml4msc.logging.mlflow_utils import EpochMetricsTracker
 from aqml4msc.models.vqa import QMLP_1
@@ -27,9 +26,7 @@ from aqml4msc.pipeline.pipeline import ClassificationPipeline
 from aqml4msc.training.mlp_training import MLPTraining
 
 
-def suggest_ansatz(
-    trial: optuna.Trial,
-) -> callable:  # TODO(TR): Typehint this properly.
+def suggest_ansatz(trial: optuna.Trial) -> Callable[..., Any]:
     """
     Use AQML methods implemented in :mod:`aqmlator` to suggest, build and return an ansatz.
 
@@ -51,13 +48,28 @@ def suggest_ansatz(
     )
 
     ansatz_recipe: dict[str, Any] = ansatz_finder.suggest_ansatz(trial)
-
     return AnsatzBuilder.from_recipe(ansatz_recipe)
 
 
 def optuna_aqml_objective(trial: optuna.Trial) -> float:
-    """ """
-    model_params = {
+    """
+    Objective function for Optuna study that uses the AQML approach to suggest ansatze
+    and trains a QMLP_1 model for classification.
+
+    This function defines hyperparameters using Optuna's `suggest` methods,
+    initializes training and data parameters, loads and preprocesses data,
+    creates a classification pipeline, and evaluates the model's performance
+    by computing the mean accuracy over multiple folds.
+
+    :param trial: An Optuna trial object used for hyperparameter optimization.
+    :type trial: optuna.Trial
+
+    :return: The mean accuracy over all folds as the objective value.
+    :rtype: float
+    """
+
+    # Define model parameters, including hyperparameters tuned by Optuna
+    model_params: dict[str, Any] = {
         "lr": 1e-3,
         "loss_fn": nn.CrossEntropyLoss(),
         "num_classes": 3,
@@ -67,7 +79,8 @@ def optuna_aqml_objective(trial: optuna.Trial) -> float:
         "n_layers": trial.suggest_int("n_layers", low=1, high=5),
     }
 
-    trainer_params = {
+    # Define trainer configuration parameters
+    trainer_params: dict[str, Any] = {
         "max_epochs": 30,
         "enable_checkpointing": True,
         "enable_progress_bar": True,
@@ -78,19 +91,27 @@ def optuna_aqml_objective(trial: optuna.Trial) -> float:
         "devices": "auto",
     }
 
-    data_params = {
+    import torch
+
+    if torch.backends.mps.is_available():
+        trainer_params["accelerator"] = "cpu"  # Pennylane HATES Macs
+
+    # Define data loading and preprocessing parameters
+    data_params: dict[str, Any] = {
         "batch_size": trial.suggest_int("batch_size", 32, 128),
         "num_workers": 8,
         "digits": [5, 6, 7],
     }
 
-    experiment_params = {
+    # Define experiment configuration parameters
+    experiment_params: dict[str, int | str] = {
         "seed": 42,
         "n_folds": 5,
         "parent_run_name": "QMLP_AQML_test",
         "model_name": "QMLP_1",
     }
 
+    # Initialize the trainer with model and training: MLPTraining parameters
     training = MLPTraining(
         model_cls=QMLP_1,
         model_kwargs=model_params,
@@ -98,23 +119,17 @@ def optuna_aqml_objective(trial: optuna.Trial) -> float:
         batch_size=data_params["batch_size"],
     )
 
+    # Load and preprocess the dataset
     X, y = load_data()
     X, y = choose_digits(X, y, data_params["digits"])
+
+    # Initialize the classification pipeline: ClassificationPipeline
     pipeline = ClassificationPipeline()
 
-    # TODO(SD):  Refactor the code, so that quantum circuit can be applied to the model PRIOR to the training.
-    ansatz: callable = suggest_ansatz(trial)
+    ansatz = suggest_ansatz(trial)
 
-    def circuit(inputs, weights) -> list[ExpectationMP]:
-        ansatz(inputs, weights)
-        return [
-            qml.expval(qml.PauliZ(wires=i)) for i in range(model_params["num_classes"])
-        ]
-
-    # TODO(SD): The object that you want to put in the model is ``circuit``.
-    # training.model.apply_ansatz(circuit)  # Weights!
-
-    metrics = pipeline.process_data(
+    # Execute the pipeline to process data, train, and evaluate the model
+    metrics: dict[str, list[float]] = pipeline.process_data(
         X=X,
         y=y,
         classifier=training,
@@ -122,19 +137,11 @@ def optuna_aqml_objective(trial: optuna.Trial) -> float:
         data_params=data_params,
         model_params=model_params,
         trainer_params=trainer_params,
-        flag=trial.params["embedding_method"]
-        != "AMPLITUDE",  # TODO(SD) check if correct
-        ansatz=circuit,
+        optuna_params=trial.params,
+        ansatz=ansatz,
     )
 
-    # TODO(SD): Once trained, if you could extract the VQC and it's weights, from the ``trainer`` or the ``pipeline``
-    #           you can compute the quantum circuit metrics (qcm) that you wanted, like so:
-    # vqc = pipeline.model
-    # weights = vqc.weights
-    # qcm: dict[str, float] = get_vqc_metrics(vqc, model_params["n_qubits"], vqc_weights)
-    # TODO(SD) Remeber to store them somewhere!
-
-    # TODO(SD): You may consider using more classification metrics, and multiobjective optimization.
+    # Return the mean accuracy across folds as the optimization objective
     return mean(metrics["accuracy"])
 
 

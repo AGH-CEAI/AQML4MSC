@@ -2,10 +2,10 @@ from typing import List
 
 import pennylane as qml
 import torch
+from qmetric.converters import PennylaneToQASM3
 from torch import nn
 
 from aqml4msc.models.base_mlp_model import BaseMLPModel
-from aqml4msc.utils.misc import probe_inputs_and_weight_shapes
 
 
 class QMLP_1(BaseMLPModel):
@@ -25,6 +25,7 @@ class QMLP_1(BaseMLPModel):
         # Set output_dim_part to be equal in both parts and match the n_qubits — which is the input size for angle encoding
         self.n_qubits = n_qubits
         self.dev = qml.device(device_name, wires=n_qubits)
+        self.n_classes: int = num_classes
         output_dim_part = n_qubits // 2
         self.model_top = self.make_classical_network(
             input_dim=input_dim, hidden_dim=hidden_dim_part, output_dim=output_dim_part
@@ -32,9 +33,7 @@ class QMLP_1(BaseMLPModel):
         self.model_bottom = self.make_classical_network(
             input_dim=input_dim, hidden_dim=hidden_dim_part, output_dim=output_dim_part
         )
-        self.model_classifier = self.make_quantum_classifier(
-            n_layers=n_layers, num_classes=num_classes
-        )
+        self.model_classifier = self.make_quantum_classifier(n_layers=n_layers, num_classes=num_classes)
 
     def forward(self, x_top, x_bottom):
         features1 = self.model_top(x_top)
@@ -60,10 +59,22 @@ class QMLP_1(BaseMLPModel):
 
         return qml.qnn.TorchLayer(qnode, weight_shapes)  # type: ignore
 
-    def apply_ansatz(self, circuit):
-        qnode = qml.QNode(circuit, self.dev)
-        weight_shapes = probe_inputs_and_weight_shapes(qnode)
-        weight_shapes.pop("inputs", None)
-        print(weight_shapes)
-        qlayer = qml.qnn.TorchLayer(qnode, weight_shapes)  # type: ignore
+    def apply_ansatz(self, ansatz):
+
+        import numpy as np
+
+        @qml.qnode(self.dev)
+        def probe_circuit(inputs, weights) -> list[qml.measurements.ExpectationMP]:
+            ansatz(np.array(inputs), np.array(weights))
+            return [qml.expval(qml.PauliZ(wires=i)) for i in range(self.n_classes)]
+
+        weight_shapes = PennylaneToQASM3.probe_inputs_and_weight_shapes(probe_circuit)
+        weight_shapes.pop("inputs")
+
+        @qml.qnode(self.dev)
+        def circuit(inputs, weights) -> list[qml.measurements.ExpectationMP]:
+            ansatz(torch.as_tensor(inputs), torch.as_tensor(weights))
+            return [qml.expval(qml.PauliZ(wires=i)) for i in range(self.n_classes)]
+
+        qlayer = qml.qnn.TorchLayer(circuit, weight_shapes)  # type: ignore
         self.model_classifier = qlayer
