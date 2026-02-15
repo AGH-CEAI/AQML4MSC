@@ -14,7 +14,7 @@ from sklearn.metrics import (
 def compute_classification_metrics(
     y_true: np.ndarray,
     y_pred: np.ndarray,
-) -> Dict[str, Any]:
+) -> Dict[str, Any]:  # TODO(SD): Is there really anything other than float? Why Any?
     """
     Computes standard classification metrics in a consistent dictionary format.
     """
@@ -27,19 +27,11 @@ def compute_classification_metrics(
         "f1_micro": f1_score(y_true, y_pred, average="micro", zero_division=0),
         "f1_macro": f1_score(y_true, y_pred, average="macro", zero_division=0),
         # Precision variants
-        "precision_weighted": precision_score(
-            y_true, y_pred, average="weighted", zero_division=0
-        ),
-        "precision_micro": precision_score(
-            y_true, y_pred, average="micro", zero_division=0
-        ),
-        "precision_macro": precision_score(
-            y_true, y_pred, average="macro", zero_division=0
-        ),
+        "precision_weighted": precision_score(y_true, y_pred, average="weighted", zero_division=0),
+        "precision_micro": precision_score(y_true, y_pred, average="micro", zero_division=0),
+        "precision_macro": precision_score(y_true, y_pred, average="macro", zero_division=0),
         # Recall variants
-        "recall_weighted": recall_score(
-            y_true, y_pred, average="weighted", zero_division=0
-        ),
+        "recall_weighted": recall_score(y_true, y_pred, average="weighted", zero_division=0),
         "recall_micro": recall_score(y_true, y_pred, average="micro", zero_division=0),
         "recall_macro": recall_score(y_true, y_pred, average="macro", zero_division=0),
     }

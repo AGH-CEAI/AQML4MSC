@@ -81,12 +81,15 @@ def create_mlflow_experiment(exp_name: str) -> None:
         "project_name": "AQML4MSC",
     }
 
-    mlflow.create_experiment(
-        name=exp_name, tags=tags, artifact_location=os.environ["MLFLOW_ARTIFACTS_ROOT"]
-    )
+    mlflow.create_experiment(name=exp_name, tags=tags, artifact_location=os.environ["MLFLOW_ARTIFACTS_ROOT"])
 
 
 def log_params(params):
+    # Remove duplicate, if they happend to
+    for k in mlflow.get_run(mlflow.active_run().info.run_id).data.params.keys():
+        if k in params.keys():
+            params.pop(k)
+
     mlflow.log_params(params)
 
 
