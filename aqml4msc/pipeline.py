@@ -1,14 +1,12 @@
 import numpy as np
 import pennylane as qml
-import torch
 from aqmlator.tuner import compute_qc_metrics
-from pennylane.measurements import ExpectationMP
 
-from aqml4msc.logging import mlflow_utils
-from aqml4msc.metrics.core import aggregate_fold_metrics, compute_classification_metrics
-from aqml4msc.preprocessing.transforms import preprocess_pipeline
+import aqml4msc.mlflow_utils as mlflow_utils
+from aqml4msc.metrics import aggregate_fold_metrics, compute_classification_metrics
+from aqml4msc.preprocessing import preprocess_pipeline
 from aqml4msc.training.base_training import BaseTraining
-from aqml4msc.utils.misc import encode_labels, get_stratified_cv_splits, set_seeds
+from aqml4msc.utils import encode_labels, get_stratified_cv_splits, set_seeds
 
 
 class ClassificationPipeline:
