@@ -14,3 +14,4 @@ even modify some of the libraries or environmental variables, just so that some 
   - naming training algorithm a classifier (see experiments) is confusing at best
 - Typehint the module! I had to look for the information about the intended type of the variables in more places than
 in should need to!
+- Parallelizing
