@@ -157,11 +157,11 @@
 	
 	% AQML
 	\tr{
-	When it comes to QML models, one of the central problems is quantum architecture search (QAS). It's a quantum
-	version of the neural architecture search (NAS) problem known in the ML community. Without the right selection
-	of the model architecture, the training might fail. While the problem case of both NAS and QAS, there are several
-	techniques that allow to address it. One of such techniques is automated (quantum) machine learning (AQML). AQML
-	are heuristic algorithms that try to propose the best models for a given data and tasks. There are several
+	When it comes to QML models, one of the central problems is quantum architecture search (QAS) \cite{QAS}. It's a
+	quantum version of the neural architecture search (NAS) problem known in the ML community. Without the right
+	selection of the model architecture, the training might fail. While the problem case of both NAS and QAS, there are
+	several techniques that allow to address it. One of such techniques is automated (quantum) machine learning (AQML).
+	AQML are heuristic algorithms that try to propose the best models for a given data and tasks. There are several
 	platforms for AQML (see \cite{Rybotycki_2025} for brief overview) available for use and reports of the
 	state-of-the-art results achieved using at least one of them \cite{AQML_Exp}.
 	
@@ -174,17 +174,22 @@
 	insights for future work.}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Problem Formulation and literature overview}
+\section{Problem formulation and literature overview}
 \label{sec:problem_formulation}
+% TR: I think 1-1.5 page total.
 
-
-	\todo[inline]{TR: High-level problem overview}
-	
-	\todo[inline]{TR: Trochę krótka sekcja. Możnaby (rzekłbym trzeba) ją rozszerzyć o jakieś do literature overview. Wtedy, po sformułowaniu problemu, możnaby przeanalizować jakie podejścia ludzie mają i dlaczego one są ograniczone. I gdzie użycie kwantów może pomóc.}
+	Performing the feature fusion using QML models is a complex, multi-step problem. While, most notably, it involves
+	QAS problem there are also multiple other decisions to be made. Complete pipelines are not necessarily restricted
+	to quantum models, after all. In this section, we detail the feature fusion problem and further argument why
+	QML models are plausible candidates for providing satisfactory solutions in that regard. We also introduce a
+	specific case of data fusion --- change detection task --- that we considered in our experiments with the remote
+	sensing satellite data. Finally, we formally itroduce QAS problem, and discuss it's usual constraints that we won't
+	consider.
 
 	\subsection{Feature fusion}	
 	
 	\todo[inline]{SD: Przepisać tak, żeby nie było o danych, tylko o problemie.}
+	\todo[inline]{Po sformułowaniu problemu, możnaby przeanalizować jakie podejścia ludzie mają i dlaczego one są ograniczone. I gdzie użycie kwantów może pomóc.}
 	
 	We consider a synthetic multisource classification setting, where multiple input sources are derived from a single
 	original sample.\todo{TR: To jeszcze się okaże.}  Specifically, an input image is partitioned into two
@@ -204,11 +209,37 @@
 	All learnable parameters $\theta_1$, $\theta_2$, and $\theta_3$ are optimized jointly
 	during training.
 	
-	\subsection{Quantum Architecture Search}
-	\todo[inline]{TR: Sformułować QAS}
+	\subsection{Change detection}
 	
+	Change detection can be defined as the following task.
+	\begin{center}
+		\textit{Given a pair of corresponding pictures, depicting the same region and taken at different times, find the
+		regions that differ between the pictures \cite{QMLCaseStudy}. }
+	\end{center}
+	Change detection can be considered a multi-source data fusion problem, even when the picture was taken using
+	the same device. This is due to the fact that the temporal difference between the images implies (in general)
+	different atmospheric conditions, and notable spatial (angles, distances, ...) or geographical differences (new
+	buildings, ...). This, in turn, introduces heterogenity to the pair of pictures. In the terms of data processing,
+	change detection can be seen as a semantic segmentation task \cite{Segmentation}, or even as binary classification
+	(change or no-change) \cite{QMLCaseStudy}. Change detection is a well studied problem, especially in remote
+	sensing~\cite{ChangeDetectionSurvey}.
 
-
+	
+	\subsection{Quantum Architecture Search}
+	
+	Quantum architecture search is a problem known by many names, and refers to automatic selection of quantum circuits
+	appropriate for given task \cite{QAS}. Formally speaking, one can formulate the QAS problem as follows.
+	\begin{center}
+		\textit{Given the task and the search space, find within the search space a quantum circuits that best fits the task,
+		according to predefined evaluation criteria.}
+	\end{center}
+	Most often, the search space is defined by the target device, on which the circuit is meant to run. This restricts
+	the building blocks of the circuit to a set of gates native to the device. It also limits the number of qubits
+	one can use and defines the effective maximal depth of the circuit. In the current noisy intermediate-scale 
+	quantum era, device selection is vital to QAS. So much so that many of the proposed methods are hardware-aware
+	by nature \cite{QAS}, and in the context of QML a notion of device-oriented training has been mentioned
+	\cite{QMLCaseStudy}. The authors of \cite{QMLCaseStudy} also report how significant were the differences when the
+	model trained on a noiseless simulator was run on a real quantum device.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -393,6 +424,9 @@
 
 	\todo[inline]{TR: High-level overview }
 	
+	
+	
+	
 	\subsection{Datasets}
 	\label{ssec:data}
 	
@@ -434,7 +468,18 @@
 	\todo[inline]{TR: To też jest trochę krótka sekcja. To nie jest nic strasznego, ale może warto by ją dać jako
 		podsekcję Approach? Zobaczymy jak to poukładać kiedy będziemy mieli pełną treść.}
 		
+		
+		
+		
 	\todo[inline]{TR: ONERA}
+	\begin{figure*}
+		\centering
+		\includegraphics[scale=0.24]{./fig/saclay1.png}
+		\includegraphics[scale=0.24]{./fig/saclay2.png}
+		\caption{A pair of images from the ONERA dataset. They show Saclay, a city in France. The images were taken on 15
+			III 2016 (Left) and 29 VIII 2017 (Right).}
+		\label{fig:ONERA}
+	\end{figure*}
 	
 	
 	\subsection{Hyperparameter Optimization}
@@ -541,7 +586,7 @@
 %
 \setlength{\emergencystretch}{5em}
 \bibliographystyle{splncs04}
-\bibliography{bibliography.bib}
+\bibliography{aqml4msc.bib}
 %
 % \begin{thebibliography}{8}
 
