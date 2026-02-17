@@ -1,4 +1,4 @@
-
+ 
 \documentclass[runningheads]{llncs}
 
 \usepackage[T1]{fontenc}
@@ -42,11 +42,27 @@
 \begin{abstract}
 	
 	
-	The abstract should briefly summarize the contents of the paper in
-	150--250 words. \todo{TR: Do uzupełnienia}
-
+	% 214 / 250 words
+	As we are nearing the advent of fault-tolerant quantum computing and slowly advance towards the era of space
+	exploration, tasks standing at the intersection of those two fields are growing even more relevant. It comes as
+	no surprise, especially in the case of computationally demanding scientific domains, such as remote sensing data
+	analysis. There are already multiple studies showing how quantum computing and quantum machine learning (QML) can
+	help in such tasks.
 	
-	\keywords{First keyword  \and Second keyword \and Another keyword.}
+	Quantum data fusion, an example of a data analysis problem, has gained a lot of attention in the recent years.
+	The reason for that is the promise that noisy intermediate-scale quantum computers of current era can solve the
+	(NP-hard) in this field faster than contemporary supercomputers. With the techniques such as quantum approximate
+	optimization algorithm and quantum adiabatic computing this is a well justified expectation. However, those methods
+	aren't the only ones worth investigating.
+	
+	In this manuscript, we present an automated QML (AQML) approach for solving data fusion problem. We study how using
+	AQML-found circuits compare to the classical MLP and manually selected QML models, in the case when the input to
+	those models comes from multiple sources. We also apply our technique for the change detection task, analyzing the
+	hyperspectral ONERA dataset and show improvement over previously reported change detection accuracy.
+	
+	
+	\keywords{quantum data fusion  \and auto quantum machine learning \and remote sensing \and hyperspectral imaging
+	\and ONERA}
 	
 	
 \end{abstract}
