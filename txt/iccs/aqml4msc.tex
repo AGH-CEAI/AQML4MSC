@@ -178,6 +178,7 @@
 \label{sec:problem_formulation}
 % TR: I think 1-1.5 page total.
 
+	\tr{
 	Performing the feature fusion using QML models is a complex, multi-step problem. While, most notably, it involves
 	QAS problem there are also multiple other decisions to be made. Complete pipelines are not necessarily restricted
 	to quantum models, after all. In this section, we detail the feature fusion problem and further argument why
@@ -185,6 +186,7 @@
 	specific case of data fusion --- change detection task --- that we considered in our experiments with the remote
 	sensing satellite data. Finally, we formally itroduce QAS problem, and discuss it's usual constraints that we won't
 	consider.
+	}
 
 	\subsection{Feature fusion}	
 	
@@ -192,7 +194,7 @@
 	\todo[inline]{Po sformułowaniu problemu, możnaby przeanalizować jakie podejścia ludzie mają i dlaczego one są ograniczone. I gdzie użycie kwantów może pomóc.}
 	
 	We consider a synthetic multisource classification setting, where multiple input sources are derived from a single
-	original sample.\todo{TR: To jeszcze się okaże.}  Specifically, an input image is partitioned into two
+	original sample.\todo{Już nie tylko, bo doszła ONERA.}  Specifically, an input image is partitioned into two
 	complementary views. Each view is independently transformed by a deterministic preprocessing pipeline into a vector
 	representation, denoted as $x_{\mathrm{top}}$ and $x_{\mathrm{bottom}}$, which constitute the synthetic multisource
 	inputs used for classification.
@@ -209,6 +211,7 @@
 	All learnable parameters $\theta_1$, $\theta_2$, and $\theta_3$ are optimized jointly
 	during training.
 	
+	\tr{
 	\subsection{Change detection}
 	
 	Change detection can be defined as the following task.
@@ -240,25 +243,44 @@
 	by nature \cite{QAS}, and in the context of QML a notion of device-oriented training has been mentioned
 	\cite{QMLCaseStudy}. The authors of \cite{QMLCaseStudy} also report how significant were the differences when the
 	model trained on a noiseless simulator was run on a real quantum device.
-
+	}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Approach}
 \label{sec:method}
 
-	\todo[inline]{TR: Osobiście nie lubię, kiedy sekcja zaczyna się od podsekcji, bez żadnego wstępu, ale niektórzy tak
-	robią. Jak będzie czas, proponowałbym uzupełnić.}
+	In this work, we present two different approaches, sharing a common core in the form of AQML. First one, detailed
+	over sections \ref{ssec:mlp} and \ref{ssec:qmlp}, and the latter in  \ref{ssec:qml_onera}. After all the models are
+	introduced, we will briefly describe the AQML technique we used and direct interested readers to appropriate
+	resources. In particular, we focus on the ajdustments that are new in comparison to its reported version
+	\cite{Rybotycki_2025}.
+	
+	While the models we used differ slightly from each other, we would like to point out that their underlying
+	high-level logic remains the same and it's only the implementational aspect that differs. Each of our models
+	consists of two main parts: feature extractor and a classifier. The feature extreactor is the initial part of
+	the model we used. It accepts the input and initially processes the data. For every model, feature extractor
+	we used is classical. Preporcessed features the inputs are then passed to the classifier. The output of this
+	model will be used to obtain the final decision about the input, depending on the experiment. This part of the
+	network may be classical (subsection \ref{ssec:mlp}), quantum (subsection \ref{ssec:qmlp}) or hybrid-quantum 
+	(subsection \ref{ssec:qml_onera}). 
+	
+	
 	
 	\todo[inline]{SD: Trzeba wyciągnąć część wspólną z ML i QML, i opisać tutaj. W podsekcjach tylko detale.}
 
-	\subsection{Classical Neural Network Baseline}
-		
-		\todo[inline]{Znowu, zacznij bardziej miękko, może od takiego ogólnego wysoko-poziomiego pomysłu na
-		architekturę. Model ma 2 części ... jedna robi to... Druga tamto... W efekcie... Output sieci jest taki...
-		Robię tak, bo ...}
+	\subsection{Multi-layer perceptron}
+	\label{ssec:mlp}
 	
-		As a baseline, we employ a \tr{standard / basic / classic}\todo{Podkreślaj, że chodzi o podstawowe
-		techniki, bo to stanowi uzasadnienia!} multilayer perceptron (MLP) architecture \todo{TR: Referencja.}
+		When defining the model for our initial quantum data fusion experiments, we had to make a decision regarding
+		which part of the model we should make quantum. Following logic similar to that in
+		\cite{wuFeatureEntanglementbasedQuantum2026}, we decided to use quantum layers for our classifier. Moreover,
+		considering the effectiveness of the network in \cite{wuFeatureEntanglementbasedQuantum2026}, we also
+		decided to separate the feature extractor part of the model into two separate parts --- one for each input.
+		
+		The first model we implemented was a classical multilayer perceptron (MLP), which was meant to serve as a
+		baseline reference for our subsequent experiments.
+		
+		 \todo{TR: Referencja.}
 		(Fig.~\ref{fig:mlp_diagram})\todo{TR: Ładny rysunek. Dobrze będzie sprawdzić później pracę w
 		\texttt{Coblis}.}. Two feature extractors\todo{TR: Zła kolejność.
 		Najpierw utwórz (dookreśl) extractory, a potem pisz co i jak robią.} independently process
@@ -292,6 +314,7 @@
 		
 		
 		\subsection{Hybrid Classical--Quantum Neural Network}
+		\label{ssec:qmlp}
 		
 			\todo[inline]{TR: Chyba nie wprowadzałeś architektur hybrydowych, więc paragraf wstępu jest na miejscu.} 
 			\todo[inline]{PG ma dobre rysunki przedstawiające ogólne schematy modeli QML. Możesz go poprosić, żeby
@@ -405,13 +428,15 @@
 			\end{figure}
 		
 	
+
 	
-	
-	\subsection{Automated Quantum Machine Learning}
-	\label{ssec:aqml}
-	\todo[inline]{TR: Fill this!}
-	
-	
+		\subsection{Change detection hybrid model}
+		\label{ssec:qml_onera}
+		
+		
+		
+		
+		\subsection{Automated Quantum Machine Learning}
 	
 	
 	
@@ -432,54 +457,60 @@
 	
 	\todo{TR: Mniej ostry wstęp. Najpierw zacznij, że używasz syntetycznych, wyjaśnij dlaczego. Możesz wspomnieć
 		o rozważanych alternatywach.}
-	
-	The MNIST dataset consists of 70,000 images of handwritten digits (0--9), each of size $28 \times 28$ pixels.
-	The dataset was obtained from Kaggle \cite{lecunMNISTHandwrittenDigits2025}, and we used the predefined
-	training--validation split provided with the dataset without modification.
-	
-	From the dataset, we select only three digit classes:\todo{TR: Dlaczeo akurat te? Arbitralnie też jest powodem.
-		Różnorodność jest ok. Ale coś powiedzieć trzeba.}
-	\begin{itemize}
-		\item digit ``5'' (\(5421\) training samples and \(892\) validation samples),
-		\item digit ``6'' (\(5918\) training samples and \(958\) validation samples),
-		\item digit ``7'' (\(6265\) training samples and \(1028\) validation samples).
-	\end{itemize}
-	Each image is preprocessed to construct synthetic multisource inputs. Specifically, images are split horizontally
-	into top and bottom halves, which are treated as complementary views. Each view is then binarized, spatially
-	downsampled, and transformed into a six-dimensional vector by computing the mean pixel intensity along columns.
-	These vectors correspond to the synthetic multisource inputs $x_{\mathrm{top}}$ and $x_{\mathrm{bottom}}$ defined
-	in Section~\ref{sec:problem_formulation}.\todo{TR: Jeśli umiesz dodać uzasadnienie, to byłoby wskazane.}
-	
-	An overview of the preprocessing pipeline is shown in Fig.~\ref{fig:preprocessing}.
-	\begin{figure}
-		\centering
-		\includegraphics[width=\textwidth]{fig/preprocessing.pdf}
-		\caption{Overview of the synthetic multisource preprocessing pipeline.
-			(a) Original input image.
-			(b) Horizontal splitting into top and bottom halves.
-			(c) Binarization of each half.
-			(d) Spatial downsampling.
-			(e) Computation of column-wise mean pixel intensities, resulting in vector representations
-			that constitute the synthetic multisource inputs $x_{\mathrm{top}}$ and $x_{\mathrm{bottom}}$.
-		}
-		\label{fig:preprocessing}
-	\end{figure}
-	
-	\todo[inline]{TR: To też jest trochę krótka sekcja. To nie jest nic strasznego, ale może warto by ją dać jako
-		podsekcję Approach? Zobaczymy jak to poukładać kiedy będziemy mieli pełną treść.}
+		
+		\subsubsection{MNIST}
+		
+		The MNIST dataset consists of 70,000 images of handwritten digits (0--9), each of size $28 \times 28$ pixels.
+		The dataset was obtained from Kaggle \cite{lecunMNISTHandwrittenDigits2025}, and we used the predefined
+		training--validation split provided with the dataset without modification.
+		
+		From the dataset, we select only three digit classes:\todo{TR: Dlaczeo akurat te? Arbitralnie też jest powodem.
+			Różnorodność jest ok. Ale coś powiedzieć trzeba.}
+		\begin{itemize}
+			\item digit ``5'' (\(5421\) training samples and \(892\) validation samples),
+			\item digit ``6'' (\(5918\) training samples and \(958\) validation samples),
+			\item digit ``7'' (\(6265\) training samples and \(1028\) validation samples).
+		\end{itemize}
+		Each image is preprocessed to construct synthetic multisource inputs. Specifically, images are split horizontally
+		into top and bottom halves, which are treated as complementary views. Each view is then binarized, spatially
+		downsampled, and transformed into a six-dimensional vector by computing the mean pixel intensity along columns.
+		These vectors correspond to the synthetic multisource inputs $x_{\mathrm{top}}$ and $x_{\mathrm{bottom}}$ defined
+		in Section~\ref{sec:problem_formulation}.\todo{TR: Jeśli umiesz dodać uzasadnienie, to byłoby wskazane.}
+		
+		An overview of the preprocessing pipeline is shown in Fig.~\ref{fig:preprocessing}.
+		\begin{figure}
+			\centering
+			\includegraphics[width=\textwidth]{fig/preprocessing.pdf}
+			\caption{Overview of the synthetic multisource preprocessing pipeline.
+				(a) Original input image.
+				(b) Horizontal splitting into top and bottom halves.
+				(c) Binarization of each half.
+				(d) Spatial downsampling.
+				(e) Computation of column-wise mean pixel intensities, resulting in vector representations
+				that constitute the synthetic multisource inputs $x_{\mathrm{top}}$ and $x_{\mathrm{bottom}}$.
+			}
+			\label{fig:preprocessing}
+		\end{figure}
+		
+		\todo[inline]{TR: To też jest trochę krótka sekcja. To nie jest nic strasznego, ale może warto by ją dać jako
+			podsekcję Approach? Zobaczymy jak to poukładać kiedy będziemy mieli pełną treść.}
 		
 		
+	
+		\subsubsection{ONERA}
+			
+		\todo[inline]{TR: ONERA}
+		\begin{figure*}
+			\centering
+			\includegraphics[scale=0.24]{./fig/saclay1.png}
+			\includegraphics[scale=0.24]{./fig/saclay2.png}
+			\caption{A pair of images from the ONERA dataset. They show Saclay, a city in France. The images were taken on 15
+				III 2016 (Left) and 29 VIII 2017 (Right).}
+			\label{fig:ONERA}
+		\end{figure*}
 		
-		
-	\todo[inline]{TR: ONERA}
-	\begin{figure*}
-		\centering
-		\includegraphics[scale=0.24]{./fig/saclay1.png}
-		\includegraphics[scale=0.24]{./fig/saclay2.png}
-		\caption{A pair of images from the ONERA dataset. They show Saclay, a city in France. The images were taken on 15
-			III 2016 (Left) and 29 VIII 2017 (Right).}
-		\label{fig:ONERA}
-	\end{figure*}
+		\cite{onera}
+	
 	
 	
 	\subsection{Hyperparameter Optimization}
