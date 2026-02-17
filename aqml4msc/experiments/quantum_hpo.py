@@ -18,7 +18,7 @@ def hpo_quantum_1():
             "num_classes": 3,
             "input_dim": 14,
             "hidden_dim_part": [trial.suggest_int("hidden_dim_part", 64, 256)],
-            "n_qubits": trial.suggest_int("n_qubits", low=4, high=16, step=2),
+            "n_qubits": trial.suggest_int("n_qubits", low=4, high=12, step=2),
             "n_layers": trial.suggest_int("n_layers", low=1, high=5),
         }
 
