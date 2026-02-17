@@ -30,7 +30,9 @@ class ClassificationPipeline:
         mlflow_utils.setup_mlflow()
         metrics = []
 
-        with mlflow_utils.start_parent_run(model_name=experiment_params["parent_run_name"]):
+        with mlflow_utils.start_parent_run(
+            model_name=experiment_params["parent_run_name"]
+        ):
             mlflow_utils.log_params(model_params)
             mlflow_utils.log_params(trainer_params)
             mlflow_utils.log_params(data_params)
@@ -66,12 +68,25 @@ class ClassificationPipeline:
                     true_labels = label_encoder.inverse_transform(val_y)
 
                     # TODO(SD): Separete method for metrics logging.
-                    metrics.append(compute_classification_metrics(y_true=true_labels, y_pred=preds))
+                    metrics.append(
+                        compute_classification_metrics(y_true=true_labels, y_pred=preds)
+                    )
 
-                    metrics[-1].update(compute_qc_metrics(qml.QNode(ansatz, device=classifier.model.dev)))
+                    metrics[-1].update(
+                        compute_qc_metrics(
+                            qml.QNode(ansatz, device=classifier.model.dev)
+                        )
+                    )
                     mlflow_utils.log_metrics(metrics[fold - 1])
-                    mlflow_utils.log_classification_report(y_true=true_labels, y_pred=preds)
-                    mlflow_utils.log_confusion_matrix(y_true=true_labels, y_pred=preds)
+                    try:
+                        mlflow_utils.log_classification_report(
+                            y_true=true_labels, y_pred=preds
+                        )
+                        mlflow_utils.log_confusion_matrix(
+                            y_true=true_labels, y_pred=preds
+                        )
+                    except Exception as e:
+                        print(f"Could not save artifacts. Error occured: {e}")
                     mlflow_utils.log_model(
                         trainer=classifier,
                         X_val=val_data,
