@@ -5,6 +5,8 @@ build/
 dist/
 wheels/
 *.egg-info
+*DS_Store
+*.blg
 
 # Virtual environments
 .venv
@@ -20,6 +22,7 @@ mlflow.db
 *aqml4msc.synctex.gz
 *aqml4msc.aux
 *aqml4msc.bbl
+*aqml4msc.blg
 *aqml4msc.fls
 *aqml4msc.fdb_latexmk
 scripts/start_mlflow_server.sh

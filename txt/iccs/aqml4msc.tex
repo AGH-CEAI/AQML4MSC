@@ -2,6 +2,7 @@
 \documentclass[runningheads]{llncs}
 
 \usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}  % Bibliography needs
 \usepackage{pgf} 
 \usepackage{graphicx}
 \usepackage{array}
@@ -16,6 +17,7 @@
 \renewcommand{\tr}[1]{{\color{blue} #1}}
 \newcommand{\trst}[1]{{\color{blue} \st{#1}}}
 
+\DeclareUnicodeCharacter{03B2}{\ensuremath{\beta}}  % Little hax for bibliography.
 
 \begin{document}
 %
@@ -43,7 +45,7 @@
 	
 	
 	% 214 / 250 words
-	As we are nearing the advent of fault-tolerant quantum computing and slowly advance towards the era of space
+	\tr{As we are nearing the advent of fault-tolerant quantum computing and slowly advance towards the era of space
 	exploration, tasks standing at the intersection of those two fields are growing even more relevant. It comes as
 	no surprise, especially in the case of computationally demanding scientific domains, such as remote sensing data
 	analysis. There are already multiple studies showing how quantum computing and quantum machine learning (QML) can
@@ -58,7 +60,7 @@
 	In this manuscript, we present an automated QML (AQML) approach for solving data fusion problem. We study how using
 	AQML-found circuits compare to the classical MLP and manually selected QML models, in the case when the input to
 	those models comes from multiple sources. We also apply our technique for the change detection task, analyzing the
-	hyperspectral ONERA dataset and show improvement over previously reported change detection accuracy.
+	hyperspectral ONERA dataset and show improvement over previously reported change detection accuracy.}
 	
 	
 	\keywords{quantum data fusion  \and auto quantum machine learning \and remote sensing \and hyperspectral imaging
@@ -72,67 +74,118 @@
 \section{Introduction}
 
 
-
 	% Multisource
-	Data about an observed object can be gathered from multiple complementary sensors.
-	To obtain richer and more accurate decision outcomes, multisource information fusion (MSIF) can be employed.
-	A comprehensive review of information fusion approaches is provided by Li et
-	al.~\cite{liMultisourceInformationFusion2024}.\todo{TR: To chyba lepiej na koniec.} In this work, we focus on
-	feature-level fusion, in which the fusion model operates on extracted feature representations.
-	MSIF has found widespread application in machine learning, particularly in classification tasks, as surveyed
-	in~\cite{baltrusaitisMultimodalMachineLearning2019}.
-	Representative applications include remote sensing~\cite{liA3CLNNSpatialSpectral2022}, military
-	systems~\cite{sycaraIntegratedApproachHighlevel2009},
-	and human action recognition~\cite{fortinoAdvancesMultisensorFusion2019}, among
-	others~\cite{liMultisourceInformationFusion2024}.\todo{TR: Wstęp bardzo do rzeczy, ale ok.}
+	% Data about an observed object can be gathered from multiple complementary sensors. To obtain richer and more
+	% accurate decision outcomes, multisource information fusion (MSIF) can be employed.
+	% A comprehensive review of information fusion approaches is provided by Li et
+	% al.~\cite{liMultisourceInformationFusion2024}.\todo{TR: To chyba lepiej na koniec.} In this work, we focus on
+	% feature-level fusion, in which the fusion model operates on extracted feature representations.
+	% MSIF has found widespread application in machine learning, particularly in classification tasks, as surveyed
+	% in~\cite{baltrusaitisMultimodalMachineLearning2019}.
+	% Representative applications include remote sensing~\cite{liA3CLNNSpatialSpectral2022}, military
+	% systems~\cite{sycaraIntegratedApproachHighlevel2009},
+	% and human action recognition~\cite{fortinoAdvancesMultisensorFusion2019}, among
+	% others~\cite{liMultisourceInformationFusion2024}.\todo{TR: Wstęp bardzo do rzeczy, ale ok.}
 	
+	\tr{Observation is a primary, primal even, epistemic tool. It is the act of observation upon which we begin our
+	most basic learning, and in empirical sciences it's the observation that ultimately falsifies (or not) the
+	hypothesis under investigation. It's also a common knowledge that the more we observe a given phenomenon, the
+	more we know about it. However, while the aggregation of such multiple observation come more or less naturally to
+	us, the situation if entirely different for the learning algorithms.
+	
+	The issue mentioned above lies at the very core of the multi-source information fusion (MSIF), a domain of
+	knowledge dedicated to finding efficient methods for multi-source data aggregation. The field itself has been a
+	subject of scientific investigations for quite some time now, particularly in the context of remote sensing
+	\cite{DataFusion1986}, where it persists as a subject of studies \cite{liA3CLNNSpatialSpectral2022}. The research
+	on data fusion is extensive enough, and the scope of techniques it presents is so wide, that they could be
+	categorized into groups and further subgroups \cite{baltrusaitisMultimodalMachineLearning2019}. In this work, we
+	focus solely on one such subgroup: a model-agnostic early fusion, otherwise known as feature-based fusion. This
+	term refers to a family of algorithms in which the fusion occurs prior to the actual data processing.
 	
 	% Transition: MSIF -> QML
-	Despite the success of classical machine learning models for feature-level fusion, their performance can be limited
-	by model capacity and scaling issues in high-dimensional feature spaces.\todo{TR: Mamy źródło?}  This motivates the
-	exploration of alternative computational paradigms for multisource learning.
+	% Despite the success of classical machine learning models for feature-level fusion, their performance can be limited
+	% by model capacity and scaling issues in high-dimensional feature spaces.\todo{TR: Mamy źródło?}  This motivates the
+	% exploration of alternative computational paradigms for multisource learning.
+	Early fusion problems are often approached with machine learning models \cite{liMultisourceInformationFusion2024,baltrusaitisMultimodalMachineLearning2019}, which one may consider a very natural approach. After all, ML models
+	are trained on the data. If the data is represented better (with multiple representations, coming from multiple
+	sources), it's only natural that the results should improve. However, some of the data fusion problems have been
+	shown to be NP-hard \cite{DataFusionNPQAOA}. This means that classical techniques, while still useful, might not
+	be able to address the problems above certain sizes (unless we see some unlikely shift in the complexity theory).
+	This is exactly why alternative methods of computing, such as quantum computing and quantum machine learning (QML),
+	have recently been of interest for data fusion specialists.
+	
+	}
 	
 	
 	% QML
 	Quantum machine learning (QML) leverages principles of quantum mechanics to process information in ways that differ
-	fundamentally from classical machine learning~\cite{biamonteQuantumMachineLearning2017a}. \todo{TR: Tutaj zdanie o
-	tym jak QML wygląda: że używa obwodów kwantowych do wyrażania obliczeń.}
-	Several works have demonstrated that quantum models can represent complex functions using comparatively shallow
-	circuits or fewer parameters than their classical counterparts, suggesting potential advantages for learning tasks
-	involving structured or high-dimensiona data~\cite{havlicekSupervisedLearningQuantumenhanced2019,
-	schuldQuantumMachineLearning2019,abbasPowerQuantumNeural2021}. Moreover, theoretical work has identified learning
-	scenarios in which quantum models offer data-dependent advantages~\cite{huangPowerDataQuantum2021a}.
+	fundamentally from classical machine learning~\cite{biamonteQuantumMachineLearning2017a}. \tr{In this paradigm,
+	computations are done within quantum circuits, commonly with the use of quantum logic gates (see e.g. 
+	\cite{sebastianelli2021circuitbasedhybridquantumneural}). In the mathematical model of quantum computation, those
+	gates can be expressed by unitary gates, making the whole circuit (up to the measurement) a unitary transformation
+	of the input. However simple the description may look, quantum mechanics introduces two computationally useful
+	phenomena --- superposition and entanglement --- that when used correctly can significantly speed up the
+	computations. That said, we can think of a QML model as a ML model that uses quantum computing.} It's known that
+	such models can represent complex functions using comparatively shallow \tr{(i. e. with low layers count)} circuits
+	or fewer parameters than their classical counterparts, suggesting potential advantages for learning tasks
+	involving structured or high-dimensional
+	 data~\cite{havlicekSupervisedLearningQuantumenhanced2019,schuldQuantumMachineLearning2019,abbasPowerQuantumNeural2021,GawronPowerOfData}. Moreover,
+	theoretical work has identified learning scenarios in which quantum models offer data-dependent
+	advantages~\cite{huangPowerDataQuantum2021a}. \tr{Empirical tests on the multi-spectral satellite data seem to also
+	confirm this finding \cite{GawronPowerOfData}.} 
 	
 	
 	% VQA on NISQ 
-	As fault-tolerant quantum computers have not yet been realized \todo{TR: Ale są całkiem mocne ambicje i prace z
-	ostatniego czasu. Można wspomnieć.}, practical QML research focuses on algorithms compatible with current noisy
-	intermediate-scale quantum (NISQ) devices~\cite{chenComplexityNISQ2023}. Among these, variational quantum
-	algorithms (VQAs)~\cite{cerezoVariationalQuantumAlgorithms2021} are particularly prominent. VQAs are hybrid
-	quantum--classical methods that employ a classical optimizer to train a parameterized quantum circuit. Importantly,
-	Schuld et al.~\cite{schuldCircuitcentricQuantumClassifiers2020a} have shown that such models exhibit robustness to
-	noise in both input data and circuit parameters, making them suitable for near-term quantum hardware.
+	% As fault-tolerant quantum computers have not yet been realized \todo{TR: Ale są całkiem mocne ambicje i prace z
+	% ostatniego czasu. Można wspomnieć.}, practical QML research focuses on algorithms compatible with current noisy
+	% intermediate-scale quantum (NISQ) devices~\cite{chenComplexityNISQ2023}. Among these, variational quantum
+	% algorithms (VQAs)~\cite{cerezoVariationalQuantumAlgorithms2021} are particularly prominent. VQAs are hybrid
+	% quantum--classical methods that employ a classical optimizer to train a parameterized quantum circuit.
+	% Importantly, Schuld et al.~\cite{schuldCircuitcentricQuantumClassifiers2020a} have shown that such models exhibit
+	% robustness to noise in both input data and circuit parameters, making them suitable for near-term quantum
+	% hardware.
 	
 	
 	% QMSC
-	Recently, several works have begun to explore the application of quantum machine learning methods to multisource or
-	multimodal data fusion. Feature-level multimodal quantum fusion presented in pre-print from
-	2026~\cite{wuFeatureEntanglementbasedQuantum2026} takes features extracted by sperate unimodal classical neural
-	networks. Extracted features are embedded into quantum fusion circuit and entangled between multiple modalities and
-	target qubits, with trainable parameters. Their model showed consistent stability and high accuracy for
-	high-dimensional data.
+	Recently, several works explored the application of QML methods to multi-source or multi-modal data fusion. \tr{
+	Common approach is to, instead of using purely-quantum models, take advantage of the hybrid quantum-classical
+	models. Feature-level multi-modal quantum fusion presented in \cite{wuFeatureEntanglementbasedQuantum2026} is a
+	stellar example of that approach. In the ML pipeline described therein, takes features extracted by separate
+	uni-modal classical neural networks and embeds them into a quantum fusion circuit. The features are then entangled
+	between multiple modalities on target qubits. Their model showed consistent stability and high accuracy for
+	high-dimensional data.}
 	
 	% AQML
-	\todo[inline]{Tutaj paragraf o AQML}
+	\tr{
+	When it comes to QML models, one of the central problems is quantum architecture search (QAS). It's a quantum
+	version of the neural architecture search (NAS) problem known in the ML community. Without the right selection
+	of the model architecture, the training might fail. While the problem case of both NAS and QAS, there are several
+	techniques that allow to address it. One of such techniques is automated (quantum) machine learning (AQML). AQML
+	are heuristic algorithms that try to propose the best models for a given data and tasks. There are several
+	platforms for AQML (see \cite{Rybotycki_2025} for brief overview) available for use and reports of the
+	state-of-the-art results achieved using at least one of them \cite{AQML_Exp}.
 	
 	% Summary
-	\todo[inline]{This paper is organized as follows...}
-
+	It this paper, we present an application of AQML to quantum feature fusion problem. In the following section
+	\ref{sec:problem_formulation} we formally present the issues addressed in this manuscript: the feature fusion and
+	quantum architecture search. Then, we provide the detailed description of our multi-level approach in section
+	\ref{sec:method}. Section \ref{sec:exp} contains the experiments overview --- along with the datasets description,
+	hyperparameter optimization (HPO) step and the results analysis. We conclude the paper with final remarks and
+	insights for future work.}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Problem Formulation} \label{sec:problem_formulation}
+\section{Problem Formulation and literature overview}
+\label{sec:problem_formulation}
 
 
+	\todo[inline]{TR: High-level problem overview}
+	
+	\todo[inline]{TR: Trochę krótka sekcja. Możnaby (rzekłbym trzeba) ją rozszerzyć o jakieś do literature overview. Wtedy, po sformułowaniu problemu, możnaby przeanalizować jakie podejścia ludzie mają i dlaczego one są ograniczone. I gdzie użycie kwantów może pomóc.}
+
+	\subsection{Feature fusion}	
+	
+	\todo[inline]{SD: Przepisać tak, żeby nie było o danych, tylko o problemie.}
+	
 	We consider a synthetic multisource classification setting, where multiple input sources are derived from a single
 	original sample.\todo{TR: To jeszcze się okaże.}  Specifically, an input image is partitioned into two
 	complementary views. Each view is independently transformed by a deterministic preprocessing pipeline into a vector
@@ -151,133 +204,58 @@
 	All learnable parameters $\theta_1$, $\theta_2$, and $\theta_3$ are optimized jointly
 	during training.
 	
-	\todo[inline]{TR: Trochę krótka sekcja. Możnaby ją rozszerzyć o jakieś do literature overview. Wtedy, po
-	sformułowaniu problemu, możnaby przeanalizować jakie podejścia ludzie mają i dlaczego one są ograniczone. I gdzie
-	użycie kwantów może pomóc.}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Synthetic Multisource Data Construction}
-
-	\todo{TR: Mniej ostry wstęp. Najpierw zacznij, że używasz syntetycznych, wyjaśnij dlaczego. Możesz wspomnieć
-	o rozważanych alternatywach.}
-
-	The MNIST dataset consists of 70,000 images of handwritten digits (0--9), each of size $28 \times 28$ pixels.
-	The dataset was obtained from Kaggle \cite{lecunMNISTHandwrittenDigits2025}, and we used the predefined
-	training--validation split provided with the dataset without modification.
+	\subsection{Quantum Architecture Search}
+	\todo[inline]{TR: Sformułować QAS}
 	
-	From the dataset, we select only three digit classes:\todo{TR: Dlaczeo akurat te? Arbitralnie też jest powodem.
-	Różnorodność jest ok. Ale coś powiedzieć trzeba.}
-	\begin{itemize}
-		\item digit ``5'' (\(5421\) training samples and \(892\) validation samples),
-		\item digit ``6'' (\(5918\) training samples and \(958\) validation samples),
-		\item digit ``7'' (\(6265\) training samples and \(1028\) validation samples).
-	\end{itemize}
-	Each image is preprocessed to construct synthetic multisource inputs. Specifically, images are split horizontally
-	into top and bottom halves, which are treated as complementary views. Each view is then binarized, spatially
-	downsampled, and transformed into a six-dimensional vector by computing the mean pixel intensity along columns.
-	These vectors correspond to the synthetic multisource inputs $x_{\mathrm{top}}$ and $x_{\mathrm{bottom}}$ defined
-	in Section~\ref{sec:problem_formulation}.\todo{TR: Jeśli umiesz dodać uzasadnienie, to byłoby wskazane.}
-	
-	An overview of the preprocessing pipeline is shown in Fig.~\ref{fig:preprocessing}.
-	\begin{figure}
-		\centering
-		\includegraphics[height=0.8\textheight]{fig/preprocessing.pdf}
-		\caption{Overview of the synthetic multisource preprocessing pipeline.
-			(a) Original input image.
-			(b) Horizontal splitting into top and bottom halves.
-			(c) Binarization of each half.
-			(d) Spatial downsampling.
-			(e) Computation of column-wise mean pixel intensities, resulting in vector representations
-			that constitute the synthetic multisource inputs $x_{\mathrm{top}}$ and $x_{\mathrm{bottom}}$.
-		}
-		\label{fig:preprocessing}
-	\end{figure}
-	
-	\todo[inline]{TR: To też jest trochę krótka sekcja. To nie jest nic strasznego, ale może warto by ją dać jako
-	podsekcję Approach? Zobaczymy jak to poukładać kiedy będziemy mieli pełną treść.}
+
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Approach}
+\label{sec:method}
 
 	\todo[inline]{TR: Osobiście nie lubię, kiedy sekcja zaczyna się od podsekcji, bez żadnego wstępu, ale niektórzy tak
 	robią. Jak będzie czas, proponowałbym uzupełnić.}
+	
+	\todo[inline]{SD: Trzeba wyciągnąć część wspólną z ML i QML, i opisać tutaj. W podsekcjach tylko detale.}
 
 	\subsection{Classical Neural Network Baseline}
+		
+		\todo[inline]{Znowu, zacznij bardziej miękko, może od takiego ogólnego wysoko-poziomiego pomysłu na
+		architekturę. Model ma 2 części ... jedna robi to... Druga tamto... W efekcie... Output sieci jest taki...
+		Robię tak, bo ...}
 	
-		\todo[inline]{TR: j/w}
-	
-		\subsubsection{Model Architecture}
+		As a baseline, we employ a \tr{standard / basic / classic}\todo{Podkreślaj, że chodzi o podstawowe
+		techniki, bo to stanowi uzasadnienia!} multilayer perceptron (MLP) architecture \todo{TR: Referencja.}
+		(Fig.~\ref{fig:mlp_diagram})\todo{TR: Ładny rysunek. Dobrze będzie sprawdzić później pracę w
+		\texttt{Coblis}.}. Two feature extractors\todo{TR: Zła kolejność.
+		Najpierw utwórz (dookreśl) extractory, a potem pisz co i jak robią.} independently process
+		$x_{\mathrm{top}}$ and $x_{\mathrm{bottom}}$, and their
+		outputs are concatenated and trained end-to-end with the classifier. Each feature extractor is an MLP with
+		six input neurons, corresponding to the dimensionality of the input vectors, and a single hidden layer with
+		ReLU activation. \todo{TR: Patrzyłeś, czy multilayer nie jest lepszy? Jeśli nie, to sprawdź proszę, to
+		chyba się przeliczy w kilka sekund, a podniesie jakość badań.}
 		
-			\todo[inline]{Znowu, zacznij bardziej miękko, może od takiego ogólnego wysoko-poziomiego pomysłu na
-			architekturę. Model ma 2 części ... jedna robi to... Druga tamto... W efekcie... Output sieci jest taki...
-			Robię tak, bo ...}
-		
-			As a baseline, we employ a \tr{standard / basic / classic}\todo{Podkreślaj, że chodzi o podstawowe
-			techniki, bo to stanowi uzasadnienia!} multilayer perceptron (MLP) architecture \todo{TR: Referencja.}
-			(Fig.~\ref{fig:mlp_diagram})\todo{TR: Ładny rysunek. Dobrze będzie sprawdzić później pracę w
-			\texttt{Coblis}.}. Two feature extractors\todo{TR: Zła kolejność.
-			Najpierw utwórz (dookreśl) extractory, a potem pisz co i jak robią.} independently process
-			$x_{\mathrm{top}}$ and $x_{\mathrm{bottom}}$, and their
-			outputs are concatenated and trained end-to-end with the classifier. Each feature extractor is an MLP with
-			six input neurons, corresponding to the dimensionality of the input vectors, and a single hidden layer with
-			ReLU activation. \todo{TR: Patrzyłeś, czy multilayer nie jest lepszy? Jeśli nie, to sprawdź proszę, to
-			chyba się przeliczy w kilka sekund, a podniesie jakość badań.}
-			
-			The classifier consists of an input layer of size equal to the concatenated feature \tr{extractors}
-			outputs \todo{TR: Nie ma czegoś takiego jak feature output. Może chodziło o output feature? Extractor
-			output jest moim zdaniem najsensowniej.}, a hidden layer with ReLU activation \todo{TR: Jestem po
-			50 stronach raportu, więc może straciłem wyczucie. Czy activation zamiast activation function jest używane
-			i akceptowane w literaturze? Jeśli tak, to ok. Wiadomo o co chodzi, ale bezpieczniej trzymać się
-			standardów}, and an output layer with three neurons, corresponding to the number of target
-			classes.\todo{TR: To połączyć z informacją, że stosujesz one-hot encoding (i dlaczego tak robisz).}
-			Training is performed using the cross-entropy loss, and predictions are obtained by selecting the output
-			logit\todo{TR: Tak się mówi? Nie output neuron? A w zasadzie nawet bardziej ściśle, indeks output neuronu?}
-			with the maximum value.
-			\begin{figure}
-				\centering
-				\includegraphics[width=0.6\textwidth]{fig/MLP_diagram.pdf}
-				\caption{Diagram of the classical MLP architecture for multisource classification baseline model.
-					Particular parts of the diagram are labeled with colors: \textbf{yellow} --- feature extractors
-					input layer, \textbf{orange} --- feature extractors, \textbf{blue} --- classifier (here the fusion
-					takes place), \textbf{green} --- output logits.}
-				\label{fig:mlp_diagram}
-			\end{figure}
-		
-		\subsubsection{Hyperparameter Optimization}
-		
-			\todo[inline]{TR: Chyba lepiej będzie dać HPO jako sekcję, w której podsumujemy optymalizację dla
-			wszystkich testowanych modeli. Zredukujemy wtedy poziom zagnieżdżenia, co zawsze jest na plus.}
-			
-			We performed hyperparameter\todo{TR: W tabeli masz hyper-paramerter. Wybierz jeden sposób zapisu i
-				ujednolić, proszę.} optimization (HPO) to select the optimal architecture for the classical
-			baseline.\todo{Nie napisałeś jak. Strzelam, że optuna, więc niech się pojawi. Bez wchodzenia w szczegóły,
-			default optuna optimization algorithm, może nazwa. Powiedzieć, że standard.} The experimental setup is
-			shown in Table~\ref{tab:baseline_hpo}. Other HPO settings were fixed as
-			follows: 100 trials \todo{Mało. Były ograniczenia czasowe / resourcowe?}, early stopping disabled, and
-			random seed 42. \todo{TR: W przypadku HPO i ML, random seed występuje w wielu miejscach. Dobrze by było
-				dookreślić co nim inicjalizowałeś. Możemy się nad tym zastanowić razem.}
-			\todo[inline]{TR: Słowo uzasadnienia nt. zakresów.}
-		
-		
-			% ===== Hyperparameters: MLP_experiment_setup =====
-			\begin{table}[t]
-				\centering
-				\caption{Experiment setup for baseline hyper-parameters optimization\tr{.}}
-				\label{tab:baseline_hpo}
-				\begin{tabular}{p{6cm}p{2cm}p{1.5cm}l}
-					\hline
-					Parameter                              & Range                 & \tr{Type}\trst{Scale}    & Best value \\
-					\hline
-					Learning rate                          & $[10^{-3},\,10^{-2}]$ & linear   & $10^{-3}$  \\
-					Batch size                             & $[32, 128]$           & discrete & $83$       \\
-					Hidden layer size (feature extractors) & $[64, 256]$           & discrete & $90$       \\
-					Output layer size (feature extractors) & $[64, 256]$           & discrete & $196$      \\
-					Hidden layer size (classifier)         & $[64, 256]$           & discrete & $95$       \\
-					\hline
-				\end{tabular}
-			\end{table}
+		The classifier consists of an input layer of size equal to the concatenated feature \tr{extractors}
+		outputs \todo{TR: Nie ma czegoś takiego jak feature output. Może chodziło o output feature? Extractor
+		output jest moim zdaniem najsensowniej.}, a hidden layer with ReLU activation \todo{TR: Jestem po
+		50 stronach raportu, więc może straciłem wyczucie. Czy activation zamiast activation function jest używane
+		i akceptowane w literaturze? Jeśli tak, to ok. Wiadomo o co chodzi, ale bezpieczniej trzymać się
+		standardów}, and an output layer with three neurons, corresponding to the number of target
+		classes.\todo{TR: To połączyć z informacją, że stosujesz one-hot encoding (i dlaczego tak robisz).}
+		Training is performed using the cross-entropy loss, and predictions are obtained by selecting the output
+		logit\todo{TR: Tak się mówi? Nie output neuron? A w zasadzie nawet bardziej ściśle, indeks output neuronu?}
+		with the maximum value.
+		\begin{figure}
+			\centering
+			\includegraphics[width=0.6\textwidth]{fig/MLP_diagram.pdf}
+			\caption{Diagram of the classical MLP architecture for multisource classification baseline model.
+				Particular parts of the diagram are labeled with colors: \textbf{yellow} --- feature extractors
+				input layer, \textbf{orange} --- feature extractors, \textbf{blue} --- classifier (here the fusion
+				takes place), \textbf{green} --- output logits.}
+			\label{fig:mlp_diagram}
+		\end{figure}
 		
 		
 		
@@ -399,14 +377,104 @@
 	
 	
 	\subsection{Automated Quantum Machine Learning}
+	\label{ssec:aqml}
 	\todo[inline]{TR: Fill this!}
 	
 	
 	
 	
 	
+	
+	
+	
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Results}
+\section{Experiments}
+\label{sec:exp}
+
+	\todo[inline]{TR: High-level overview }
+	
+	\subsection{Datasets}
+	\label{ssec:data}
+	
+	\todo{TR: Mniej ostry wstęp. Najpierw zacznij, że używasz syntetycznych, wyjaśnij dlaczego. Możesz wspomnieć
+		o rozważanych alternatywach.}
+	
+	The MNIST dataset consists of 70,000 images of handwritten digits (0--9), each of size $28 \times 28$ pixels.
+	The dataset was obtained from Kaggle \cite{lecunMNISTHandwrittenDigits2025}, and we used the predefined
+	training--validation split provided with the dataset without modification.
+	
+	From the dataset, we select only three digit classes:\todo{TR: Dlaczeo akurat te? Arbitralnie też jest powodem.
+		Różnorodność jest ok. Ale coś powiedzieć trzeba.}
+	\begin{itemize}
+		\item digit ``5'' (\(5421\) training samples and \(892\) validation samples),
+		\item digit ``6'' (\(5918\) training samples and \(958\) validation samples),
+		\item digit ``7'' (\(6265\) training samples and \(1028\) validation samples).
+	\end{itemize}
+	Each image is preprocessed to construct synthetic multisource inputs. Specifically, images are split horizontally
+	into top and bottom halves, which are treated as complementary views. Each view is then binarized, spatially
+	downsampled, and transformed into a six-dimensional vector by computing the mean pixel intensity along columns.
+	These vectors correspond to the synthetic multisource inputs $x_{\mathrm{top}}$ and $x_{\mathrm{bottom}}$ defined
+	in Section~\ref{sec:problem_formulation}.\todo{TR: Jeśli umiesz dodać uzasadnienie, to byłoby wskazane.}
+	
+	An overview of the preprocessing pipeline is shown in Fig.~\ref{fig:preprocessing}.
+	\begin{figure}
+		\centering
+		\includegraphics[width=\textwidth]{fig/preprocessing.pdf}
+		\caption{Overview of the synthetic multisource preprocessing pipeline.
+			(a) Original input image.
+			(b) Horizontal splitting into top and bottom halves.
+			(c) Binarization of each half.
+			(d) Spatial downsampling.
+			(e) Computation of column-wise mean pixel intensities, resulting in vector representations
+			that constitute the synthetic multisource inputs $x_{\mathrm{top}}$ and $x_{\mathrm{bottom}}$.
+		}
+		\label{fig:preprocessing}
+	\end{figure}
+	
+	\todo[inline]{TR: To też jest trochę krótka sekcja. To nie jest nic strasznego, ale może warto by ją dać jako
+		podsekcję Approach? Zobaczymy jak to poukładać kiedy będziemy mieli pełną treść.}
+		
+	\todo[inline]{TR: ONERA}
+	
+	
+	\subsection{Hyperparameter Optimization}
+	\label{ssec:hpo}
+	
+	\todo[inline]{TR: Chyba lepiej będzie dać HPO jako sekcję, w której podsumujemy optymalizację dla
+		wszystkich testowanych modeli. Zredukujemy wtedy poziom zagnieżdżenia, co zawsze jest na plus.}
+	
+	We performed hyperparameter\todo{TR: W tabeli masz hyper-paramerter. Wybierz jeden sposób zapisu i
+		ujednolić, proszę.} optimization (HPO) to select the optimal architecture for the classical
+	baseline.\todo{Nie napisałeś jak. Strzelam, że optuna, więc niech się pojawi. Bez wchodzenia w szczegóły,
+		default optuna optimization algorithm, może nazwa. Powiedzieć, że standard.} The experimental setup is
+	shown in Table~\ref{tab:baseline_hpo}. Other HPO settings were fixed as
+	follows: 100 trials \todo{Mało. Były ograniczenia czasowe / resourcowe?}, early stopping disabled, and
+	random seed 42. \todo{TR: W przypadku HPO i ML, random seed występuje w wielu miejscach. Dobrze by było
+		dookreślić co nim inicjalizowałeś. Możemy się nad tym zastanowić razem.}
+	\todo[inline]{TR: Słowo uzasadnienia nt. zakresów.}
+	
+	
+	% ===== Hyperparameters: MLP_experiment_setup =====
+	\begin{table}[t]
+		\centering
+		\caption{Experiment setup for baseline hyper-parameters optimization\tr{.}}
+		\label{tab:baseline_hpo}
+		\begin{tabular}{p{6cm}p{2cm}p{1.5cm}l}
+			\hline
+			Parameter                              & Range                 & \tr{Type}\trst{Scale}    & Best value \\
+			\hline
+			Learning rate                          & $[10^{-3},\,10^{-2}]$ & linear   & $10^{-3}$  \\
+			Batch size                             & $[32, 128]$           & discrete & $83$       \\
+			Hidden layer size (feature extractors) & $[64, 256]$           & discrete & $90$       \\
+			Output layer size (feature extractors) & $[64, 256]$           & discrete & $196$      \\
+			Hidden layer size (classifier)         & $[64, 256]$           & discrete & $95$       \\
+			\hline
+		\end{tabular}
+	\end{table}
+	
+	
+	\subsection{Results}
+	\label{ssec:results}
 
 	\todo[inline]{TR: Najpierw zacznij od określenia użytych metryk i uzasadnienia. Potem przejdź od sposobu ich
 		 agregacji i przedstawienia.}
@@ -442,8 +510,12 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Conclusion}
+\label{sec:conclusions}
 
 	\todo[inline]{Do uzupełnienia, ale chyba faktycznie po eksperymentach.}
+	\begin{itemize}
+		\item AQML > QML
+	\end{itemize}
 
 
 
