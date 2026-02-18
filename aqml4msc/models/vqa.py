@@ -53,11 +53,15 @@ class QMLP_1(BaseMLPModel):
         def qnode(inputs, weights):
             qml.AngleEmbedding(inputs, wires=range(self.n_qubits))
             qml.BasicEntanglerLayers(weights, wires=range(self.n_qubits))
-            return [qml.expval(qml.PauliZ(wires=i)) for i in range(num_classes)]
+            # return [qml.expval(qml.PauliZ(wires=i)) for i in range(num_classes)]
+            return [qml.expval(qml.PauliZ(wires=i)) for i in range(self.n_qubits)]
 
         weight_shapes = {"weights": (n_layers, self.n_qubits)}
 
-        return qml.qnn.TorchLayer(qnode, weight_shapes)  # type: ignore
+        # return qml.qnn.TorchLayer(qnode, weight_shapes)
+        return torch.nn.Sequential(
+            qml.qnn.TorchLayer(qnode, weight_shapes), torch.nn.Linear(self.n_qubits, self.n_classes)
+        )  # type: ignore
 
     def apply_ansatz(self, ansatz):
 

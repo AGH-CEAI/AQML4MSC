@@ -107,7 +107,7 @@ def optuna_aqml_objective(trial: optuna.Trial) -> float:
     experiment_params: dict[str, int | str] = {
         "seed": 42,
         "n_folds": 5,
-        "parent_run_name": "QMLP_AQML_test",
+        "parent_run_name": "QMLP_AQML_Classical_Output",
         "model_name": "QMLP_1",
     }
 
