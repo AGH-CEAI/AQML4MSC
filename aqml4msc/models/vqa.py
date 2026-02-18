@@ -60,7 +60,7 @@ class QMLP_1(BaseMLPModel):
 
         # return qml.qnn.TorchLayer(qnode, weight_shapes)
         return torch.nn.Sequential(
-            qml.qnn.TorchLayer(qnode, weight_shapes), torch.nn.Linear(self.n_qubits, self.n_classes)
+            qml.qnn.TorchLayer(qnode, weight_shapes), torch.nn.ReLU(), torch.nn.Linear(self.n_qubits, self.n_classes)
         )  # type: ignore
 
     def apply_ansatz(self, ansatz):
