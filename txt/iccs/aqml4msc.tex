@@ -73,7 +73,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
 
-
+	\todo[inline]{TR: Ładny rysunek. Dobrze będzie sprawdzić później pracę w \texttt{Coblis}.}
 	% Multisource
 	% Data about an observed object can be gathered from multiple complementary sensors. To obtain richer and more
 	% accurate decision outcomes, multisource information fusion (MSIF) can be employed.
@@ -265,8 +265,6 @@
 	(subsection \ref{ssec:qml_onera}). 
 	
 	
-	
-	\todo[inline]{SD: Trzeba wyciągnąć część wspólną z ML i QML, i opisać tutaj. W podsekcjach tylko detale.}
 
 	\subsection{Multi-layer perceptron}
 	\label{ssec:mlp}
@@ -277,29 +275,9 @@
 		considering the effectiveness of the network in \cite{wuFeatureEntanglementbasedQuantum2026}, we also
 		decided to separate the feature extractor part of the model into two separate parts --- one for each input.
 		
-		The first model we implemented was a classical multilayer perceptron (MLP), which was meant to serve as a
-		baseline reference for our subsequent experiments.
-		
-		 \todo{TR: Referencja.}
-		(Fig.~\ref{fig:mlp_diagram})\todo{TR: Ładny rysunek. Dobrze będzie sprawdzić później pracę w
-		\texttt{Coblis}.}. Two feature extractors\todo{TR: Zła kolejność.
-		Najpierw utwórz (dookreśl) extractory, a potem pisz co i jak robią.} independently process
-		$x_{\mathrm{top}}$ and $x_{\mathrm{bottom}}$, and their
-		outputs are concatenated and trained end-to-end with the classifier. Each feature extractor is an MLP with
-		six input neurons, corresponding to the dimensionality of the input vectors, and a single hidden layer with
-		ReLU activation. \todo{TR: Patrzyłeś, czy multilayer nie jest lepszy? Jeśli nie, to sprawdź proszę, to
-		chyba się przeliczy w kilka sekund, a podniesie jakość badań.}
-		
-		The classifier consists of an input layer of size equal to the concatenated feature \tr{extractors}
-		outputs \todo{TR: Nie ma czegoś takiego jak feature output. Może chodziło o output feature? Extractor
-		output jest moim zdaniem najsensowniej.}, a hidden layer with ReLU activation \todo{TR: Jestem po
-		50 stronach raportu, więc może straciłem wyczucie. Czy activation zamiast activation function jest używane
-		i akceptowane w literaturze? Jeśli tak, to ok. Wiadomo o co chodzi, ale bezpieczniej trzymać się
-		standardów}, and an output layer with three neurons, corresponding to the number of target
-		classes.\todo{TR: To połączyć z informacją, że stosujesz one-hot encoding (i dlaczego tak robisz).}
-		Training is performed using the cross-entropy loss, and predictions are obtained by selecting the output
-		logit\todo{TR: Tak się mówi? Nie output neuron? A w zasadzie nawet bardziej ściśle, indeks output neuronu?}
-		with the maximum value.
+		The first model we implemented was a classical multilayer perceptron (MLP) \cite{RussellNorvig2010}, which was
+		meant to serve as a baseline reference for our subsequent experiments. In this model both the extractors and
+		the classifier was a MLP. We present this a architecture in the figure~\ref{fig:mlp_diagram}.
 		\begin{figure}
 			\centering
 			\includegraphics[width=0.6\textwidth]{fig/MLP_diagram.pdf}
@@ -310,15 +288,18 @@
 			\label{fig:mlp_diagram}
 		\end{figure}
 		
-		
+		In this architecture, the input from both the sources --- $x_{top}$ and $x_{bottom}$ --- is passed to their
+		respective feature extractors and then processed, independently. After this processing, the output vectors of
+		both extractors are concatenated, such that $x_{classifier} = [x^1_{top}, ..., x^n_{top}, x^1_{bottom}, ...,
+		x^m_{bottom}]$, assuming the lengths of $x_{top}$ and $x_{bottom}$ are $n$ and $m$ respectively. The resultant
+		vector $x_{classifier}$ is used as the input of the classifier network (here another MLP). For all the layers
+		(beside the output) we used $ ReLU(x) = \max(x, 0)$ activation function, which is a standard way to introduce
+		non-linearity in deep neural networks \cite{RussellNorvig2010}.
 		
 		
 		\subsection{Hybrid Classical--Quantum Neural Network}
 		\label{ssec:qmlp}
 		
-			\todo[inline]{TR: Chyba nie wprowadzałeś architektur hybrydowych, więc paragraf wstępu jest na miejscu.} 
-			\todo[inline]{PG ma dobre rysunki przedstawiające ogólne schematy modeli QML. Możesz go poprosić, żeby
-			Ci je udostępnił (ja też gdzieś je mam, ale formalnie wypada zapytać).}
 		
 			In the hybrid approach, the classifier in the classical neural network architecture is replaced by a
 			variational quantum circuit, while the feature extractors are kept unchanged. \todo{TR: Uzasadnienie
@@ -450,8 +431,6 @@
 	\todo[inline]{TR: High-level overview }
 	
 	
-	
-	
 	\subsection{Datasets}
 	\label{ssec:data}
 	
@@ -496,6 +475,26 @@
 			podsekcję Approach? Zobaczymy jak to poukładać kiedy będziemy mieli pełną treść.}
 		
 		
+		\subsubsection{Experimental setup}
+		
+		
+		The output of the
+		classifier is equal to the number of classes in the experiment. The reason for that is the planned use of 
+		one-hot encoding \cite{hancock_survey_2020}, one of the standard approaches in the problem under our
+		investigation.  and 
+		
+		
+		
+		and trained end-to-end with the classifier. Each feature extractor is an MLP with
+		six input neurons, corresponding to the dimensionality of the input vectors, and a single hidden layer with
+		ReLU activation.
+		
+		The classifier consists of an input layer of size equal to the concatenated feature \tr{extractors}
+		outputs.
+		
+		Training is performed using the cross-entropy loss, and predictions are obtained by selecting the output
+		logit\todo{TR: Tak się mówi? Nie output neuron? A w zasadzie nawet bardziej ściśle, indeks output neuronu?}
+		with the maximum value.
 	
 		\subsubsection{ONERA}
 			
@@ -511,6 +510,16 @@
 		
 		\cite{onera}
 	
+	
+	\subsection{Metrics}
+	
+	
+		\todo[inline]{TR: Najpierw zacznij od określenia użytych metryk i uzasadnienia. Potem przejdź od sposobu ich
+		agregacji i przedstawienia.}
+	For evaluation  we look at mean metric values from five cross-validation folds.
+	Metrics we look at are accuracy and macro averaged f1-score
+	--- \texttt{accuracy\_score} and \texttt{f1\_score} with argument \texttt{average="macro"} from
+	\texttt{scikit-learn version 1.8}.
 	
 	
 	\subsection{Hyperparameter Optimization}
@@ -552,37 +561,35 @@
 	\subsection{Results}
 	\label{ssec:results}
 
-	\todo[inline]{TR: Najpierw zacznij od określenia użytych metryk i uzasadnienia. Potem przejdź od sposobu ich
-		 agregacji i przedstawienia.}
-	For evaluation  we look at mean metric values from five cross-validation folds.
-	Metrics we look at are accuracy and macro averaged f1-score
-	--- \texttt{accuracy\_score} and \texttt{f1\_score} with argument \texttt{average="macro"} from
-	\texttt{scikit-learn version 1.8}. Results are shown in the table~\ref{tab:results}.
+		\todo[inline]{Do tabeli trzeba dodać liczbę parametrów treningowych. Najlepiej wszystkich i tych jedynie
+			dot. klasyfikatorów.}
 
-
-
-% ===== CV Metrics per Fold: HPO\_classical\_MLP\_3 =====
-\begin{table}[t]
-	\centering
-	\caption{Accuracy and macro averaged f1-score metrics for classical MLP found by hyperparameter optimization
-		and VQA found by AQMlator.}
-	\label{tab:results}
-	\begin{tabular}{l|ccccc|c}
-		\hline
-		Metric    & Fold 1 & Fold 2 & Fold 3 & Fold 4 & Fold 5 & Mean              \\
-		\hline
-		\multicolumn{7}{c}{MLP}                                                    \\
-		\hline
-		accuracy  & 0.962  & 0.959  & 0.960  & 0.960  & 0.960  & $0.960 \pm 0.001$ \\
-		f1\_macro & 0.961  & 0.959  & 0.959  & 0.959  & 0.959  & $0.959 \pm 0.001$ \\
-		\hline
-		\multicolumn{7}{c}{VQA}                                                    \\
-		\hline
-		accuracy  & 0.0    & 0.0    & 0.0    & 0.0    & 0.0    & $0.0 \pm 0.0$     \\
-		f1\_macro & 0.0    & 0.0    & 0.0    & 0.0    & 0.0    & $0.0 \pm 0.0$     \\
-		\hline
-	\end{tabular}
-\end{table}\todo{TR: Pamiętaj, żeby dodać też ręcznie znalezione modele.}
+		\subsubsection{MNIST}
+		 Results are shown in the table~\ref{tab:results}.
+		% ===== CV Metrics per Fold: HPO\_classical\_MLP\_3 =====
+		\begin{table}[t]
+			\centering
+			\caption{Accuracy and macro averaged f1-score metrics for classical MLP found by hyperparameter optimization
+				and VQA found by AQMlator.}
+			\label{tab:results}
+			\begin{tabular}{l|ccccc|c}
+				\hline
+				Metric    & Fold 1 & Fold 2 & Fold 3 & Fold 4 & Fold 5 & Mean              \\
+				\hline
+				\multicolumn{7}{c}{MLP}                                                    \\
+				\hline
+				accuracy  & 0.962  & 0.959  & 0.960  & 0.960  & 0.960  & $0.960 \pm 0.001$ \\
+				f1\_macro & 0.961  & 0.959  & 0.959  & 0.959  & 0.959  & $0.959 \pm 0.001$ \\
+				\hline
+				\multicolumn{7}{c}{VQA}                                                    \\
+				\hline
+				accuracy  & 0.0    & 0.0    & 0.0    & 0.0    & 0.0    & $0.0 \pm 0.0$     \\
+				f1\_macro & 0.0    & 0.0    & 0.0    & 0.0    & 0.0    & $0.0 \pm 0.0$     \\
+				\hline
+			\end{tabular}
+		\end{table}\todo{TR: Pamiętaj, żeby dodać też ręcznie znalezione modele.}
+		
+		\subsection{ONERA Change detection}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Conclusion}
