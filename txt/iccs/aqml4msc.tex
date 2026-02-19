@@ -73,7 +73,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
 
-\todo[inline]{TR: Ładny rysunek. Dobrze będzie sprawdzić później pracę w \texttt{Coblis}.}
+\todo[inline]{Sprawdzić pracę w \texttt{Coblis}.}
 % Multisource
 % Data about an observed object can be gathered from multiple complementary sensors. To obtain richer and more
 % accurate decision outcomes, multisource information fusion (MSIF) can be employed.
@@ -100,20 +100,22 @@
 	on data fusion is extensive enough, and the scope of techniques it presents is so wide, that they could be
 	categorized into groups and further subgroups \cite{baltrusaitisMultimodalMachineLearning2019}. In this work, we
 	focus solely on one such subgroup: a model-agnostic early fusion, otherwise known as feature-based fusion. This
-	term refers to a family of algorithms in which the fusion occurs prior to the actual data processing.
+	term refers to a family of algorithms in which the fusion occurs at the early stages of the ML pipeline. A subtype of
+	those algorithms is a data-level fusion, an approach in which the multi-source data is aggregated prior to entering
+	the ML model \cite{dalla_mura_challenges_2015}.
 
 	% Transition: MSIF -> QML
 	% Despite the success of classical machine learning models for feature-level fusion, their performance can be limited
 	% by model capacity and scaling issues in high-dimensional feature spaces.\todo{TR: Mamy źródło?}  This motivates the
 	% exploration of alternative computational paradigms for multisource learning.
-	\todo[inline]{TR: JEscze jeden rozdzaj early fusion - data fusion. Tam fuzja jest robiona od razu na surowych danych. Zaznaczyć różnicę.}
-	Early fusion problems are often approached with machine learning models \cite{liMultisourceInformationFusion2024,baltrusaitisMultimodalMachineLearning2019}, which one may consider a very natural approach. After all, ML models
-	are trained on the data. If the data is represented better (with multiple representations, coming from multiple
-	sources), it's only natural that the results should improve. However, some of the data fusion problems have been
-	shown to be NP-hard \cite{DataFusionNPQAOA}. This means that classical techniques, while still useful, might not
-	be able to address the problems above certain sizes (unless we see some unlikely shift in the complexity theory).
-	This is exactly why alternative methods of computing, such as quantum computing and quantum machine learning (QML),
-	have recently been of interest for data fusion specialists.
+	\todo[inline]{TR: Jescze jeden rozdzaj early fusion - data fusion. Tam fuzja jest robiona od razu na surowych danych. Zaznaczyć różnicę.}
+	Early fusion problems are often approached with machine learning models \cite{liMultisourceInformationFusion2024,baltrusaitisMultimodalMachineLearning2019}, which one may consider a very
+	natural approach. After all, ML models are trained on the data. If the data is represented better (with multiple
+	representations, coming from multiple sources), it's only natural that the results should improve. However, some of
+	the data fusion problems have been shown to be NP-hard \cite{DataFusionNPQAOA}. This means that classical techniques,
+	while still useful, might not be able to address the problems above certain sizes (unless we see some unlikely shift
+	in the complexity theory). This is exactly why alternative methods of computing, such as quantum computing and
+	quantum machine learning (QML), have recently been of interest for data fusion specialists.
 
 }
 
@@ -250,11 +252,10 @@ during training.
 \section{Approach}
 \label{sec:method}
 
-In this work, we present two different approaches, sharing a common core in the form of AQML. First one, detailed
-over sections \ref{ssec:mlp} and \ref{ssec:qmlp}, and the latter in  \ref{ssec:qml_onera}. After all the models are
-introduced, we will briefly describe the AQML technique we used and direct interested readers to appropriate
-resources. In particular, we focus on the ajdustments that are new in comparison to its reported version
-\cite{Rybotycki_2025}.
+In this work, we present two different approaches, sharing a common core in the form of AQML. We detailed both in
+subsection \ref{ssec:hqnn}. After all the models are introduced, we will briefly describe the AQML technique we used
+and direct interested readers to appropriate resources. In particular, we focus on the ajdustments that are new in
+comparison to its reported version \cite{Rybotycki_2025}.
 
 While the models we used differ slightly from each other, we would like to point out that their underlying
 high-level logic remains the same and it's only the implementational aspect that differs. Each of our models
@@ -262,8 +263,9 @@ consists of two main parts: feature extractor and a classifier. The feature extr
 the model we used. It accepts the input and initially processes the data. For every model, feature extractor
 we used is classical. Preprocessed features the inputs are then passed to the classifier. The output of this
 model will be used to obtain the final decision about the input, depending on the experiment. This part of the
-network may be classical (subsection \ref{ssec:mlp}), quantum (subsection \ref{ssec:qmlp}) or hybrid-quantum
-(subsection \ref{ssec:qml_onera}).
+network may be classical (subsection \ref{ssec:mlp}) or quantum and hybrid quantum-classical (subsection
+\ref{ssec:hqnn}) or hybrid-quantum.
+
 
 
 \subsection{Multi-layer perceptron}
@@ -299,7 +301,7 @@ deep neural networks \cite{RussellNorvig2010}.
 
 
 \subsection{Hybrid Quantum--Classical Neural Network}
-\label{ssec:qmlp}
+\label{ssec:hqnn}
 
 In our initial experiments with automated quantum machine learning, we used a hybrid quantum-classical machine learning
 model. What the name entails is the fact that in the ML pipeline, both classical and quantum layers are used. A common
@@ -444,10 +446,18 @@ quantum circuits \cite{schuld_effect_2021}.
 
 
 
-\subsection{Change detection hybrid model}
-\label{ssec:qml_onera}
+\subsubsection{Change detection hybrid model}
+\label{sssec:qml_onera}
 
 
+To investigate the performance of our approach with the real data, we decided to revisits the experiments reported in
+\cite{Rybotycki_2025}, only this time, with the use of AQML. The model we used for those experiments follows the
+schematic presented in the figure \ref{fig:model_schamatic} and is similar to the model described in previous subsection
+\ref{ssec:hqnn}. The only difference here is that we used a single data extractor instead of two, to which we uploaded
+the concatenated data from both the sources. This approach, known as data-level fusion, is also sometimes considered in
+remote sensing \cite{dalla_mura_challenges_2015}. We decided not to separate the data extraction, so that the experiment
+differs from \cite{Rybotycki_2025} only in the application of AQML. In this model, the final classical layer was also
+an optional addition.
 
 
 \subsection{Automated Quantum Machine Learning}
