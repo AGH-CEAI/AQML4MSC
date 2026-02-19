@@ -451,19 +451,28 @@ quantum circuits \cite{schuld_effect_2021}.
 
 
 To investigate the performance of our approach with the real data, we decided to revisits the experiments reported in
-\cite{Rybotycki_2025}, only this time, with the use of AQML. The model we used for those experiments follows the
+\cite{QMLCaseStudy}, only this time, with the use of AQML. The model we used for those experiments follows the
 schematic presented in the figure \ref{fig:model_schamatic} and is similar to the model described in previous subsection
 \ref{ssec:hqnn}. The only difference here is that we used a single data extractor instead of two, to which we uploaded
 the concatenated data from both the sources. This approach, known as data-level fusion, is also sometimes considered in
 remote sensing \cite{dalla_mura_challenges_2015}. We decided not to separate the data extraction, so that the experiment
-differs from \cite{Rybotycki_2025} only in the application of AQML. In this model, the final classical layer was also
+differs from \cite{QMLCaseStudy} only in the application of AQML. In this model, the final classical layer was also
 an optional addition.
 
 
 \subsection{Automated Quantum Machine Learning}
 
+In our experiments, we used the \texttt{aqmlator} library and thus the hyperparameter optimization (HPO)-based AQML
+approach reported in \cite{Rybotycki_2025}. The idea behind this algorithm is to treat the ansatz architecture as an
+hyperparameter and apply classical HPO techniques to find it. However, instead of using quantum gates as the basic
+building blocks of the PQC, the authors proposed to use well-known and commonly used quantum layers, and thus limiting
+the search-space of the optimization algorithm significantly.
 
-
+The latest version of \texttt{aqmlator} (2.0.0a1, available only through the sources), aside from technical
+improvements, offers more flexible ansatze finding classes, proposes data re-uploading layers, and uses a wider range
+of layers during the ansatz search. In particular, it implements the \texttt{SimplifiedTwoDesign} and the
+\texttt{BellmanLayer}, this making it possible for \text{aqmlator} to find the models used in the previous ONERA change
+detection experiments \cite{QMLCaseStudy}. 
 
 
 
