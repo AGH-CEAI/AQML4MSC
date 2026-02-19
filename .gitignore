@@ -33,3 +33,4 @@ scripts/docker_run.sh
 scripts/test.py
 checkpoints/
 txt/iccs/aqml4msc.blg
+*.drawio.bkp
