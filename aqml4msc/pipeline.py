@@ -85,13 +85,13 @@ class ClassificationPipeline:
                         mlflow_utils.log_confusion_matrix(
                             y_true=true_labels, y_pred=preds
                         )
+                        mlflow_utils.log_model(
+                            trainer=classifier,
+                            X_val=val_data,
+                            model_name=experiment_params["model_name"],
+                        )
                     except Exception as e:
                         print(f"Could not save artifacts. Error occured: {e}")
-                    mlflow_utils.log_model(
-                        trainer=classifier,
-                        X_val=val_data,
-                        model_name=experiment_params["model_name"],
-                    )
 
             aggretated_metrics = aggregate_fold_metrics(metrics)
             mlflow_utils.log_aggregated_metrics(aggretated_metrics)
