@@ -106,6 +106,7 @@
 	% Despite the success of classical machine learning models for feature-level fusion, their performance can be limited
 	% by model capacity and scaling issues in high-dimensional feature spaces.\todo{TR: Mamy źródło?}  This motivates the
 	% exploration of alternative computational paradigms for multisource learning.
+	\todo[inline]{TR: JEscze jeden rozdzaj early fusion - data fusion. Tam fuzja jest robiona od razu na surowych danych. Zaznaczyć różnicę.}
 	Early fusion problems are often approached with machine learning models \cite{liMultisourceInformationFusion2024,baltrusaitisMultimodalMachineLearning2019}, which one may consider a very natural approach. After all, ML models
 	are trained on the data. If the data is represented better (with multiple representations, coming from multiple
 	sources), it's only natural that the results should improve. However, some of the data fusion problems have been
@@ -265,7 +266,6 @@ network may be classical (subsection \ref{ssec:mlp}), quantum (subsection \ref{s
 (subsection \ref{ssec:qml_onera}).
 
 
-
 \subsection{Multi-layer perceptron}
 \label{ssec:mlp}
 
@@ -273,11 +273,12 @@ When defining the model for our initial quantum data fusion experiments, we had 
 which part of the model we should make quantum. Following logic similar to that in
 \cite{wuFeatureEntanglementbasedQuantum2026}, we decided to use quantum layers for our classifier. Moreover,
 considering the effectiveness of the network in \cite{wuFeatureEntanglementbasedQuantum2026}, we also
-decided to separate the feature extractor part of the model into two separate parts --- one for each input.
+decided to separate the feature extractor part of the model into two distinct parts --- one for each input.
 
-The first model we implemented was a classical multilayer perceptron (MLP) \cite{RussellNorvig2010}, which was
-meant to serve as a baseline reference for our subsequent experiments. In this model both the extractors and
-the classifier was a MLP. We present this a architecture in the figure~\ref{fig:mlp_diagram}.
+The first model we implemented was a classical multilayer perceptron (MLP) \cite{RussellNorvig2010}, which was meant to
+serve as a baseline reference for our subsequent experiments. In this model both the extractors and the classifier was
+a MLP. We present this a architecture in the figure~\ref{fig:model_schamatic}. \todo[inline]{TR: Remember to update the
+figure and the descriptions, once done.}
 \begin{figure}
 	\centering
 	\includegraphics[width=0.6\textwidth]{fig/MLP_diagram.pdf}
@@ -285,128 +286,160 @@ the classifier was a MLP. We present this a architecture in the figure~\ref{fig:
 		Particular parts of the diagram are labeled with colors: \textbf{yellow} --- feature extractors
 		input layer, \textbf{orange} --- feature extractors, \textbf{blue} --- classifier (here the fusion
 		takes place), \textbf{green} --- output logits.}
-	\label{fig:mlp_diagram}
+	\label{fig:model_schamatic}
 \end{figure}
 
-In this architecture, the input from both the sources --- $x_\mathrm{top}$ and $x_\mathrm{bottom}$ --- is passed to their
-respective feature extractors and then processed, independently. After this processing, the output vectors of
+In this architecture, the input from both the sources --- $x_\mathrm{top}$ and $x_\mathrm{bottom}$ --- is passed to
+their respective feature extractors and then processed, independently. After this processing, the output vectors of
 both extractors are concatenated, such that $v = [v^1_\mathrm{top}, ..., v^n_\mathrm{top}, v^1_\mathrm{bottom}, ...,
-	v^m_\mathrm{bottom}]$, assuming the lengths of $v_\mathrm{top}$ and $v_\mathrm{bottom}$ are $n$ and $m$ respectively. The resultant
-vector $x_{classifier}$ is used as the input of the classifier network (here another MLP). For all the layers
-(beside the output) we used $ ReLU(v) = \max(v, 0)$ activation function, which is a standard way to introduce
-non-linearity in deep neural networks \cite{RussellNorvig2010}.
+v^m_\mathrm{bottom}]$, assuming the lengths of $v_\mathrm{top}$ and $v_\mathrm{bottom}$ are $n$ and $m$ respectively.
+The resultant vector $v$ is used as the input of the classifier network (here another MLP). For all the layers (beside
+the output) we used $ ReLU(v) = \max(v, 0)$ activation function, which is a standard way to introduce non-linearity in
+deep neural networks \cite{RussellNorvig2010}.
 
 
-\subsection{Hybrid Classical--Quantum Neural Network}
+\subsection{Hybrid Quantum--Classical Neural Network}
 \label{ssec:qmlp}
 
+In our initial experiments with automated quantum machine learning, we used a hybrid quantum-classical machine learning
+model. What the name entails is the fact that in the ML pipeline, both classical and quantum layers are used. A common
+approach is to include a parametrized quantum circuit (PQC), with an arbitrary number of gate layers, as a single
+quanum layer of the network. Such layer can then be a part of a model, or a model by itself. 
 
-In the hybrid approach, the classifier in the classical neural network architecture is replaced by a
-variational quantum circuit, while the feature extractors are kept unchanged. \todo{TR: Uzasadnienie
-	dlaczego akurat tak.} Diagram of our hybrid architecture is shown on figure~\ref{fig:vqa_diagram}. The
-extracted features are concatenated into a single feature vector
-\(
-v = [v_{\mathrm{top}}, v_{\mathrm{bottom}}],
-\)\todo{TR: To się chyba nie różni od tego co w architekturze klasycznej? Dlaczego pojawia się dopiero
-	w tej sekcji?}
-which is then used as the input to the quantum circuit via angle embedding.\todo{TR: Tutaj, znowu,
-	lepiej nakreślić bardziej na miękko, że generalnie danych klasycznych nie można na surowo używać z
-	QML, trzeba je transformować w stany (embedować). Następny akapit zacząć, że embedowanie to problem
-	sam w sobie, cały czas aktywnie badany [ref. nowa praca xanadu o tym]. Są standardowe metody. W tej
-	pracy używamy...}
+Starting from the model schematic, as presented in the figure \ref{fig:model_schamatic}, we kept the feature extractors
+as in the MLP experiment (see subsection \ref{ssec:mlp}). However, we used quantum classifier, instead of the classical
+one. This way, our final architecture resambled the one in \cite{wuFeatureEntanglementbasedQuantum2026}. Moreover, this
+way we could assess the classification capabilities on the found models, under the assumption that the data
+preprocessing (i.e. the preprocessing algorithm) remained intact.
 
-The angle embedding is defined in Eq.~\ref{eq:embedding}, where \(n\) denotes the number of qubits—equal to
-the number of features fed into the classifier, and \(v_i\) is the \(i\)-th component of the feature vector
-\(v\).
-\begin{align}\label{eq:embedding}
-	\ket{\phi(v)} & =
-	U_{\mathrm{emb}}(v)\ket{0}                                                                                    \\
-	              & = \left( R_X(v_1) \otimes R_X(v_2) \otimes \cdots \otimes R_X(v_n) \right) \ket{0}. \nonumber
-\end{align}
-Here,
-\begin{equation*}
-	R_X(\alpha) = e^{-\mathrm{i} \alpha \sigma_X / 2}.
-\end{equation*}\todo{Jeszcze nie zdefiniowałeś (chyba), że $\sigma_\square$ to macierze Pauliego. W tym
-	miejscu dobrze jest też explicite zauważyć, że bez odpowiedniej normalizacji inputu, wyniki mogą być
-	chaotyczne. Wynika to z intuicji stojącej za angle embeddingiem --- większe wartości, powinny być bardziej
-	odchylone od stanu wyjściowego (czyli zazwyczaj |0>). Jeśli wartości nie zostaną znormalizowane, albo będą
-	znormalizowane źle, to możliwe jest "przekręcenie stanu" i zrównanie (na sferze blocha) istotnie różnych
-	wartości.} The embedded quantum state is then processed by a parametrized unitary \todo{TR: Wiem co chcesz
-	powiedzieć, ale to znowu nieściśle. Taki stan, przetwarza OBWÓD, który matematycznie wyraża się przez
-	unitarkę.} , referred to as the ansatz. The ansatz used in this work consists of \(L\) Basic Entangler
-Layers provided by the \texttt{pennylane version 0.43.1} package. The trainable parameters of the ansatz
-are denoted by \(\boldsymbol{\Theta}\).
-
-The full parameter set of the variational circuit\todo{TR: Nitpick. Czy było już mówione o obwodzie? :P}
-\tr{we used} is defined as
-\begin{equation}
-	\boldsymbol{\Theta}
-	=
-	\left\{
-	\boldsymbol{\theta}^{(1)}, \boldsymbol{\theta}^{(2)}, \ldots, \boldsymbol{\theta}^{(L)}
-	\right\},
-	\qquad
-	\boldsymbol{\theta}^{(\ell)} \in \mathbb{R}^{n},
-\end{equation}
-where \(L\) denotes the number of entangler layers and \(n\) is the number of qubits. The overall ansatz
-unitary is given by
-\begin{equation}
-	U_{\mathrm{ansatz}}(\boldsymbol{\Theta})
-	=
-	\prod_{\ell=1}^{L}
-	U_{\mathrm{BEL}}(\boldsymbol{\theta}^{(\ell)}),
-\end{equation}
-\tr{where $U_{BEL}$ is a unitary matrix representing} a single Basic Entangler Layer\tr{. It's} defined as
-\begin{equation}
-	U_{\mathrm{BEL}}(\boldsymbol{\theta}^{(\ell)})
-	=
-	\left(
-	\prod_{i=1}^{n}
-	\mathrm{CNOT}_{i,\,i+1 \bmod n}
-	\right)
-	\left(
-	\bigotimes_{i=1}^{n}
-	R_Y(\theta^{(\ell)}_i)
-	\right),
-\end{equation}
-where
-\begin{align*}
-	R_Y(\theta) & = e^{-\mathrm{i} \theta \sigma_Y / 2}, \\
-	\mathrm{CNOT}
-	            & =
-	\ket{0}\!\bra{0} \otimes \mathbb{I}
-	+
-	\ket{1}\!\bra{1} \otimes \sigma_X.
-\end{align*}
-Applying the ansatz unitary to the embedded quantum state yields
-\begin{equation}
-	\ket{\gamma}
-	=
-	U_{\mathrm{ansatz}}(\boldsymbol{\Theta}) \ket{\phi}.
-\end{equation}
-At the output of the circuit, a vector of expectation values \tr{of the Pauli-\(Z\) operator on the first
-	three qubits are obtained by the final state measurement}. Each expectation value corresponds to the
-expectation of an ideal projective measurement of \(\sigma_Z\) acting on the respective qubit. The
-expectation value for qubit \(j\) is given by
-\begin{equation}
-	\langle \sigma_Z \rangle_{\gamma, j}
-	=
-	\bra{\gamma} \sigma_Z^{[j]} \ket{\gamma},
-	\qquad j = 1,2,3,
-\end{equation}
-where
-\begin{equation}
-	\sigma_Z^{[j]}
-	=
-	\mathbb{I}^{\otimes (j-1)} \otimes \sigma_Z \otimes \mathbb{I}^{\otimes (n-j)}.
-\end{equation}
-
+In the construction of our quantum classifiers, we used two different approach. First we tried manual selection of the
+ansatz (which is another usual name for a PQC). In that case, the model we selected had no data re-uploading and
+consisted of typically used quantum neural network (QNN) layers. In our other approach, we used AQML techniques to
+find the right ansatz for the problem. In this scenario, the algorithm suggested the circuit build using several QML
+blocks, which are pairs of data (re-)uploading and variational operations. The resultant PQC schematic is presented in
+the figure \ref{fig:AQML_PQC}.
 \begin{figure}
 	\centering
-	\includegraphics[width=0.9\textwidth]{fig/VQA_diagram.pdf}
-	\caption{ }
-	\label{fig:vqa_diagram}
+	\includegraphics[width=0.6\textwidth]{fig/variational_circuit.pdf}
+	\caption{A general schematic of a parametrized quantum circuit. It consists of $K$ QML blocks, each containing a
+	data (re-)uploading operation and a variational operation. Notice that both $U_{\mathrm{load}}$ and $U_{\mathrm{var}}$
+	could, in principle, be an identity. On the schematic $x$ denote the input and $\theta$ denotes the full set of PQC
+	parameters. The PQC is concluded with a measurement.}
+	\label{fig:AQML_PQC}
 \end{figure}
+For some experiments, we enhanced this architecture with additional classical layer that additionally processed the
+output of the PQC, and naturally led to a desired number of outputs.
+
+The imporatance of data uploading layers cannot be overstated. First of all, at least one such layer is required of any
+QML model, as raw classical data cannot be processed by a quantum circuit. It has to be encoded into a quantum state.
+Second of all, data reuploading is known --- both theoretically and empirically --- to increase the expressivness of
+quantum circuits \cite{schuld_effect_2021}.
+
+
+
+% In the hybrid approach, the classifier in the classical neural network architecture is replaced by a
+% variational quantum circuit, while the feature extractors are kept unchanged. \todo{TR: Uzasadnienie
+% dlaczego akurat tak.} Diagram of our hybrid architecture is shown on figure~\ref{fig:vqa_diagram}. The
+% extracted features are concatenated into a single feature vector
+% \(
+% v = [v_{\mathrm{top}}, v_{\mathrm{bottom}}],
+% \)
+%
+%which is then used as the input to the quantum circuit via angle embedding.\todo{TR: Tutaj, znowu,
+%	lepiej nakreślić bardziej na miękko, że generalnie danych klasycznych nie można na surowo używać z
+%	QML, trzeba je transformować w stany (embedować). Następny akapit zacząć, że embedowanie to problem
+%	sam w sobie, cały czas aktywnie badany [ref. nowa praca xanadu o tym]. Są standardowe metody. W tej
+%	pracy używamy...}
+
+% The angle embedding is defined in Eq.~\ref{eq:embedding}, where \(n\) denotes the number of qubits—equal to
+% the number of features fed into the classifier, and \(v_i\) is the \(i\)-th component of the feature vector
+% \(v\).
+% \begin{align}\label{eq:embedding}
+%	\ket{\phi(v)} & =
+%	U_{\mathrm{emb}}(v)\ket{0}                                                                                    \\
+%	              & = \left( R_X(v_1) \otimes R_X(v_2) \otimes \cdots \otimes R_X(v_n) \right) \ket{0}. \nonumber
+% \end{align}
+% Here,
+% \begin{equation*}
+%	R_X(\alpha) = e^{-\mathrm{i} \alpha \sigma_X / 2}.
+%\end{equation*} The embedded quantum state is then processed by a parametrized unitary, referred to as the ansatz. The ansatz used in this work consists of \(L\) Basic Entangler
+% Layers provided by the \texttt{pennylane version 0.43.1} package. The trainable parameters of the ansatz
+% are denoted by \(\boldsymbol{\Theta}\).
+
+
+% OLD description
+% 
+% The full parameter set of the variational circuit
+% \tr{we used} is defined as
+% \begin{equation}
+%	\boldsymbol{\Theta}
+%	=
+%	\left\{
+%	\boldsymbol{\theta}^{(1)}, \boldsymbol{\theta}^{(2)}, \ldots, \boldsymbol{\theta}^{(L)}
+%	\right\},
+%	\qquad
+%	\boldsymbol{\theta}^{(\ell)} \in \mathbb{R}^{n},
+%\end{equation}
+% where \(L\) denotes the number of entangler layers and \(n\) is the number of qubits. The overall ansatz
+% unitary is given by
+% \begin{equation}
+%	U_{\mathrm{ansatz}}(\boldsymbol{\Theta})
+%	=
+%	\prod_{\ell=1}^{L}
+%	U_{\mathrm{BEL}}(\boldsymbol{\theta}^{(\ell)}),
+%\end{equation}
+% \tr{where $U_{BEL}$ is a unitary matrix representing} a single Basic Entangler Layer\tr{. It's} defined as
+%\begin{equation}
+%	U_{\mathrm{BEL}}(\boldsymbol{\theta}^{(\ell)})
+%	=
+%	\left(
+%	\prod_{i=1}^{n}
+%	\mathrm{CNOT}_{i,\,i+1 \bmod n}
+%	\right)
+%	\left(
+%	\bigotimes_{i=1}^{n}
+%	R_Y(\theta^{(\ell)}_i)
+%	\right),
+%\end{equation}
+%where
+%\begin{align*}
+%	R_Y(\theta) & = e^{-\mathrm{i} \theta \sigma_Y / 2}, \\
+%	\mathrm{CNOT}
+%	            & =
+%	\ket{0}\!\bra{0} \otimes \mathbb{I}
+%	+
+%	\ket{1}\!\bra{1} \otimes \sigma_X.
+%\end{align*}
+%Applying the ansatz unitary to the embedded quantum state yields
+%\begin{equation}
+%	\ket{\gamma}
+%	=
+%	U_{\mathrm{ansatz}}(\boldsymbol{\Theta}) \ket{\phi}.
+%\end{equation}
+%At the output of the circuit, a vector of expectation values \tr{of the Pauli-\(Z\) operator on the first
+% three qubits are obtained by the final state measurement}. Each expectation value corresponds to the
+% expectation of an ideal projective measurement of \(\sigma_Z\) acting on the respective qubit. The
+% expectation value for qubit \(j\) is given by
+% \begin{equation}
+%	\langle \sigma_Z \rangle_{\gamma, j}
+%	=
+%	\bra{\gamma} \sigma_Z^{[j]} \ket{\gamma},
+%	\qquad j = 1,2,3,
+%\end{equation}
+% where
+% \begin{equation}
+%	\sigma_Z^{[j]}
+%	=
+%	\mathbb{I}^{\otimes (j-1)} \otimes \sigma_Z \otimes \mathbb{I}^{\otimes (n-j)}.
+%\end{equation}
+
+% Old VQA figure. Possibly won't be used.
+% \begin{figure}
+% 	\centering
+% 	\includegraphics[width=0.9\textwidth]{fig/VQA_diagram.pdf}
+% 	\caption{ }
+% 	\label{fig:vqa_diagram}
+% \end{figure}
 
 
 
