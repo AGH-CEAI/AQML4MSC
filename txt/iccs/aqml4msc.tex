@@ -43,25 +43,10 @@
 \maketitle              % typeset the header of the contribution
 %
 \begin{abstract}
-
-
-	% 214 / 250 words
-	As we are nearing the advent of fault-tolerant quantum computing and slowly advancing towards the era of space exploration,
-	tasks standing at the intersection of these two fields are growing even more relevant. It comes as no surprise,
-	especially in the case of computationally demanding scientific domains such as remote sensing data analysis.
-	There are already multiple studies showing how quantum computing and quantum machine learning (QML) can help in such tasks.
-
-	Quantum data fusion, an example of a data analysis problem, has gained a lot of attention in recent years.
-	The reason for that is the promise that noisy intermediate-scale quantum computers of the current era
-	can solve (NP-hard) problems in this field faster than contemporary supercomputers.
-	With techniques such as the quantum approximate optimization algorithm and quantum adiabatic computing,
-	this is a well-justified expectation. However, those methods are not the only ones worth investigating.
-
-	In this manuscript, we present an automated QML (AQML) approach for solving the data fusion problem.
-	We study how AQML-found circuits compare to the classical MLP and manually selected QML models,
-	in the case when the input to those models comes from multiple sources.
-	We also apply our technique to the change detection task, analyzing the multispectral ONERA dataset
-	and showing improvement over previously reported QML-based change detection accuracy.
+With fault-tolerant quantum computing on the horizon, there is growing interest in applying quantum computational methods to data-intensive scientific fields like remote sensing. Quantum machine learning (QML) has already demonstrated potential for such demanding tasks.
+One area of particular focus is quantum data fusion—a complex data analysis problem that has attracted significant recent attention.
+In this work, we introduce an automated QML (AQML) approach for addressing data fusion challenges. We evaluate how AQML-generated quantum circuits perform compared to classical multilayer perceptrons (MLPs) and manually designed QML models when processing multi-source inputs.
+Furthermore, we apply our method to change detection using the multispectral ONERA dataset, achieving improved accuracy over previously reported QML-based change detection results.
 
 
 	\keywords{quantum data fusion  \and auto quantum machine learning \and remote sensing \and multispectral imaging
@@ -73,25 +58,20 @@
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
+Multisource Data about an observed object can be gathered from multiple
+complementary sensors. These data sensors have to be
+aggregated and transformed into useful information to e.g.\ obtain richer and
+more accurate decision outcomes. The field of multisource information fusion (MSIF) deals with this type of data processing problems.
 
-% Multisource
-% Data about an observed object can be gathered from multiple complementary sensors. To obtain richer and more
-% accurate decision outcomes, multisource information fusion (MSIF) can be employed.
-% A comprehensive review of information fusion approaches is provided by Li et
-% al.~\cite{liMultisourceInformationFusion2024}.\todo{TR: To chyba lepiej na koniec.} In this work, we focus on
-% feature-level fusion, in which the fusion model operates on extracted feature representations.
-% MSIF has found widespread application in machine learning, particularly in classification tasks, as surveyed
-% in~\cite{baltrusaitisMultimodalMachineLearning2019}.
-% Representative applications include remote sensing~\cite{liA3CLNNSpatialSpectral2022}, military
-% systems~\cite{sycaraIntegratedApproachHighlevel2009},
-% and human action recognition~\cite{fortinoAdvancesMultisensorFusion2019}, among
-% others~\cite{liMultisourceInformationFusion2024}.\todo{TR: Wstęp bardzo do rzeczy, ale ok.}
-
-Observation is a primary, primal even, epistemic tool. It is the act of observation upon which we begin our
-most basic learning, and in empirical sciences it's the observation that ultimately falsifies (or not) the
-hypothesis under investigation. It's also a common knowledge that the more we observe a given phenomenon, the
-more we know about it. However, while the aggregation of such multiple observation come more or less naturally to
-us, the situation is entirely different for the learning algorithms.
+In this work, we focus on
+feature-level fusion, in which the fusion model operates on extracted feature
+representations. MSIF has found widespread application in machine learning,
+particularly in classification tasks, as surveyed
+in~\cite{baltrusaitisMultimodalMachineLearning2019}. Representative applications
+include remote sensing~\cite{liA3CLNNSpatialSpectral2022}, military
+systems~\cite{sycaraIntegratedApproachHighlevel2009}, and human action
+recognition~\cite{fortinoAdvancesMultisensorFusion2019}, among
+others~\cite{liMultisourceInformationFusion2024}.
 
 The issue mentioned above lies at the very core of the multi-source information fusion (MSIF), a domain of
 knowledge dedicated to finding efficient methods for multi-source data aggregation. The field itself has been a
@@ -170,7 +150,7 @@ It this paper, we present an application of AQML to quantum feature fusion probl
 \ref{sec:problem_formulation} we formally present the issues addressed in this manuscript: the feature fusion and
 quantum architecture search. Then, we provide the detailed description of our multi-level approach in section
 \ref{sec:method}. Section \ref{sec:exp} contains the experiments overview --- along with the datasets description,
-hyper-parameter optimization (HPO) step and the results analysis. We conclude the paper with final remarks and
+hyper-parameter optimization (HPO) step and the results' analysis. We conclude the paper with final remarks and
 insights for future work.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -776,8 +756,8 @@ further studies.
 \vspace*{-0.3cm}
 \begin{credits}
 
-	\subsubsection{\ackname} We gratefully acknowledge the funding support by the program ”Excellence initiative—research
-	university” for the AGH University of Kraków as well as the ARTIQ project (UMO-2021/01/2/ST6/00004 and
+	\subsubsection{\ackname} We gratefully acknowledge the funding support by the program ``Excellence initiative—research
+	university'' for the AGH University of Kraków as well as the ARTIQ project (UMO-2021/01/2/ST6/00004 and
 	ARTIQ/0004/2021).
 
 	\vspace*{-0.3cm}
