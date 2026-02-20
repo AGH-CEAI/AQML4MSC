@@ -57,78 +57,162 @@ plt.rcParams.update(
     }
 )
 
-fig = plt.figure(figsize=(4.2, 7.5))  # single-column friendly
 
-gs = GridSpec(5, 2, height_ratios=[2.2, 1.2, 1.2, 1.2, 0.8], hspace=0.35, wspace=0.08)
-
-# (a) Original (span both columns)
-ax_a = fig.add_subplot(gs[0, :])
-ax_a.imshow(img_original, cmap="gray")
-ax_a.set_title("(a) Original", loc="left", fontsize=11, pad=5)
-ax_a.axis("off")
+def _imshow_clean(ax, img, title=None):
+    ax.imshow(img, cmap="gray")
+    if title:
+        ax.set_title(title, loc="left", fontsize=11, pad=15)
+    ax.axis("off")
 
 
-# Helper function for paired rows
-def plot_pair(row, title, img_top, img_bottom):
+def _plot_projection(ax, projection, title=None):
+    heatmap = projection[np.newaxis, :]
+    ax.imshow(heatmap, aspect="equal", cmap="gray", vmin=0, vmax=1)
+    if title:
+        ax.set_title(title, loc="left", fontsize=11, pad=32)
+    ax.axis("off")
+
+
+def _plot_pair_vertical(fig, gs, row, title, img_top, img_bottom):
     ax_t = fig.add_subplot(gs[row, 0])
     ax_b = fig.add_subplot(gs[row, 1])
 
-    ax_t.imshow(img_top, cmap="gray")
-    ax_b.imshow(img_bottom, cmap="gray")
-
-    ax_t.set_title(title, loc="left", fontsize=11, pad=5)
-    ax_t.axis("off")
-    ax_b.axis("off")
+    _imshow_clean(ax_t, img_top, title)
+    _imshow_clean(ax_b, img_bottom)
 
     return ax_t, ax_b
 
 
-# (b) Split
-plot_pair(1, "(b) Split (top / bottom)", img_top, img_bottom)
-# (c) Binarized
-plot_pair(2, "(c) Binarized", bin_top, bin_bottom)
-# (d) Downsampled
-plot_pair(3, "(d) Downsampled", reduced_top, reduced_bottom)
-# (e) Column mean
-ax_e1 = fig.add_subplot(gs[4, 0])
-ax_e2 = fig.add_subplot(gs[4, 1])
+def _plot_pair_horizontal(fig, gs, col, title, img_top, img_bottom):
+    ax_t = fig.add_subplot(gs[0, col])
+    ax_b = fig.add_subplot(gs[1, col])
 
-for ax, heatmap, label in [
-    (ax_e1, vertical_projection_top, "(e) Vertical mean projection"),
-    (ax_e2, vertical_projection_bottom, None),
-]:
-    heatmap = heatmap[np.newaxis, :]
-    ax.imshow(heatmap, aspect="equal", cmap="gray", vmin=0, vmax=1)
+    _imshow_clean(ax_t, img_top, title)
+    _imshow_clean(ax_b, img_bottom)
 
-    # for i, v in enumerate(heatmap[0]):
-    #     ax.text(i, 0, f"{v:.2f}", ha="center", va="center", fontsize=7, color="white")
-
-    ax.axis("off")
-    if label:
-        ax.set_title(label, loc="left", fontsize=11, pad=5)
+    return ax_t, ax_b
 
 
-# Add labels under final steps
-ax_e1.text(
-    0.5,
-    -1.0,
-    r"$x_{\mathrm{top}}$",
-    transform=ax_e1.transAxes,
-    ha="center",
-    va="top",
-    fontsize=13,
-)
+# ------------------------------------------------------------------
+# Figure factory
+# ------------------------------------------------------------------
 
-ax_e2.text(
-    0.5,
-    -1.0,
-    r"$x_{\mathrm{bottom}}$",
-    transform=ax_e2.transAxes,
-    ha="center",
-    va="top",
-    fontsize=13,
-)
 
-plt.tight_layout()
-fig.savefig("txt/iccs/fig/figure.pdf", backend="pgf")
+def create_pipeline_figure(layout="vertical"):
+    """
+    layout ∈ {"vertical", "horizontal"}
+    """
+
+    if layout == "vertical":
+        fig = plt.figure(figsize=(4.2, 7.5))
+        gs = GridSpec(
+            5,
+            2,
+            height_ratios=[2.2, 1.2, 1.2, 1.2, 0.8],
+            hspace=0.35,
+            wspace=0.08,
+        )
+
+        # (a) Original
+        ax_a = fig.add_subplot(gs[0, :])
+        _imshow_clean(ax_a, img_original, "(a) Original")
+
+        # Processing steps
+        _plot_pair_vertical(fig, gs, 1, "(b) Split (top / bottom)", img_top, img_bottom)
+        _plot_pair_vertical(fig, gs, 2, "(c) Binarized", bin_top, bin_bottom)
+        _plot_pair_vertical(fig, gs, 3, "(d) Downsampled", reduced_top, reduced_bottom)
+
+        # Projection
+        ax_e1 = fig.add_subplot(gs[4, 0])
+        ax_e2 = fig.add_subplot(gs[4, 1])
+
+        _plot_projection(ax_e1, vertical_projection_top, "(e) Vertical mean projection")
+        _plot_projection(ax_e2, vertical_projection_bottom)
+
+        ax_e1.text(
+            0.5,
+            -1.0,
+            r"$x_{\mathrm{top}}$",
+            transform=ax_e1.transAxes,
+            ha="center",
+            va="top",
+            fontsize=13,
+        )
+
+        ax_e2.text(
+            0.5,
+            -1.0,
+            r"$x_{\mathrm{bottom}}$",
+            transform=ax_e2.transAxes,
+            ha="center",
+            va="top",
+            fontsize=13,
+        )
+
+    elif layout == "horizontal":
+        fig = plt.figure(figsize=(10, 3.2))
+        gs = GridSpec(
+            2,
+            5,
+            height_ratios=[1, 1],
+            width_ratios=[1.8, 1, 1, 1, 1],
+            hspace=0.1,
+            wspace=0.25,
+        )
+
+        # (a) Original
+        ax_a = fig.add_subplot(gs[:, 0])
+        _imshow_clean(ax_a, img_original, "(a) Original")
+
+        # Processing steps
+        _plot_pair_horizontal(fig, gs, 1, "(b) Split", img_top, img_bottom)
+        _plot_pair_horizontal(fig, gs, 2, "(c) Binarized", bin_top, bin_bottom)
+        _plot_pair_horizontal(
+            fig, gs, 3, "(d) Downsampled", reduced_top, reduced_bottom
+        )
+
+        # Projection
+        ax_e1 = fig.add_subplot(gs[0, 4])
+        ax_e2 = fig.add_subplot(gs[1, 4])
+
+        _plot_projection(ax_e1, vertical_projection_top, "(e) Vertical mean")
+        _plot_projection(ax_e2, vertical_projection_bottom)
+
+        ax_e1.text(
+            0.5,
+            -0.8,
+            r"$x_{\mathrm{top}}$",
+            transform=ax_e1.transAxes,
+            ha="center",
+            va="top",
+            fontsize=12,
+        )
+
+        ax_e2.text(
+            0.5,
+            -0.8,
+            r"$x_{\mathrm{bottom}}$",
+            transform=ax_e2.transAxes,
+            ha="center",
+            va="top",
+            fontsize=12,
+        )
+
+    else:
+        raise ValueError("layout must be 'vertical' or 'horizontal'")
+
+    plt.tight_layout()
+    return fig
+
+
+# ------------------------------------------------------------------
+# Generate & save both versions
+# ------------------------------------------------------------------
+
+fig_vertical = create_pipeline_figure(layout="vertical")
+fig_vertical.savefig("txt/iccs/fig/fig_vertical.pdf", backend="pgf")
+
+fig_horizontal = create_pipeline_figure(layout="horizontal")
+fig_horizontal.savefig("txt/iccs/fig/fig_horizontal.pdf", backend="pgf")
+
 plt.show()
