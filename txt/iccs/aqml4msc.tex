@@ -46,25 +46,25 @@
 
 
 	% 214 / 250 words
-	As we are nearing the advent of fault-tolerant quantum computing and slowly advance towards the era of space
-		exploration, tasks standing at the intersection of those two fields are growing even more relevant. It comes as
-		no surprise, especially in the case of computationally demanding scientific domains, such as remote sensing data
-		analysis. There are already multiple studies showing how quantum computing and quantum machine learning (QML) can
-		help in such tasks.
+	As we are nearing the advent of fault-tolerant quantum computing and slowly advancing towards the era of space exploration,
+	tasks standing at the intersection of these two fields are growing even more relevant. It comes as no surprise,
+	especially in the case of computationally demanding scientific domains such as remote sensing data analysis.
+	There are already multiple studies showing how quantum computing and quantum machine learning (QML) can help in such tasks.
 
-		Quantum data fusion, an example of a data analysis problem, has gained a lot of attention in the recent years.
-		The reason for that is the promise that noisy intermediate-scale quantum computers of current era can solve the
-		(NP-hard) in this field faster than contemporary supercomputers. With the techniques such as quantum approximate
-		optimization algorithm and quantum adiabatic computing this is a well justified expectation. However, those methods
-		aren't the only ones worth investigating.
+	Quantum data fusion, an example of a data analysis problem, has gained a lot of attention in recent years.
+	The reason for that is the promise that noisy intermediate-scale quantum computers of the current era
+	can solve (NP-hard) problems in this field faster than contemporary supercomputers.
+	With techniques such as the quantum approximate optimization algorithm and quantum adiabatic computing,
+	this is a well-justified expectation. However, those methods are not the only ones worth investigating.
 
-		In this manuscript, we present an automated QML (AQML) approach for solving data fusion problem. We study how using
-		AQML-found circuits compare to the classical MLP and manually selected QML models, in the case when the input to
-		those models comes from multiple sources. We also apply our technique for the change detection task, analyzing the
-		hyper-spectral ONERA dataset and show improvement over previously reported QML-based change detection accuracy.
+	In this manuscript, we present an automated QML (AQML) approach for solving the data fusion problem.
+	We study how AQML-found circuits compare to the classical MLP and manually selected QML models,
+	in the case when the input to those models comes from multiple sources.
+	We also apply our technique to the change detection task, analyzing the multispectral ONERA dataset
+	and showing improvement over previously reported QML-based change detection accuracy.
 
 
-	\keywords{quantum data fusion  \and auto quantum machine learning \and remote sensing \and hyper-spectral imaging
+	\keywords{quantum data fusion  \and auto quantum machine learning \and remote sensing \and multispectral imaging
 		\and ONERA}
 
 
@@ -88,52 +88,52 @@
 % others~\cite{liMultisourceInformationFusion2024}.\todo{TR: Wstęp bardzo do rzeczy, ale ok.}
 
 Observation is a primary, primal even, epistemic tool. It is the act of observation upon which we begin our
-	most basic learning, and in empirical sciences it's the observation that ultimately falsifies (or not) the
-	hypothesis under investigation. It's also a common knowledge that the more we observe a given phenomenon, the
-	more we know about it. However, while the aggregation of such multiple observation come more or less naturally to
-	us, the situation if entirely different for the learning algorithms.
+most basic learning, and in empirical sciences it's the observation that ultimately falsifies (or not) the
+hypothesis under investigation. It's also a common knowledge that the more we observe a given phenomenon, the
+more we know about it. However, while the aggregation of such multiple observation come more or less naturally to
+us, the situation is entirely different for the learning algorithms.
 
-	The issue mentioned above lies at the very core of the multi-source information fusion (MSIF), a domain of
-	knowledge dedicated to finding efficient methods for multi-source data aggregation. The field itself has been a
-	subject of scientific investigations for quite some time now, particularly in the context of remote sensing
-	\cite{DataFusion1986}, where it persists as a subject of studies \cite{liA3CLNNSpatialSpectral2022}. The research
-	on data fusion is extensive enough, and the scope of techniques it presents is so wide, that they could be
-	categorized into groups and further subgroups \cite{baltrusaitisMultimodalMachineLearning2019}. In this work, we
-	focus solely on one such subgroup: a model-agnostic early fusion, otherwise known as feature-based fusion. This
-	term refers to a family of algorithms in which the fusion occurs at the early stages of the ML pipeline. A subtype of
-	those algorithms is a data-level fusion, an approach in which the multi-source data is aggregated prior to entering
-	the ML model \cite{dalla_mura_challenges_2015}.
+The issue mentioned above lies at the very core of the multi-source information fusion (MSIF), a domain of
+knowledge dedicated to finding efficient methods for multi-source data aggregation. The field itself has been a
+subject of scientific investigations for quite some time now, particularly in the context of remote sensing
+\cite{DataFusion1986}, where it persists as a subject of studies \cite{liA3CLNNSpatialSpectral2022}. The research
+on data fusion is extensive enough, and the scope of techniques it presents is so wide, that they could be
+categorized into groups and further subgroups \cite{baltrusaitisMultimodalMachineLearning2019}. In this work, we
+focus solely on one such subgroup: a model-agnostic early fusion, otherwise known as feature-based fusion. This
+term refers to a family of algorithms in which the fusion occurs at the early stages of the ML pipeline. A subtype of
+those algorithms is a data-level fusion, an approach in which the multi-source data is aggregated prior to entering
+the ML model \cite{dalla_mura_challenges_2015}.
 
-	% Transition: MSIF -> QML
-	% Despite the success of classical machine learning models for feature-level fusion, their performance can be limited
-	% by model capacity and scaling issues in high-dimensional feature spaces.\todo{TR: Mamy źródło?}  This motivates the
-	% exploration of alternative computational paradigms for multisource learning.
-	Early fusion problems are often approached with machine learning models \cite{liMultisourceInformationFusion2024,baltrusaitisMultimodalMachineLearning2019}, which one may consider a very
-	natural approach. After all, ML models are trained on the data. If the data is represented better (with multiple
-	representations, coming from multiple sources), it's only natural that the results should improve. However, some of
-	the data fusion problems have been shown to be NP-hard \cite{DataFusionNPQAOA}. This means that classical techniques,
-	while still useful, might not be able to address the problems above certain sizes (unless we see some unlikely shift
-	in the complexity theory). This is exactly why alternative methods of computing, such as quantum computing and
-	quantum machine learning (QML), have recently been of interest for data fusion specialists.
+% Transition: MSIF -> QML
+% Despite the success of classical machine learning models for feature-level fusion, their performance can be limited
+% by model capacity and scaling issues in high-dimensional feature spaces.\todo{TR: Mamy źródło?}  This motivates the
+% exploration of alternative computational paradigms for multisource learning.
+Early fusion problems are often approached with machine learning models \cite{liMultisourceInformationFusion2024,baltrusaitisMultimodalMachineLearning2019}, which one may consider a very
+natural approach. After all, ML models are trained on the data. If the data is represented better (with multiple
+representations, coming from multiple sources), it's only natural that the results should improve. However, some of
+the data fusion problems have been shown to be NP-hard \cite{DataFusionNPQAOA}. This means that classical techniques,
+while still useful, might not be able to address the problems above certain sizes (unless we see some unlikely shift
+in the complexity theory). This is exactly why alternative methods of computing, such as quantum computing and
+quantum machine learning (QML), have recently been of interest for data fusion specialists.
 
 
 
 % QML
 Quantum machine learning (QML) leverages principles of quantum mechanics to process information in ways that differ
 fundamentally from classical machine learning~\cite{biamonteQuantumMachineLearning2017a}. In this paradigm,
-	computations are done within quantum circuits, commonly with the use of quantum logic gates (see e.g.
-	\cite{sebastianelli2021circuitbasedhybridquantumneural}). In the mathematical model of quantum computation, those
-	gates can be expressed by unitary gates, making the whole circuit (up to the measurement) a unitary transformation
-	of the input. However simple the description may look, quantum mechanics introduces two computationally useful
-	phenomena --- superposition and entanglement --- that when used correctly can significantly speed up the
-	computations. That said, we can think of a QML model as a ML model that uses quantum computing. It's known that
+computations are done within quantum circuits, commonly with the use of quantum logic gates (see e.g.
+\cite{sebastianelli2021circuitbasedhybridquantumneural}). In the mathematical model of quantum computation, those
+gates can be expressed by unitary gates, making the whole circuit (up to the measurement) a unitary transformation
+of the input. However simple the description may look, quantum mechanics introduces two computationally useful
+phenomena --- superposition and entanglement --- that when used correctly can significantly speed up the
+computations. That said, we can think of a QML model as a ML model that uses quantum computing. It's known that
 such models can represent complex functions using comparatively shallow (i. e. with low layers count) circuits
 or fewer parameters than their classical counterparts, suggesting potential advantages for learning tasks
 involving structured or high-dimensional
 data~\cite{havlicekSupervisedLearningQuantumenhanced2019,schuldQuantumMachineLearning2019,abbasPowerQuantumNeural2021,GawronPowerOfData}. Moreover,
 theoretical work has identified learning scenarios in which quantum models offer data-dependent
 advantages~\cite{huangPowerDataQuantum2021a}. Empirical tests on the multi-spectral satellite data seem to also
-	confirm this finding \cite{GawronPowerOfData}.
+confirm this finding \cite{GawronPowerOfData}.
 
 
 % VQA on NISQ 
@@ -148,30 +148,30 @@ advantages~\cite{huangPowerDataQuantum2021a}. Empirical tests on the multi-spect
 
 
 % QMSC
-Recently, several works explored the application of QML methods to multi-source or multi-modal data fusion. 
-	Common approach is to, instead of using purely-quantum models, take advantage of the hybrid quantum-classical
-	models. Feature-level multi-modal quantum fusion presented in \cite{wuFeatureEntanglementbasedQuantum2026} is a
-	stellar example of that approach. In the ML pipeline described therein, takes features extracted by separate
-	uni-modal classical neural networks and embeds them into a quantum fusion circuit. The features are then entangled
-	between multiple modalities on target qubits. Their model showed consistent stability and high accuracy for
-	high-dimensional data.
+Recently, several works explored the application of QML methods to multi-source or multi-modal data fusion.
+Common approach is to, instead of using purely-quantum models, take advantage of the hybrid quantum-classical
+models. Feature-level multi-modal quantum fusion presented in \cite{wuFeatureEntanglementbasedQuantum2026} is a
+stellar example of that approach. In the ML pipeline described therein, takes features extracted by separate
+uni-modal classical neural networks and embeds them into a quantum fusion circuit. The features are then entangled
+between multiple modalities on target qubits. Their model showed consistent stability and high accuracy for
+high-dimensional data.
 
-	% AQML
-	When it comes to QML models, one of the central problems is quantum architecture search (QAS) \cite{QAS}. It's a
-	quantum version of the neural architecture search (NAS) problem known in the ML community. Without the right
-	selection of the model architecture, the training might fail. While the problem case of both NAS and QAS, there are
-	several techniques that allow to address it. One of such techniques is automated (quantum) machine learning (AQML).
-	AQML are heuristic algorithms that try to propose the best models for a given data and tasks. There are several
-	platforms for AQML (see \cite{Rybotycki_2025} for brief overview) available for use and reports of the
-	state-of-the-art results achieved using at least one of them \cite{AQML_Exp}.
+% AQML
+When it comes to QML models, one of the central problems is quantum architecture search (QAS) \cite{QAS}. It's a
+quantum version of the neural architecture search (NAS) problem known in the ML community. Without the right
+selection of the model architecture, the training might fail. While the problem case of both NAS and QAS, there are
+several techniques that allow to address it. One of such techniques is automated (quantum) machine learning (AQML).
+AQML are heuristic algorithms that try to propose the best models for a given data and tasks. There are several
+platforms for AQML (see \cite{Rybotycki_2025} for brief overview) available for use and reports of the
+state-of-the-art results achieved using at least one of them \cite{AQML_Exp}.
 
-	% Summary
-	It this paper, we present an application of AQML to quantum feature fusion problem. In the following section
-	\ref{sec:problem_formulation} we formally present the issues addressed in this manuscript: the feature fusion and
-	quantum architecture search. Then, we provide the detailed description of our multi-level approach in section
-	\ref{sec:method}. Section \ref{sec:exp} contains the experiments overview --- along with the datasets description,
-	hyper-parameter optimization (HPO) step and the results analysis. We conclude the paper with final remarks and
-	insights for future work.
+% Summary
+It this paper, we present an application of AQML to quantum feature fusion problem. In the following section
+\ref{sec:problem_formulation} we formally present the issues addressed in this manuscript: the feature fusion and
+quantum architecture search. Then, we provide the detailed description of our multi-level approach in section
+\ref{sec:method}. Section \ref{sec:exp} contains the experiments overview --- along with the datasets description,
+hyper-parameter optimization (HPO) step and the results analysis. We conclude the paper with final remarks and
+insights for future work.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Problem formulation and literature overview}
@@ -179,56 +179,56 @@ Recently, several works explored the application of QML methods to multi-source 
 % TR: I think 1-1.5 page total.
 
 
-	Performing the feature fusion using QML models is a complex, multi-step problem. While, most notably, it involves
-	QAS problem there are also multiple other decisions to be made. Complete pipelines are not necessarily restricted
-	to quantum models, after all. In this section, we detail the feature fusion problem and further argument why
-	QML models are plausible candidates for providing satisfactory solutions in that regard. We also introduce a
-	specific case of data fusion --- change detection task --- that we considered in our experiments with the remote
-	sensing satellite data. Finally, we formally introduce QAS problem, and discuss it's usual constraints that we won't
-	consider.
+Performing the feature fusion using QML models is a complex, multi-step problem. While it most notably involves a QAS problem,
+there are also multiple other decisions to be made. Complete pipelines are not necessarily restricted
+to quantum models, after all. In this section, we detail the feature fusion problem and further argument why
+QML models are plausible candidates for providing satisfactory solutions in that regard. We also introduce a
+specific case of data fusion --- change detection task --- that we considered in our experiments with the remote
+sensing satellite data. Finally, we formally introduce QAS problem, and discuss it's usual constraints that we won't
+consider.
 
 \subsection{Data fusion}
 
-	Data fusion has a goal-oriented definition.
-	\begin{center}
-		\textit{Join information from multiple modalities (sources) to perform prediction \cite{baltrusaitisMultimodalMachineLearning2019}.}
-	\end{center}
-	In this work we study early fusion, which means the data will be aggregated directly after its extraction. Data
-	fusion is known to enhance the quality of MLP model predictions and is required for tasks such as change detection
-	\cite{QMLCaseStudy}. The simplest form of data fusion is concatenating the extracted feature vectors.
+Data fusion has a goal-oriented definition.
+\begin{center}
+	\textit{Join information from multiple modalities (sources) to perform prediction \cite{baltrusaitisMultimodalMachineLearning2019}.}
+\end{center}
+In this work we study early fusion, which means the data will be aggregated directly after its extraction. Data
+fusion is known to enhance the quality of MLP model predictions and is required for tasks such as change detection
+\cite{QMLCaseStudy}. The simplest form of data fusion is concatenating the extracted feature vectors.
 
 
-	\subsection{Change detection}
+\subsection{Change detection}
 
-	Change detection can be defined as the following task.
-	\begin{center}
-		\textit{Given a pair of corresponding pictures, depicting the same region and taken at different times, find the
-			regions that differ between the pictures \cite{QMLCaseStudy}. }
-	\end{center}
-	Change detection can be considered a multi-source data fusion problem, even when the picture was taken using
-	the same device. This is due to the fact that the temporal difference between the images implies (in general)
-	different atmospheric conditions, and notable spatial (angles, distances, ...) or geographical differences (new
-	buildings, ...). This, in turn, introduces heterogeneity to the pair of pictures. In the terms of data processing,
-	change detection can be seen as a semantic segmentation task \cite{Segmentation}, or even as binary classification
-	(change or no-change) \cite{QMLCaseStudy}. Change detection is a well studied problem, especially in remote
-	sensing~\cite{ChangeDetectionSurvey}.
+Change detection can be defined as the following task.
+\begin{center}
+	\textit{Given a pair of corresponding pictures, depicting the same region and taken at different times, find the
+		regions that differ between the pictures \cite{QMLCaseStudy}. }
+\end{center}
+Change detection can be considered a multi-source data fusion problem, even when the picture was taken using
+the same device. This is due to the fact that the temporal difference between the images implies (in general)
+different atmospheric conditions, and notable spatial (angles, distances, ...) or geographical differences (new
+buildings, ...). This, in turn, introduces heterogeneity to the pair of pictures. In the terms of data processing,
+change detection can be seen as a semantic segmentation task \cite{Segmentation}, or even as binary classification
+(change or no-change) \cite{QMLCaseStudy}. Change detection is a well studied problem, especially in remote
+sensing~\cite{ChangeDetectionSurvey}.
 
 
-	\subsection{Quantum Architecture Search}
+\subsection{Quantum Architecture Search}
 
-	Quantum architecture search is a problem known by many names, and refers to automatic selection of quantum circuits
-	appropriate for given task \cite{QAS}. Formally speaking, one can formulate the QAS problem as follows.
-	\begin{center}
-		\textit{Given the task and the search space, find within the search space a quantum circuits that best fits the task,
-			according to predefined evaluation criteria.}
-	\end{center}
-	Most often, the search space is defined by the target device, on which the circuit is meant to run. This restricts
-	the building blocks of the circuit to a set of gates native to the device. It also limits the number of qubits
-	one can use and defines the effective maximal depth of the circuit. In the current noisy intermediate-scale
-	quantum era, device selection is vital to QAS. So much so that many of the proposed methods are hardware-aware
-	by nature \cite{QAS}, and in the context of QML a notion of device-oriented training has been mentioned
-	\cite{QMLCaseStudy}. The authors of \cite{QMLCaseStudy} also report how significant were the differences when the
-	model trained on a noiseless simulator was run on a real quantum device.
+Quantum architecture search is a problem known by many names, and refers to automatic selection of quantum circuits
+appropriate for given task \cite{QAS}. Formally speaking, one can formulate the QAS problem as follows.
+\begin{center}
+	\textit{Given the task and the search space, find within the search space a quantum circuits that best fits the task,
+		according to predefined evaluation criteria.}
+\end{center}
+Most often, the search space is defined by the target device, on which the circuit is meant to run. This restricts
+the building blocks of the circuit to a set of gates native to the device. It also limits the number of qubits
+one can use and defines the effective maximal depth of the circuit. In the current noisy intermediate-scale
+quantum era, device selection is vital to QAS. So much so that many of the proposed methods are hardware-aware
+by nature \cite{QAS}, and in the context of QML a notion of device-oriented training has been mentioned
+\cite{QMLCaseStudy}. The authors of \cite{QMLCaseStudy} also report how significant were the differences when the
+model trained on a noiseless simulator was run on a real quantum device.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -244,7 +244,7 @@ While the models we used differ slightly from each other, we would like to point
 high-level logic remains the same and it's only the implementation aspect that differs. Each of our models
 consists of two main parts: feature extractor and a classifier. The feature extractor is the initial part of
 the model we used. It accepts the input and initially processes the data. For every model, feature extractor
-we used is classical. Preprocessed features the inputs are then passed to the classifier. The output of this
+we used is classical. Preprocessed features are then passed to the classifier. The output of this
 model will be used to obtain the final decision about the input, depending on the experiment. This part of the
 network may be classical (subsection \ref{ssec:mlp}) or quantum and hybrid quantum-classical (subsection
 \ref{ssec:hqnn}) or hybrid-quantum.
@@ -261,7 +261,7 @@ considering the effectiveness of the network in \cite{wuFeatureEntanglementbased
 decided to separate the feature extractor part of the model into two distinct parts --- one for each input.
 
 The first model we implemented was a classical multi-layer perceptron (MLP) \cite{RussellNorvig2010}, which was meant to
-serve as a baseline reference for our subsequent experiments. In this model both the extractors and the classifier was
+serve as a baseline reference for our subsequent experiments. In this model both the extractors and the classifier were
 a MLP. We present this a architecture in the figure~\ref{fig:model_schamatic}.
 \vspace*{-0.85cm}
 \begin{figure}
@@ -273,10 +273,10 @@ a MLP. We present this a architecture in the figure~\ref{fig:model_schamatic}.
 	\label{fig:model_schamatic}
 \end{figure}
 
-In this architecture, the input from both the sources --- $x_\mathrm{top}$ and $x_\mathrm{bottom}$ --- is passed to
+In this architecture, the inputs from both sources --- $x_\mathrm{top}$ and $x_\mathrm{bottom}$ --- are passed to
 their respective feature extractors and then processed, independently. After this processing, the output vectors of
 both extractors are concatenated, such that $v = [v^1_\mathrm{top}, ..., v^n_\mathrm{top}, v^1_\mathrm{bottom}, ...,
-v^m_\mathrm{bottom}]$, assuming the lengths of $v_\mathrm{top}$ and $v_\mathrm{bottom}$ are $n$ and $m$ respectively.
+	v^m_\mathrm{bottom}]$, assuming the lengths of $v_\mathrm{top}$ and $v_\mathrm{bottom}$ are $n$ and $m$ respectively.
 The resultant vector $v$ is used as the input of the classifier network (here another MLP). For all the layers (beside
 the output) we used $ ReLU(v) = \max(v, 0)$ activation function, which is a standard way to introduce non-linearity in
 deep neural networks \cite{RussellNorvig2010}.
@@ -288,7 +288,7 @@ deep neural networks \cite{RussellNorvig2010}.
 In our initial experiments with automated quantum machine learning, we used a hybrid quantum-classical machine learning
 model. What the name entails is the fact that in the ML pipeline, both classical and quantum layers are used. A common
 approach is to include a parameterized quantum circuit (PQC), with an arbitrary number of gate layers, as a single
-quantum layer of the network. Such layer can then be a part of a model, or a model by itself. 
+quantum layer of the network. Such layer can then be a part of a model, or a model by itself.
 
 Starting from the model schematic, as presented in the figure \ref{fig:model_schamatic}, we kept the feature extractors
 as in the MLP experiment (see subsection \ref{ssec:mlp}). However, we used quantum classifier, instead of the classical
@@ -296,23 +296,23 @@ one. This way, our final architecture resembled the one in \cite{wuFeatureEntang
 way we could assess the classification capabilities on the found models, under the assumption that the data
 preprocessing (i.e. the preprocessing algorithm) remained intact.
 
-In the construction of our quantum classifiers, we used two different approach. First we tried manual selection of the
+In the construction of our quantum classifiers, we used two different approaches. First we tried manual selection of the
 ansatz (which is another usual name for a PQC). In that case, the model we selected had no data re-uploading and
 consisted of typically used quantum neural network (QNN) layers. In our other approach, we used AQML techniques to
-find the right ansatz for the problem. In this scenario, the algorithm suggested the circuit build using several QML
+find the right ansatz for the problem. In this scenario, the algorithm suggested the circuit built using several QML
 blocks, which are pairs of data (re-)uploading and variational operations. The resultant PQC schematic is presented in
 the figure \ref{fig:AQML_PQC}.
 \begin{figure}
 	\centering
 	\includegraphics[width=0.6\textwidth]{fig/variational_circuit.pdf}
 	\caption{A general schematic of a parameterized quantum circuit. It consists of $K$ QML blocks, each containing a
-	data (re-)uploading operation and a variational operation. Notice that both $U_{\mathrm{load}}$ and $U_{\mathrm{var}}$
-	could, in principle, be an identity. On the schematic $x$ denote the input and $\theta$ denotes the full set of PQC
-	parameters. The PQC is concluded with a measurement.}
+		data (re-)uploading operation and a variational operation. Notice that both $U_{\mathrm{load}}$ and $U_{\mathrm{var}}$
+		could, in principle, be an identity. On the schematic, $x$ denotes the input, and $\theta$ denotes the full set of PQC
+		parameters. The PQC is concluded with a measurement.}
 	\label{fig:AQML_PQC}
 \end{figure}
-For some experiments, we enhanced this architecture with additional classical layer that additionally processed the
-output of the PQC, and naturally led to a desired number of outputs.
+For some experiments, we enhanced this architecture with an additional classical layer that additionally processed the
+output of the PQC and naturally led to a desired number of outputs.
 
 The importance of data uploading layers cannot be overstated. First of all, at least one such layer is required of any
 QML model, as raw classical data cannot be processed by a quantum circuit. It has to be encoded into a quantum state.
@@ -432,11 +432,11 @@ quantum circuits \cite{schuld_effect_2021}.
 \label{sssec:qml_onera}
 
 
-To investigate the performance of our approach with the real data, we decided to revisits the experiments reported in
+To investigate the performance of our approach with the real data, we decided to revisit the experiments reported in
 \cite{QMLCaseStudy}, only this time, with the use of AQML. The model we used for those experiments follows the
 schematic presented in the figure \ref{fig:model_schamatic} and is similar to the model described in previous subsection
-\ref{ssec:hqnn}. The only difference here is that we used a single data extractor instead of two, to which we uploaded
-the concatenated data from both the sources. We decided not to separate the data extraction, so that the experiment
+\ref{ssec:hqnn}. The only difference here is that we used a single feature extractor instead of two, to which we uploaded
+the concatenated data from both sources. We decided not to separate the feature extraction, so that the experiment
 differs from \cite{QMLCaseStudy} only in the application of AQML. In this model, the final classical layer was also
 an optional addition. To reduce the initial dimensionality of the input (with 13-band pixels it would require too many
 qubits for efficient simulation) PCA was used, leaving the input from each source described by four features.
@@ -454,8 +454,8 @@ the search-space of the optimization algorithm significantly.
 The latest version of \texttt{aqmlator} (2.0.0a1, available only through the sources), aside from technical
 improvements, offers more flexible ansatze finding classes, proposes data re-uploading layers, and uses a wider range
 of layers during the ansatz search. In particular, it implements the \texttt{SimplifiedTwoDesign} and the
-\texttt{BellmanLayer}, this making it possible for \texttt{aqmlator} to find the models used in the previous ONERA QML
-change detection experiments \cite{QMLCaseStudy}. 
+\texttt{BellmanLayer}, thus making it possible for \texttt{aqmlator} to find the models used in the previous ONERA QML
+change detection experiments \cite{QMLCaseStudy}.
 
 
 
@@ -471,285 +471,282 @@ time using AQML techniques to select the quantum classifier. The code from our M
 the public github repository\footnote{\url{https://github.com/AGH-CEAI/AQML4MSC}}. Our ONERA AQML experiments are in the
 original repository of \cite{QMLCaseStudy}.
 
-	\subsection{MNIST}
+\subsection{MNIST}
 
-		\subsubsection{Dataset}
-		The original MNIST dataset consists of 70,000 grayscale images of handwritten digits (0--9), each of size $28
-		\times 28$ pixels. We obtained the dataset from Kaggle \cite{lecunMNISTHandwrittenDigits2025}, and used the
-		predefined training--validation split as-is.
-		
-		In the preliminary research, we reduced the number of output classes from 10 to 3. The idea here was to reduce the
-		complexity of the task, so that we could ensure reasonable (i. e. simulable) sizes of our quantum classifiers. We
-		also wanted not to overcomplicate our preliminary examples. We arbitrarily selected:
-		\begin{itemize}
-			\item digit ``5'' (\(5421\) training samples and \(892\) validation samples),
-			\item digit ``6'' (\(5918\) training samples and \(958\) validation samples),
-			\item digit ``7'' (\(6265\) training samples and \(1028\) validation samples).
-		\end{itemize}
-		
-		Each image was preprocessed to construct synthetic multi-source inputs. Images were split horizontally into top and
-		bottom halves, which were treated as complementary views. Each view was then binarized, spatially downsampled, and
-		transformed into a six-dimensional vector by computing the mean pixel intensity along the columns. These vectors
-		correspond to the synthetic multi-source inputs $x_{\mathrm{top}}$ and $x_{\mathrm{bottom}}$, each described with
-		six features. We graphically present this data preparation scheme in the figure \ref{fig:dataPrep}.
-		\begin{figure}
-			\centering
-			\includegraphics[width=\textwidth]{fig/preprocessing.pdf}
-			\caption{Overview of the synthetic multi-source preprocessing pipeline.
-				(a) Original input image.
-				(b) Horizontal splitting into top and bottom halves.
-				(c) Binarization of each half.
-				(d) Spatial downsampling.
-				(e) Computation of column-wise mean pixel intensities, resulting in vector representations
-				that constitute the synthetic multi-source inputs $x_{\mathrm{top}}$ and $x_{\mathrm{bottom}}$.
-			}
-			\label{fig:dataPrep}
-		\end{figure}
-		
-		
-		\subsubsection{Experimental setup}
-		
-		The $x_{\mathrm{top}}$ and $x_{\mathrm{bottom}}$ are used directly as the input to the respective feature 
-		extractors. Each feature extractor had, therefore, 6 input neurons. The number of neurons in the hidden and output
-		layers of the feature extractors were determined by the HPO experiments detailed below. In those experiments,
-		feature extractors had only one hidden layer.
-		
-		Similarly for the number of a single hidden layer neurons in the classical classifier and number of QML
-		blocks in the quantum classifier. Classifiers' number of inputs was determined by the length of concatenated output
-		of the feature extractors $v$, and output size was determined by the number of classes, which was fixed to three.
-		The reason for the latter was the use of standard one-hot encoding \cite{hancock_survey_2020}, common in
-		classification tasks. 
-	
-		The training goes as follows. The vector inputs is subsequently passed through learnable feature extraction
-		functions $f(\cdot,\theta_1)$ and $f(\cdot,\theta_2)$, producing feature vectors $v_{\mathrm{top}}$ and
-		$v_{\mathrm{bottom}}$ of equal dimensionality. These features are fused and classified by a function
-		$h(\cdot,\theta_3)$ --- realized by the classifier --- yielding the final classification decision $d$. The
-		resulting formulation is defined as:
-		\begin{align*}
-			v_{\mathrm{top}}    & = f(x_{\mathrm{top}}, \theta_1),                      \\
-			v_{\mathrm{bottom}} & = f(x_{\mathrm{bottom}}, \theta_2),                   \\
-			d                   & = h(v_{\mathrm{top}}, v_{\mathrm{bottom}}, \theta_3).
-		\end{align*}
-		All learnable parameters $\theta_1$, $\theta_2$, and $\theta_3$ are optimized jointly during the training. The
-		training is performed using the cross-entropy loss, and predictions are obtained by selecting the output
-		logit (or qubit) with the maximum output value. In the case of PQC, we used measured expectation value of the 
-		Pauli $Z$ operator for each qubit. We trained all the models using 5-fold cross-validation, to better assess the
-		average performance of the investigated models. The optimizer we used was standard ADAM optimizer \cite{ADAM}.
-		
-		
-		\subsubsection{Metrics}
-		Although we gathered information about accuracy, precision, recall and f1-scores of the model, in their different
-		variants implemented in \texttt{scikit-learn} version 1.8, the scores we ultimately used for models evaluation were
-		accuracy and averaged f1$_{\mathrm{macro}}$ score. Both are standard metrics used for measuring classification
-		performance, and f1-score aggregates the information given by recall and precision (by definition). This set of
-		metrics allowed us to assess the general performance of the evaluated models. 
-		
-		
-		\subsubsection{Hyperparameter Optimization}
-		\label{ssec:hpo}
-		
-		We performed hyper-parameter optimization (HPO) to select the optimal architecture for the models we tested in the
-		experiment. To that aim, we used \texttt{optuna} hyper-parameter optimizes \cite{optuna}, a \texttt{Python} package
-		for HPO, used in both ML and QML. We present the HPO setup and results for the classical and quantum experiments in
-		the Tables~\ref{tab:baseline_hpo} and \ref{tab:pqc_hpo}. Those results were obtained without early stopping, and
-	 	using random seed equal to 42. The number of trials varied, depending on the model, and was equal to 100, 100, 50
-	 	and 35 for MLP, $PQC_{\mathrm{manual}}$, $PQC_{\mathrm{AQML}^{\mathrm{Solo}}}$ and
-	 	$PQC_{\mathrm{AQML}^{\mathrm{Linear}}}$, respectively. The variation was the effect of limited compuational
-	 	resources.
-		
-		% ===== Hyperparameters: MLP_experiment_setup =====
-		\begin{table}[t]
-			\centering
-			\caption{Experiment setup for baseline hyper-parameters optimization.}
-			\label{tab:baseline_hpo}
-			\begin{tabular}{p{6cm}p{2cm}p{1.5cm}l}
-				\hline
-				\textbf{Parameter}                   & \textbf{Range}                 & \textbf{Type} & \textbf{Best value} \\
-				\hline
-				Learning rate                          & $[10^{-3},\,10^{-2}]$ & linear                & $10^{-3}$  \\
-				Batch size                             & $[32, 128]$           & discrete              & $83$       \\
-				Hidden layer size (feature extractors) & $[64, 256]$           & discrete              & $90$       \\
-				Output layer size (feature extractors) & $[64, 256]$           & discrete              & $196$      \\
-				Hidden layer size (classifier)         & $[64, 256]$           & discrete              & $95$       \\
-				\hline
-			\end{tabular}
-		\end{table}
-		
-		% ===== Hyperparameters: PQC_experiment_setup =====
-		\begin{table}[t]
-			\centering
-			\caption{Experiment setup for PQC hyper-parameters optimization. For those experiments the learning rate was
-			fixed to $lr = 10^{-3}$. PQC$^{\mathrm{Solo}}_{\mathrm{AQML}}$ and PQC$^{\mathrm{Linear}}_{\mathrm{AQML}}$ denote
-			PQC models without and with final classical linear layer respectively. We present the architecture of the model
-			in the parenthesis, next to the models name.}
-			\label{tab:pqc_hpo}
-			\begin{tabular}{p{6cm}p{2cm}p{1.5cm}l}
-				\hline
-				\textbf{Parameter}                              & \textbf{Range}                 & \textbf{Type} & \textbf{Best value} \\
-				\hline
-				\multicolumn{4}{c}{PQC$_{\mathrm{Manual}}$ (\texttt{AngleX} $ \to 3 \times $ \texttt{BEL} )} \\
-				\hline
-				Batch size                             & $[32, 128]$           & discrete              & $32$       \\
-				Hidden layer size (feature extractors) & $[64, 256]$           & discrete              & $128$       \\
-				Output layer size (feature extractors) & $[4, 12]$           & discrete              & $6$      \\
-				\texttt{BasicEntangler} layers number (classifier)         			& $[1, 5]$           & discrete              & $3$       \\
-				\hline
-				\multicolumn{4}{c}{PQC$^{\mathrm{Solo}}_{\mathrm{AQML}}$ (\texttt{Amplitude} $\to$ \texttt{SEL} $\to$ \texttt{AngleY} $\to 2 \times$ \texttt{SEL})}\\
-				\hline
-				Batch size                             & $[32, 128]$           & discrete              & 76       \\
-				Hidden layer size (feature extractors) & $[64, 256]$           & discrete              & 163       \\
-				Output layer size (feature extractors) & $[4, 12]$           & discrete              & 8      \\
-				QML Blocks number (classifier)         & $[1, 5]$           & discrete              & 3       \\
-				\hline
-				\multicolumn{4}{c}{PQC$^{\mathrm{Linear}}_{\mathrm{AQML}}$
-				(\texttt{Amplitude} $\to$ \texttt{BEL} $\to$ \texttt{AngleX} $\to$ \texttt{BEL} $\to$ \texttt{AngleZ}
-				$\to$ \texttt{BEL} $\to$ \texttt{SEL} $\to$ \texttt{BEL} )} \\
-				\hline
-				Batch size                             & $[32, 128]$           & discrete              & 121       \\
-				Hidden layer size (feature extractors) & $[64, 256]$           & discrete              & 97       \\
-				Output layer size (feature extractors) & $[4, 12]$           & discrete              & 8      \\
-				QML Blocks number (classifier)         & $[1, 5]$           & discrete              & 5       \\
-				\hline
-			\end{tabular}
-		\end{table}
-		
-		\subsubsection{Results} 
+\subsubsection{Dataset}
+The original MNIST dataset consists of 70,000 grayscale images of handwritten digits (0--9), each of size $28
+	\times 28$ pixels. We obtained the dataset from Kaggle \cite{lecunMNISTHandwrittenDigits2025}, and used the
+predefined training--validation split as-is.
 
-		In table~\ref{tab:mnist_results} we present the values of metrics obtained with the best classical, manual PQC and
-		AQML-found PQC models. The results clearly show that the models found with AQML outperformed manually selected PQCs
-		for our synthetic multi-source MNIST classification task. The accuracy they obtain is on par with the classical MLP,
-		but with over 10 times less parameters.Over 100 times less, if we consider only classifiers.
-		
-		In the table~\ref{tab:mnist_results} one can also see that while PQCs with additional linear layer performed better,
-		the difference between the best models reported isn't significant (is within a single standard deviation). We have
-		noticed, however, that the models with linear layer seem to behave more consistently during the training. We started
-		to investigate that phenomenon, and found that indeed accuracy averaged over all models from given groups was:
-		\begin{equation}
-			\mathrm{accuracy}^{\mathrm{avg}}_{\mathrm{PQC}^{\mathrm{Solo}}_{AQML}}
-			= 0.837 < 0.889 =
-			\mathrm{accuracy}^{\mathrm{avg}}_{\mathrm{PQC}^{\mathrm{Linear}}_{AQML}},
-		\end{equation}
-		which seems to confirm our initial insights. It's also consistent with another empirical observation:
-		\begin{equation}
-			\mathrm{accuracy}^{\mathrm{min}}_{\mathrm{PQC}^{\mathrm{Solo}}_{AQML}} 
-			= 0.367 < 0.631 = 
-			\mathrm{accuracy}^{\mathrm{min}}_{\mathrm{PQC}^{\mathrm{Linear}}_{AQML}}.
-		\end{equation}
-		This fact was also observed for the other metrics. We plan to continue to investigate this issue further as a part
-		of a separate study.
-		
-		\begin{table}[t]
-			\centering
-			\caption{Average accuracy and f1$_{\mathrm{macro}}$-score metrics for classical, manual PQC and AQML-found PQC
-				models. PQC$^{\mathrm{Solo}}_{\mathrm{AQML}}$ and PQC$^{\mathrm{Linear}}_{\mathrm{AQML}}$ denote
-				PQC models without and with final classical linear layer respectively. We also provide trainable parameters
-				number for each model.}
-			\label{tab:mnist_results}
-			\begin{tabular}{l|ccccc|c}
-				\hline
-				\textbf{Metric}    & \textbf{Fold 1} & \textbf{Fold 2} & \textbf{Fold 3} & \textbf{Fold 4} & \textbf{Fold 5} & \textbf{Mean}              \\
-				\hline
-				\multicolumn{7}{c}{MLP (\# Parameters. Feature extractors: 19186; Classifier: 37623, Total: 56809)} \\
-				\hline
-				accuracy  & 0.962  & 0.959  & 0.960  & 0.960  & 0.960  & $0.960 \pm 0.001$ \\
-				f1$_{\mathrm{macro}}$ & 0.961  & 0.959  & 0.959  & 0.959  & 0.959  & $0.959 \pm 0.001$ \\
-				\hline
-				\multicolumn{7}{c}{PQC$_{\mathrm{manual}}$ (\# Parameters. Feature extractors: 2307; Classifier: 18, Total:
-				2325)}\\
-				\hline
-				accuracy  & 0.880  & 0.855  & 0.880  & 0.905  & 0.911    & $0.886 \pm 0.022$    \\
-				f1$_{\mathrm{macro}}$ & 0.879  & 0.852  & 0.879  & 0.903  & 0.910    & $0.885 \pm 0.023$    \\
-				\hline
-				\multicolumn{7}{c}{PQC$^{\mathrm{Solo}}_{\mathrm{AQML}}$ (\# Parameters. Feature extractors: 3101; Classifier: 72, Total:
-					3173)}\\
-				\hline
-				accuracy  & 0.937 & 0.943 & 0.935 & 0.934 & 0.949   & $0.939 \pm 0.006$    \\
-				f1$_{\mathrm{macro}}$ & 0.935 & 0.941 & 0.933 & 0.932 & 0.947   & $0.938 \pm 0.006$     \\
-				\hline
-				\multicolumn{7}{c}{PQC$^{\mathrm{Linear}}_{\mathrm{AQML}}$ (\# Parameters. Feature extractors: 5382; Classifier: 135, Total: 5517)}\\
-				\hline
-				accuracy  & 0.947 & 0.947 & 0.935 & 0.943 & 0.947    & $0.944 \pm 0.005$    \\
-				f1$_{\mathrm{macro}}$ & 0.946 & 0.946 & 0.933 & 0.942 & 0.946    & $0.943 \pm 0.005$     \\
-				\hline
-			\end{tabular}
-		\end{table}
-	
-		
-	
-	
+In the preliminary research, we reduced the number of output classes from 10 to 3. The idea here was to reduce the
+complexity of the task, so that we could ensure reasonable (i. e. simulable) sizes of our quantum classifiers. We
+also wanted not to overcomplicate our preliminary examples. We arbitrarily selected:
+\begin{itemize}
+	\item digit ``5'' (\(5421\) training samples and \(892\) validation samples),
+	\item digit ``6'' (\(5918\) training samples and \(958\) validation samples),
+	\item digit ``7'' (\(6265\) training samples and \(1028\) validation samples).
+\end{itemize}
+
+Each image was preprocessed to construct synthetic multi-source inputs. Images were split horizontally into top and
+bottom halves, which were treated as complementary views. Each view was then binarized, spatially downsampled, and
+transformed into a 14-dimensional vector by computing the mean pixel intensity along the columns. These vectors
+correspond to the synthetic multi-source inputs $x_{\mathrm{top}}$ and $x_{\mathrm{bottom}}$, each described with
+14 features. We graphically present this data preparation scheme in the figure \ref{fig:dataPrep}.
+\begin{figure}
+	\centering
+	\includegraphics[width=\textwidth]{fig/preprocessing.pdf}
+	\caption{Overview of the synthetic multi-source preprocessing pipeline.
+		(a) Original input image.
+		(b) Horizontal splitting into top and bottom halves.
+		(c) Binarization of each half.
+		(d) Spatial downsampling.
+		(e) Computation of column-wise mean pixel intensities, resulting in vector representations
+		that constitute the synthetic multi-source inputs $x_{\mathrm{top}}$ and $x_{\mathrm{bottom}}$.
+	}
+	\label{fig:dataPrep}
+\end{figure}
+
+
+\subsubsection{Experimental setup}
+
+The $x_{\mathrm{top}}$ and $x_{\mathrm{bottom}}$ are used directly as the input to the respective feature
+extractors. Each feature extractor had, therefore, 14 input neurons. The number of neurons in the hidden and output
+layers of the feature extractors were determined by the HPO experiments detailed below. In those experiments,
+feature extractors had only one hidden layer.
+
+Similarly for the number of a single hidden layer neurons in the classical classifier and number of QML
+blocks in the quantum classifier. Classifiers' number of inputs was determined by the length of concatenated output
+of the feature extractors $v$, and output size was determined by the number of classes, which was fixed to three.
+The reason for the latter was the use of standard one-hot encoding \cite{hancock_survey_2020}, common in
+classification tasks.
+
+The training goes as follows. The vector inputs is subsequently passed through learnable feature extraction
+functions $f(\cdot,\theta_1)$ and $f(\cdot,\theta_2)$, producing feature vectors $v_{\mathrm{top}}$ and
+$v_{\mathrm{bottom}}$ of equal dimensionality. These features are fused and classified by a function
+$h(\cdot,\theta_3)$ --- realized by the classifier --- yielding the final classification decision $d$. The
+resulting formulation is defined as:
+\begin{align*}
+	v_{\mathrm{top}}    & = f(x_{\mathrm{top}}, \theta_1),                      \\
+	v_{\mathrm{bottom}} & = f(x_{\mathrm{bottom}}, \theta_2),                   \\
+	d                   & = h(v_{\mathrm{top}}, v_{\mathrm{bottom}}, \theta_3).
+\end{align*}
+All learnable parameters $\theta_1$, $\theta_2$, and $\theta_3$ are optimized jointly during the training. The
+training is performed using the cross-entropy loss, and predictions are obtained by selecting the output
+logit (or qubit) with the maximum output value. In the case of PQC, we used measured expectation value of the
+Pauli $Z$ operator for each qubit. We trained all the models using 5-fold cross-validation, to better assess the
+average performance of the investigated models. The optimizer we used was standard ADAM optimizer \cite{ADAM}.
+
+
+\subsubsection{Metrics}
+Although we gathered information about accuracy, precision, recall and f1-scores of the model, in their different
+variants implemented in \texttt{scikit-learn} version 1.8, the scores we ultimately used for models evaluation were
+accuracy and averaged f1$_{\mathrm{macro}}$ score. Both are standard metrics used for measuring classification
+performance, and f1-score aggregates the information given by recall and precision (by definition). This set of
+metrics allowed us to assess the general performance of the evaluated models.
+
+
+\subsubsection{Hyperparameter Optimization}
+\label{ssec:hpo}
+
+We performed hyper-parameter optimization (HPO) to select the optimal architecture for the models we tested in the
+experiment. To that aim, we used \texttt{optuna} hyper-parameter optimizer \cite{optuna}, a \texttt{Python} package
+for HPO, used in both ML and QML. We present the HPO setup and the results for the classical and quantum experiments in
+the Tables~\ref{tab:baseline_hpo} and \ref{tab:pqc_hpo}. Those results were obtained without early stopping, and
+using random seed equal to 42. The number of trials varied, depending on the model, and was equal to 100, 100, 50
+and 35 for MLP, $PQC_{\mathrm{manual}}$, $PQC_{\mathrm{AQML}^{\mathrm{Solo}}}$ and
+$PQC_{\mathrm{AQML}^{\mathrm{Linear}}}$, respectively. The variation was the effect of limited compuational
+resources.
+
+% ===== Hyperparameters: MLP_experiment_setup =====
+\begin{table}[t]
+	\centering
+	\caption{Experiment setup for baseline hyper-parameters optimization.}
+	\label{tab:baseline_hpo}
+	\begin{tabular}{p{6cm}p{2cm}p{1.5cm}l}
+		\hline
+		\textbf{Parameter}                     & \textbf{Range}        & \textbf{Type} & \textbf{Best value} \\
+		\hline
+		Learning rate                          & $[10^{-3},\,10^{-2}]$ & linear        & $10^{-3}$           \\
+		Batch size                             & $[32, 128]$           & discrete      & $83$                \\
+		Hidden layer size (feature extractors) & $[64, 256]$           & discrete      & $90$                \\
+		Output layer size (feature extractors) & $[64, 256]$           & discrete      & $196$               \\
+		Hidden layer size (classifier)         & $[64, 256]$           & discrete      & $95$                \\
+		\hline
+	\end{tabular}
+\end{table}
+
+% ===== Hyperparameters: PQC_experiment_setup =====
+\begin{table}[t]
+	\centering
+	\caption{Experiment setup for PQC hyper-parameters optimization. For those experiments the learning rate was
+		fixed to $lr = 10^{-3}$. PQC$^{\mathrm{Solo}}_{\mathrm{AQML}}$ and PQC$^{\mathrm{Linear}}_{\mathrm{AQML}}$ denote
+		PQC models without and with final classical linear layer respectively. We present the architecture of the model
+		in the parenthesis, next to the model's name.}
+	\label{tab:pqc_hpo}
+	\begin{tabular}{p{6cm}p{2cm}p{1.5cm}l}
+		\hline
+		\textbf{Parameter}                                 & \textbf{Range} & \textbf{Type} & \textbf{Best value}                                           \\
+		\hline
+		\multicolumn{4}{c}{PQC$_{\mathrm{Manual}}$ (\texttt{AngleX} $ \to 3 \times $ \texttt{BEL} )}                                                        \\
+		\hline
+		Batch size                                         & $[32, 128]$    & discrete      & $32$                                                          \\
+		Hidden layer size (feature extractors)             & $[64, 256]$    & discrete      & $128$                                                         \\
+		Output layer size (feature extractors)             & $[4, 12]$      & discrete      & $6$                                                           \\
+		\texttt{BasicEntangler} layers number (classifier) & $[1, 5]$       & discrete      & $3$                                                           \\
+		\hline
+		\multicolumn{4}{c}{PQC$^{\mathrm{Solo}}_{\mathrm{AQML}}$ (\texttt{Amplitude} $\to$ \texttt{SEL} $\to$ \texttt{AngleY} $\to 2 \times$ \texttt{SEL})} \\
+		\hline
+		Batch size                                         & $[32, 128]$    & discrete      & 76                                                            \\
+		Hidden layer size (feature extractors)             & $[64, 256]$    & discrete      & 163                                                           \\
+		Output layer size (feature extractors)             & $[4, 12]$      & discrete      & 8                                                             \\
+		QML Blocks number (classifier)                     & $[1, 5]$       & discrete      & 3                                                             \\
+		\hline
+		\multicolumn{4}{c}{PQC$^{\mathrm{Linear}}_{\mathrm{AQML}}$
+			(\texttt{Amplitude} $\to$ \texttt{BEL} $\to$ \texttt{AngleX} $\to$ \texttt{BEL} $\to$ \texttt{AngleZ}
+		$\to$ \texttt{BEL} $\to$ \texttt{SEL} $\to$ \texttt{BEL} )}                                                                                         \\
+		\hline
+		Batch size                                         & $[32, 128]$    & discrete      & 121                                                           \\
+		Hidden layer size (feature extractors)             & $[64, 256]$    & discrete      & 97                                                            \\
+		Output layer size (feature extractors)             & $[4, 12]$      & discrete      & 8                                                             \\
+		QML Blocks number (classifier)                     & $[1, 5]$       & discrete      & 5                                                             \\
+		\hline
+	\end{tabular}
+\end{table}
+
+\subsubsection{Results}
+
+In table~\ref{tab:mnist_results} we present the values of metrics obtained with the best classical, manual PQC and
+AQML-found PQC models. The results clearly show that the models found with AQML outperformed manually selected PQCs
+for our synthetic multi-source MNIST classification task. The accuracy they obtain is on par with the classical MLP,
+but with over 10 times less parameters. Over 100 times less, if we consider only classifiers.
+
+In the table~\ref{tab:mnist_results} one can also see that while PQCs with additional linear layer performed better,
+the difference between the best models reported isn't significant (is within a single standard deviation). We have
+noticed, however, that the models with linear layer seem to behave more consistently during the training. We started
+to investigate that phenomenon, and found that indeed accuracy averaged over all models from given groups was:
+\begin{equation}
+	\mathrm{accuracy}^{\mathrm{avg}}_{\mathrm{PQC}^{\mathrm{Solo}}_{AQML}}
+	= 0.837 < 0.889 =
+	\mathrm{accuracy}^{\mathrm{avg}}_{\mathrm{PQC}^{\mathrm{Linear}}_{AQML}},
+\end{equation}
+which seems to confirm our initial insights. It's also consistent with another empirical observation:
+\begin{equation}
+	\mathrm{accuracy}^{\mathrm{min}}_{\mathrm{PQC}^{\mathrm{Solo}}_{AQML}}
+	= 0.367 < 0.631 =
+	\mathrm{accuracy}^{\mathrm{min}}_{\mathrm{PQC}^{\mathrm{Linear}}_{AQML}}.
+\end{equation}
+This fact was also observed for the other metrics. We plan to continue to investigate this issue further as a part
+of a separate study.
+
+\begin{table}[t]
+	\centering
+	\caption{Average accuracy and f1$_{\mathrm{macro}}$-score metrics for classical, manual PQC and AQML-found PQC
+		models. PQC$^{\mathrm{Solo}}_{\mathrm{AQML}}$ and PQC$^{\mathrm{Linear}}_{\mathrm{AQML}}$ denote
+		PQC models without and with final classical linear layer respectively. We also provide trainable parameters
+		number for each model.}
+	\label{tab:mnist_results}
+	\begin{tabular}{l|ccccc|c}
+		\hline
+		\textbf{Metric}       & \textbf{Fold 1} & \textbf{Fold 2} & \textbf{Fold 3} & \textbf{Fold 4} & \textbf{Fold 5} & \textbf{Mean}       \\
+		\hline
+		\multicolumn{7}{c}{MLP (\# Parameters. Feature extractors: 38372; Classifier: 37623, Total: 75995)}                                   \\
+		\hline
+		accuracy              & 0.962           & 0.959           & 0.960           & 0.960           & 0.960           & $0.960 \pm 0.001$   \\
+		f1$_{\mathrm{macro}}$ & 0.961           & 0.959           & 0.959           & 0.959           & 0.959           & $0.959 \pm 0.001$   \\
+		\hline
+		\multicolumn{7}{c}{PQC$_{\mathrm{manual}}$ (\# Parameters. Feature extractors: 4614; Classifier: 18, Total: 4632)}                    \\
+		\hline
+		accuracy              & 0.880           & 0.855           & 0.880           & 0.905           & 0.911           & $0.886 \pm 0.022$   \\
+		f1$_{\mathrm{macro}}$ & 0.879           & 0.852           & 0.879           & 0.903           & 0.910           & $0.885 \pm 0.023$   \\
+		\hline
+		\multicolumn{7}{c}{PQC$^{\mathrm{Solo}}_{\mathrm{AQML}}$ (\# Parameters. Feature extractors: 6202; Classifier: 72, Total: 6274)}      \\
+		\hline
+		accuracy              & 0.937           & 0.943           & 0.935           & 0.934           & 0.949           & $0.939 \pm 0.006$   \\
+		f1$_{\mathrm{macro}}$ & 0.935           & 0.941           & 0.933           & 0.932           & 0.947           & $0.938 \pm 0.006$   \\
+		\hline
+		\multicolumn{7}{c}{PQC$^{\mathrm{Linear}}_{\mathrm{AQML}}$ (\# Parameters. Feature extractors: 10764; Classifier: 135, Total: 10899)} \\
+		\hline
+		accuracy              & 0.947           & 0.947           & 0.935           & 0.943           & 0.947           & $0.944 \pm 0.005$   \\
+		f1$_{\mathrm{macro}}$ & 0.946           & 0.946           & 0.933           & 0.942           & 0.946           & $0.943 \pm 0.005$   \\
+		\hline
+	\end{tabular}
+\end{table}
+
+
+
+
 
 \subsection{ONERA}
-	
-	\subsubsection{Dataset} 
-	The ONERA change detection dataset is a publicly available dataset containing annotated pairs of multi-spectral
-	satellite images \cite{onera}. The spatial resolution of the images vary between the pairs. Each image has 13 spectral
-	bands. An example of the input, reduced to the visible bands, is presented in the figure~\ref{fig:ONERA}.
-	
-	\begin{figure*}
-		\centering
-		\includegraphics[scale=0.24]{./fig/saclay1.png}
-		\includegraphics[scale=0.24]{./fig/saclay2.png}
-		\caption{A pair of images from the ONERA dataset. They show Saclay, a city in France. The images were taken on 15
-			III 2016 (Left) and 29 VIII 2017 (Right).}
-		\label{fig:ONERA}
-	\end{figure*}
 
-	\subsubsection{Experimental setup} 
-	In our experiments we repeat the experiment reported in \cite{QMLCaseStudy}, thus the setup remains the same. The only
-	change we include is using AQML to find ansatze used for the change detection. The metric we consider is still
-	accuracy and the data is preprocessed and fused in the same manner as in \cite{QMLCaseStudy}, as we explained in the section
-	\ref{sec:method}.
-	
-	For the AQML, we set up the number of QML blocks in range [1, 5]. We also included baseline classical classifier,
-	which was an MLP with 6 layers. As in \cite{QMLCaseStudy}, we didn't vary over the number of qubits, and it remained
-	equal to 8 for all the selected models.
-	
-	\subsubsection{Results} 
-	
-	We ran 26, 36 and 41 experiments for MLP, PQC$^{\mathrm{Solo}}_{\mathrm{AQML}}$ and
-	PQC$^{\mathrm{Linear}}_{\mathrm{AQML}}$ models respectively. It's worth mentioning that in change detection
-	experiments the architecture of MLP didn't change from run to run. It is therefore justified to consider both the
-	base and the average performance of MLP in the comparison with PQC models.
-	
-	While the accuracy of the best classical model outperformed the best PQC model --- 0.752 vs. 0.743 --- the best PQC
-	model was better than average MLP. The average performance comparison is even better, because the average accuracy
-	of PQC$^{\mathrm{Linear}}_{\mathrm{AQML}}$ models outperformed MLP, although only slightly  --- 0.730 vs. 0.728. Even
-	more surprising is the fact that the best PQC model found was a very basic model: \texttt{Amplitude} $\to$
-	$\texttt{BEL}$. This model only had 8 trainable parameters! For the comparison, the MLP we used had 384 trainable
-	parameters. While none of the models is close to the reported state-of-the-art, we conclude that given similar
-	restrictions, AQML-found PQCs lead to results comparable with classical models.
-	
-	To further justify the comparison PQC and classical models, we rerun 13 repetitions of the experiment with MLP
-	containing a single hidden layer, reducing the number of trainable parameters to 64. The accuracy of MLP didn't
-	drop significantly, and remained at an impressive 0.731 on average (the best from all the models). However, the best
-	accuracy it achieved was 0.738, which is below the best accuracy reported by baseline MLP and PQC. Finishing this
-	direction of research, we considered an MLP with only 2 hidden neurons, and thus 16 parameters. Over another 10 runs,
-	the model scored 0.731, 0.667, 0.525 for maximal, average and minimal accuracy, all below AQML-found PQCs.
-	
-	We also report that AQML approach led to the results that were better than originally reported with accuracy 
-	0.752 vs. 0.720). That's also true for PQC$^{\mathrm{Solo}}_{\mathrm{AQML}}$ models, which achieved best accuracy of
-	0.738. Furthermore, the best PQC model had only 8 parameters and significantly less gates than the model reported
-	in the original research. This conclusion is vital, because transpiling and running such model on a real device would
-	be much easier and would lead to lesser influence of the device imperfections. And models that easy were not even
-	considered in the original study! This highlights how useful AQML approach can be, if only at the prototyping stage
-	of the research. 
-	
-	Finally, we also report that while the additional classical linear layer had no significant influence on the best
-	accuracy obtained with both the models, we noticed that the stability of the training and the results are greatly
-	increased if we use the linear layer (and thus consider all the output qubits). The results are even more visible
-	than in the case of the MNIST dataset, with:
-	\begin{equation}
-		\mathrm{accuracy}^{\mathrm{avg}}_{\mathrm{PQC}^{\mathrm{Solo}}_{AQML}}
-		= 0.676 < 0.738 =
-		\mathrm{accuracy}^{\mathrm{avg}}_{\mathrm{PQC}^{\mathrm{Linear}}_{AQML}},
-	\end{equation}
-	\begin{equation}
-		\mathrm{accuracy}^{\mathrm{min}}_{\mathrm{PQC}^{\mathrm{Solo}}_{AQML}} 
-		= 0.505 < 0.710 = 
-		\mathrm{accuracy}^{\mathrm{min}}_{\mathrm{PQC}^{\mathrm{Linear}}_{AQML}}.
-	\end{equation}
-	This observation positions training stability research as an interesting direction for future investigations.
-	
+\subsubsection{Dataset}
+The ONERA change detection dataset is a publicly available dataset containing annotated pairs of multispectral
+satellite images \cite{onera}. The spatial resolution of the images vary between the pairs. Each image has 13 spectral
+bands. An example of the input, reduced to the visible bands, is presented in the figure~\ref{fig:ONERA}.
+
+\begin{figure*}
+	\centering
+	\includegraphics[scale=0.24]{./fig/saclay1.png}
+	\includegraphics[scale=0.24]{./fig/saclay2.png}
+	\caption{A pair of images from the ONERA dataset. They show Saclay, a city in France. The images were taken on 15
+		III 2016 (Left) and 29 VIII 2017 (Right).}
+	\label{fig:ONERA}
+\end{figure*}
+
+\subsubsection{Experimental setup}
+In our experiments we repeat the experiment reported in \cite{QMLCaseStudy}, thus the setup remains the same. The only
+change we include is using AQML to find ansatze used for the change detection. The metric we consider is still
+accuracy and the data is preprocessed and fused in the same manner as in \cite{QMLCaseStudy}, as we explained in the section
+\ref{sec:method}.
+
+For the AQML, we set up the number of QML blocks in range [1, 5]. We also included baseline classical classifier,
+which was an MLP with 6 layers. As in \cite{QMLCaseStudy}, we didn't vary over the number of qubits, and it remained
+equal to 8 for all the selected models.
+
+\subsubsection{Results}
+
+We ran 26, 36 and 41 experiments for MLP, PQC$^{\mathrm{Solo}}_{\mathrm{AQML}}$ and
+PQC$^{\mathrm{Linear}}_{\mathrm{AQML}}$ models respectively. It's worth mentioning that in change detection
+experiments the architecture of MLP didn't change from run to run. It is therefore justified to consider both the
+base and the average performance of MLP in the comparison with PQC models.
+
+While the accuracy of the best classical model outperformed the best PQC model --- 0.752 vs. 0.743 --- the best PQC
+model was better than average MLP. The average performance comparison is even better, because the average accuracy
+of PQC$^{\mathrm{Linear}}_{\mathrm{AQML}}$ models outperformed MLP, although only slightly  --- 0.730 vs. 0.728. Even
+more surprising is the fact that the best PQC model found was a very basic model: \texttt{Amplitude} $\to$
+$\texttt{BEL}$. This model had only 8 trainable parameters! For the comparison, the MLP we used had 384 trainable
+parameters. While none of the models is close to the reported state-of-the-art, we conclude that given similar
+restrictions, AQML-found PQCs lead to results comparable with classical models.
+
+To further justify the comparison PQC and classical models, we rerun 13 repetitions of the experiment with MLP
+containing a single hidden layer, reducing the number of trainable parameters to 64. The accuracy of MLP didn't
+drop significantly, and remained at an impressive 0.731 on average (the best from all the models). However, the best
+accuracy it achieved was 0.738, which is below the best accuracy reported by baseline MLP and PQC. Finishing this
+direction of research, we considered an MLP with only 2 hidden neurons, and thus 16 parameters. Over another 10 runs,
+the model scored 0.731, 0.667, 0.525 for maximal, average and minimal accuracy, all below AQML-found PQCs.
+
+We also report that AQML approach led to the results that were better than originally reported with accuracy
+0.752 vs. 0.720). That's also true for PQC$^{\mathrm{Solo}}_{\mathrm{AQML}}$ models, which achieved best accuracy of
+0.738. Furthermore, the best PQC model had only 8 parameters and significantly less gates than the model reported
+in the original research. This conclusion is vital, because transpiling and running such model on a real device would
+be much easier and would lead to lesser influence of the device imperfections. Models that simple were not even considered
+in the original study! This highlights how useful the AQML approach can be, at least during the prototyping stage of the research.
+
+Finally, we also report that while the additional classical linear layer had no significant influence on the best
+accuracy obtained with both the models, we noticed that the stability of the training and the results are greatly
+increased if we use the linear layer (and thus consider all the output qubits). The results are even more visible
+than in the case of the MNIST dataset, with:
+\begin{equation}
+	\mathrm{accuracy}^{\mathrm{avg}}_{\mathrm{PQC}^{\mathrm{Solo}}_{AQML}}
+	= 0.676 < 0.738 =
+	\mathrm{accuracy}^{\mathrm{avg}}_{\mathrm{PQC}^{\mathrm{Linear}}_{AQML}},
+\end{equation}
+\begin{equation}
+	\mathrm{accuracy}^{\mathrm{min}}_{\mathrm{PQC}^{\mathrm{Solo}}_{AQML}}
+	= 0.505 < 0.710 =
+	\mathrm{accuracy}^{\mathrm{min}}_{\mathrm{PQC}^{\mathrm{Linear}}_{AQML}}.
+\end{equation}
+This observation positions training stability research as an interesting direction for future investigations.
+
 
 
 
@@ -757,21 +754,21 @@ original repository of \cite{QMLCaseStudy}.
 \section{Conclusion}
 \label{sec:conclusions}
 
-	In this study, we provide evidence that even the simplest AQML approach can lead to better hybrid quantum-classical
-	models. This is particularly true for the models that also perform data fusion.
-	
-	Using specially prepared MNIST as an synthetic example, we report that manually selected QML models were worse than
-	that found by AQML. Although the models were never as good as the best classical models, they were comparable, and
-	they needed far trainable parameters to achieve their accuracy.
-	
-	We also performed experiments using real data, this time using AQML to suggest the best QML model for change detection
-	on ONERA dataset. Not only do we report finding QML model better than the original work, but we also report that on
-	average the AQML-found models were better than classical MLP with similar number of parameters. This result further
-	highlights the usefulness of AQML approach.
-	
-	An interesting by-product of our study is that the additional classical linear output layer seem to stabilize the
-	hybrid model training. We presented the preliminary results on that matter and leave the proper investigation for 
-	further studies.
+In this study, we provide evidence that even the simplest AQML approach can lead to better hybrid quantum-classical
+models. This is particularly true for the models that also perform data fusion.
+
+Using specially prepared MNIST as an synthetic example, we report that manually selected QML models were worse than
+that found by AQML. Although the models were never as good as the best classical models, they were comparable, and
+they needed far less trainable parameters to achieve their accuracy.
+
+We also performed experiments using real data, this time using AQML to suggest the best QML model for the change detection
+on ONERA dataset. Not only do we report finding a QML model better than the original work, but we also report, that on
+average, the AQML-found models were better than classical MLPs with similar number of parameters. This result further
+highlights the usefulness of the AQML approach.
+
+An interesting by-product of our study is that the additional classical linear output layer seems to stabilize the
+hybrid model training. We presented the preliminary results on that matter and leave the proper investigation for
+further studies.
 
 
 
