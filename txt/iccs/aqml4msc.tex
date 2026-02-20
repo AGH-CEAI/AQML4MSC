@@ -46,7 +46,7 @@
 
 
 	% 214 / 250 words
-	\tr{As we are nearing the advent of fault-tolerant quantum computing and slowly advance towards the era of space
+	As we are nearing the advent of fault-tolerant quantum computing and slowly advance towards the era of space
 		exploration, tasks standing at the intersection of those two fields are growing even more relevant. It comes as
 		no surprise, especially in the case of computationally demanding scientific domains, such as remote sensing data
 		analysis. There are already multiple studies showing how quantum computing and quantum machine learning (QML) can
@@ -61,7 +61,7 @@
 		In this manuscript, we present an automated QML (AQML) approach for solving data fusion problem. We study how using
 		AQML-found circuits compare to the classical MLP and manually selected QML models, in the case when the input to
 		those models comes from multiple sources. We also apply our technique for the change detection task, analyzing the
-		hyper-spectral ONERA dataset and show improvement over previously reported change detection accuracy.}
+		hyper-spectral ONERA dataset and show improvement over previously reported change detection accuracy.
 
 
 	\keywords{quantum data fusion  \and auto quantum machine learning \and remote sensing \and hyper-spectral imaging
@@ -88,7 +88,7 @@
 % and human action recognition~\cite{fortinoAdvancesMultisensorFusion2019}, among
 % others~\cite{liMultisourceInformationFusion2024}.\todo{TR: Wstęp bardzo do rzeczy, ale ok.}
 
-\tr{Observation is a primary, primal even, epistemic tool. It is the act of observation upon which we begin our
+Observation is a primary, primal even, epistemic tool. It is the act of observation upon which we begin our
 	most basic learning, and in empirical sciences it's the observation that ultimately falsifies (or not) the
 	hypothesis under investigation. It's also a common knowledge that the more we observe a given phenomenon, the
 	more we know about it. However, while the aggregation of such multiple observation come more or less naturally to
@@ -117,25 +117,24 @@
 	in the complexity theory). This is exactly why alternative methods of computing, such as quantum computing and
 	quantum machine learning (QML), have recently been of interest for data fusion specialists.
 
-}
 
 
 % QML
 Quantum machine learning (QML) leverages principles of quantum mechanics to process information in ways that differ
-fundamentally from classical machine learning~\cite{biamonteQuantumMachineLearning2017a}. \tr{In this paradigm,
+fundamentally from classical machine learning~\cite{biamonteQuantumMachineLearning2017a}. In this paradigm,
 	computations are done within quantum circuits, commonly with the use of quantum logic gates (see e.g.
 	\cite{sebastianelli2021circuitbasedhybridquantumneural}). In the mathematical model of quantum computation, those
 	gates can be expressed by unitary gates, making the whole circuit (up to the measurement) a unitary transformation
 	of the input. However simple the description may look, quantum mechanics introduces two computationally useful
 	phenomena --- superposition and entanglement --- that when used correctly can significantly speed up the
-	computations. That said, we can think of a QML model as a ML model that uses quantum computing.} It's known that
-such models can represent complex functions using comparatively shallow \tr{(i. e. with low layers count)} circuits
+	computations. That said, we can think of a QML model as a ML model that uses quantum computing. It's known that
+such models can represent complex functions using comparatively shallow (i. e. with low layers count) circuits
 or fewer parameters than their classical counterparts, suggesting potential advantages for learning tasks
 involving structured or high-dimensional
 data~\cite{havlicekSupervisedLearningQuantumenhanced2019,schuldQuantumMachineLearning2019,abbasPowerQuantumNeural2021,GawronPowerOfData}. Moreover,
 theoretical work has identified learning scenarios in which quantum models offer data-dependent
-advantages~\cite{huangPowerDataQuantum2021a}. \tr{Empirical tests on the multi-spectral satellite data seem to also
-	confirm this finding \cite{GawronPowerOfData}.}
+advantages~\cite{huangPowerDataQuantum2021a}. Empirical tests on the multi-spectral satellite data seem to also
+	confirm this finding \cite{GawronPowerOfData}.
 
 
 % VQA on NISQ 
@@ -150,16 +149,15 @@ advantages~\cite{huangPowerDataQuantum2021a}. \tr{Empirical tests on the multi-s
 
 
 % QMSC
-Recently, several works explored the application of QML methods to multi-source or multi-modal data fusion. \tr{
+Recently, several works explored the application of QML methods to multi-source or multi-modal data fusion. 
 	Common approach is to, instead of using purely-quantum models, take advantage of the hybrid quantum-classical
 	models. Feature-level multi-modal quantum fusion presented in \cite{wuFeatureEntanglementbasedQuantum2026} is a
 	stellar example of that approach. In the ML pipeline described therein, takes features extracted by separate
 	uni-modal classical neural networks and embeds them into a quantum fusion circuit. The features are then entangled
 	between multiple modalities on target qubits. Their model showed consistent stability and high accuracy for
-	high-dimensional data.}
+	high-dimensional data.
 
-% AQML
-\tr{
+	% AQML
 	When it comes to QML models, one of the central problems is quantum architecture search (QAS) \cite{QAS}. It's a
 	quantum version of the neural architecture search (NAS) problem known in the ML community. Without the right
 	selection of the model architecture, the training might fail. While the problem case of both NAS and QAS, there are
@@ -174,14 +172,14 @@ Recently, several works explored the application of QML methods to multi-source 
 	quantum architecture search. Then, we provide the detailed description of our multi-level approach in section
 	\ref{sec:method}. Section \ref{sec:exp} contains the experiments overview --- along with the datasets description,
 	hyper-parameter optimization (HPO) step and the results analysis. We conclude the paper with final remarks and
-	insights for future work.}
+	insights for future work.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Problem formulation and literature overview}
 \label{sec:problem_formulation}
 % TR: I think 1-1.5 page total.
 
-\tr{
+
 	Performing the feature fusion using QML models is a complex, multi-step problem. While, most notably, it involves
 	QAS problem there are also multiple other decisions to be made. Complete pipelines are not necessarily restricted
 	to quantum models, after all. In this section, we detail the feature fusion problem and further argument why
@@ -189,7 +187,6 @@ Recently, several works explored the application of QML methods to multi-source 
 	specific case of data fusion --- change detection task --- that we considered in our experiments with the remote
 	sensing satellite data. Finally, we formally introduce QAS problem, and discuss it's usual constraints that we won't
 	consider.
-}
 
 \subsection{Feature fusion}
 
@@ -197,7 +194,7 @@ Recently, several works explored the application of QML methods to multi-source 
 \todo[inline]{Po sformułowaniu problemu, możnaby przeanalizować jakie podejścia ludzie mają i dlaczego one są ograniczone. I gdzie użycie kwantów może pomóc.}
 \todo[inline]{TR}
 
-\tr{
+
 	\subsection{Change detection}
 
 	Change detection can be defined as the following task.
@@ -229,7 +226,7 @@ Recently, several works explored the application of QML methods to multi-source 
 	by nature \cite{QAS}, and in the context of QML a notion of device-oriented training has been mentioned
 	\cite{QMLCaseStudy}. The authors of \cite{QMLCaseStudy} also report how significant were the differences when the
 	model trained on a noiseless simulator was run on a real quantum device.
-}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Approach}
@@ -262,15 +259,13 @@ decided to separate the feature extractor part of the model into two distinct pa
 
 The first model we implemented was a classical multi-layer perceptron (MLP) \cite{RussellNorvig2010}, which was meant to
 serve as a baseline reference for our subsequent experiments. In this model both the extractors and the classifier was
-a MLP. We present this a architecture in the figure~\ref{fig:model_schamatic}. \todo[inline]{TR: Remember to update the
-figure and the descriptions, once done.}
+a MLP. We present this a architecture in the figure~\ref{fig:model_schamatic}.
 \begin{figure}
 	\centering
-	\includegraphics[width=0.6\textwidth]{fig/MLP_diagram.pdf}
-	\caption{Diagram of the classical MLP architecture for multi-source classification baseline model.
-		Particular parts of the diagram are labeled with colors: \textbf{yellow} --- feature extractors
-		input layer, \textbf{orange} --- feature extractors, \textbf{blue} --- classifier (here the fusion
-		takes place), \textbf{green} --- output logits.}
+	\hspace*{-0.07\paperwidth}\includegraphics[width=1.2\textwidth]{fig/Model_schematic.pdf}
+	\caption{A schematic representation of all the models used in this work: \textbf{yellow} --- feature extractor, \textbf{blue} --- classifier (here the fusion takes place), \textbf{green} --- optional output logits for quantum
+		classifiers. XOR on the schematic means that only one type of classifier is used at the time. Top classifier
+		represents MLP approach, and the bottom one PQC approach.}
 	\label{fig:model_schamatic}
 \end{figure}
 
