@@ -22,7 +22,7 @@
 
 \begin{document}
 %
-\title{Auto Quantum Machine Learning for Multi-source Classification}
+\title{Auto Quantum Machine Learning for Multisource Classification}
 
 \author{Tomasz Rybotycki\inst{1, 2, 3}\orcidID{0000-0003-2493-0459} \and
 	Sebastian Dziura\inst{1}\orcidID{0009-0008-6786-511X} \and
@@ -43,25 +43,10 @@
 \maketitle              % typeset the header of the contribution
 %
 \begin{abstract}
-
-
-	% 214 / 250 words
-	As we are nearing the advent of fault-tolerant quantum computing and slowly advancing towards the era of space exploration,
-	tasks standing at the intersection of these two fields are growing even more relevant. It comes as no surprise,
-	especially in the case of computationally demanding scientific domains such as remote sensing data analysis.
-	There are already multiple studies showing how quantum computing and quantum machine learning (QML) can help in such tasks.
-
-	Quantum data fusion, an example of a data analysis problem, has gained a lot of attention in recent years.
-	The reason for that is the promise that noisy intermediate-scale quantum computers of the current era
-	can solve (NP-hard) problems in this field faster than contemporary supercomputers.
-	With techniques such as the quantum approximate optimization algorithm and quantum adiabatic computing,
-	this is a well-justified expectation. However, those methods are not the only ones worth investigating.
-
-	In this manuscript, we present an automated QML (AQML) approach for solving the data fusion problem.
-	We study how AQML-found circuits compare to the classical MLP and manually selected QML models,
-	in the case when the input to those models comes from multiple sources.
-	We also apply our technique to the change detection task, analyzing the multispectral ONERA dataset
-	and showing improvement over previously reported QML-based change detection accuracy.
+With fault-tolerant quantum computing on the horizon, there is growing interest in applying quantum computational methods to data-intensive scientific fields like remote sensing. Quantum machine learning (QML) has already demonstrated potential for such demanding tasks.
+One area of particular focus is quantum data fusion—a complex data analysis problem that has attracted significant recent attention.
+In this work, we introduce an automated QML (AQML) approach for addressing data fusion challenges. We evaluate how AQML-generated quantum circuits perform compared to classical multilayer perceptrons (MLPs) and manually designed QML models when processing multisource inputs.
+Furthermore, we apply our method to change detection using the multispectral ONERA dataset, achieving improved accuracy over previously reported QML-based change detection results.
 
 
 	\keywords{quantum data fusion  \and auto quantum machine learning \and remote sensing \and multispectral imaging
@@ -73,35 +58,30 @@
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
+Multisource Data about an observed object can be gathered from multiple
+complementary sensors. These data sensors have to be
+aggregated and transformed into useful information to e.g.\ obtain richer and
+more accurate decision outcomes. The field of multisource information fusion (MSIF) deals with this type of data processing problems.
 
-% Multisource
-% Data about an observed object can be gathered from multiple complementary sensors. To obtain richer and more
-% accurate decision outcomes, multisource information fusion (MSIF) can be employed.
-% A comprehensive review of information fusion approaches is provided by Li et
-% al.~\cite{liMultisourceInformationFusion2024}.\todo{TR: To chyba lepiej na koniec.} In this work, we focus on
-% feature-level fusion, in which the fusion model operates on extracted feature representations.
-% MSIF has found widespread application in machine learning, particularly in classification tasks, as surveyed
-% in~\cite{baltrusaitisMultimodalMachineLearning2019}.
-% Representative applications include remote sensing~\cite{liA3CLNNSpatialSpectral2022}, military
-% systems~\cite{sycaraIntegratedApproachHighlevel2009},
-% and human action recognition~\cite{fortinoAdvancesMultisensorFusion2019}, among
-% others~\cite{liMultisourceInformationFusion2024}.\todo{TR: Wstęp bardzo do rzeczy, ale ok.}
+In this work, we focus on
+feature-level fusion, in which the fusion model operates on extracted feature
+representations. MSIF has found widespread application in machine learning,
+particularly in classification tasks, as surveyed
+in~\cite{baltrusaitisMultimodalMachineLearning2019}. Representative applications
+include remote sensing~\cite{liA3CLNNSpatialSpectral2022}, military
+systems~\cite{sycaraIntegratedApproachHighlevel2009}, and human action
+recognition~\cite{fortinoAdvancesMultisensorFusion2019}, among
+others~\cite{liMultisourceInformationFusion2024}.
 
-Observation is a primary, primal even, epistemic tool. It is the act of observation upon which we begin our
-most basic learning, and in empirical sciences it's the observation that ultimately falsifies (or not) the
-hypothesis under investigation. It's also a common knowledge that the more we observe a given phenomenon, the
-more we know about it. However, while the aggregation of such multiple observation come more or less naturally to
-us, the situation is entirely different for the learning algorithms.
-
-The issue mentioned above lies at the very core of the multi-source information fusion (MSIF), a domain of
-knowledge dedicated to finding efficient methods for multi-source data aggregation. The field itself has been a
+The issue mentioned above lies at the very core of the MSIF, a domain of
+knowledge dedicated to finding efficient methods for multisource data aggregation. The field itself has been a
 subject of scientific investigations for quite some time now, particularly in the context of remote sensing
 \cite{DataFusion1986}, where it persists as a subject of studies \cite{liA3CLNNSpatialSpectral2022}. The research
 on data fusion is extensive enough, and the scope of techniques it presents is so wide, that they could be
 categorized into groups and further subgroups \cite{baltrusaitisMultimodalMachineLearning2019}. In this work, we
 focus solely on one such subgroup: a model-agnostic early fusion, otherwise known as feature-based fusion. This
 term refers to a family of algorithms in which the fusion occurs at the early stages of the ML pipeline. A subtype of
-those algorithms is a data-level fusion, an approach in which the multi-source data is aggregated prior to entering
+those algorithms is a data-level fusion, an approach in which the multisource data is aggregated prior to entering
 the ML model \cite{dalla_mura_challenges_2015}.
 
 % Transition: MSIF -> QML
@@ -110,7 +90,7 @@ the ML model \cite{dalla_mura_challenges_2015}.
 % exploration of alternative computational paradigms for multisource learning.
 Early fusion problems are often approached with machine learning models \cite{liMultisourceInformationFusion2024,baltrusaitisMultimodalMachineLearning2019}, which one may consider a very
 natural approach. After all, ML models are trained on the data. If the data is represented better (with multiple
-representations, coming from multiple sources), it's only natural that the results should improve. However, some of
+representations, coming from multiple sources), it is only natural that the results should improve. However, some of
 the data fusion problems have been shown to be NP-hard \cite{DataFusionNPQAOA}. This means that classical techniques,
 while still useful, might not be able to address the problems above certain sizes (unless we see some unlikely shift
 in the complexity theory). This is exactly why alternative methods of computing, such as quantum computing and
@@ -126,13 +106,13 @@ computations are done within quantum circuits, commonly with the use of quantum 
 gates can be expressed by unitary gates, making the whole circuit (up to the measurement) a unitary transformation
 of the input. However simple the description may look, quantum mechanics introduces two computationally useful
 phenomena --- superposition and entanglement --- that when used correctly can significantly speed up the
-computations. That said, we can think of a QML model as a ML model that uses quantum computing. It's known that
+computations. That said, we can think of a QML model as a ML model that uses quantum computing. It is known that
 such models can represent complex functions using comparatively shallow (i. e. with low layers count) circuits
 or fewer parameters than their classical counterparts, suggesting potential advantages for learning tasks
 involving structured or high-dimensional
 data~\cite{havlicekSupervisedLearningQuantumenhanced2019,schuldQuantumMachineLearning2019,abbasPowerQuantumNeural2021,GawronPowerOfData}. Moreover,
 theoretical work has identified learning scenarios in which quantum models offer data-dependent
-advantages~\cite{huangPowerDataQuantum2021a}. Empirical tests on the multi-spectral satellite data seem to also
+advantages~\cite{huangPowerDataQuantum2021a}. Empirical tests on the multispectral satellite data seem to also
 confirm this finding \cite{GawronPowerOfData}.
 
 
@@ -148,16 +128,16 @@ confirm this finding \cite{GawronPowerOfData}.
 
 
 % QMSC
-Recently, several works explored the application of QML methods to multi-source or multi-modal data fusion.
+Recently, several works explored the application of QML methods to multisource or multi-modal data fusion.
 Common approach is to, instead of using purely-quantum models, take advantage of the hybrid quantum-classical
 models. Feature-level multi-modal quantum fusion presented in \cite{wuFeatureEntanglementbasedQuantum2026} is a
-stellar example of that approach. In the ML pipeline described therein, takes features extracted by separate
+stellar example of that approach. The ML pipeline described therein, takes features extracted by separate
 uni-modal classical neural networks and embeds them into a quantum fusion circuit. The features are then entangled
 between multiple modalities on target qubits. Their model showed consistent stability and high accuracy for
 high-dimensional data.
 
 % AQML
-When it comes to QML models, one of the central problems is quantum architecture search (QAS) \cite{QAS}. It's a
+When it comes to QML models, one of the central problems is quantum architecture search (QAS) \cite{QAS}. It is a
 quantum version of the neural architecture search (NAS) problem known in the ML community. Without the right
 selection of the model architecture, the training might fail. While the problem case of both NAS and QAS, there are
 several techniques that allow to address it. One of such techniques is automated (quantum) machine learning (AQML).
@@ -170,7 +150,7 @@ It this paper, we present an application of AQML to quantum feature fusion probl
 \ref{sec:problem_formulation} we formally present the issues addressed in this manuscript: the feature fusion and
 quantum architecture search. Then, we provide the detailed description of our multi-level approach in section
 \ref{sec:method}. Section \ref{sec:exp} contains the experiments overview --- along with the datasets description,
-hyper-parameter optimization (HPO) step and the results analysis. We conclude the paper with final remarks and
+hyperparameter optimization (HPO) step and the results' analysis. We conclude the paper with final remarks and
 insights for future work.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -184,7 +164,7 @@ there are also multiple other decisions to be made. Complete pipelines are not n
 to quantum models, after all. In this section, we detail the feature fusion problem and further argument why
 QML models are plausible candidates for providing satisfactory solutions in that regard. We also introduce a
 specific case of data fusion --- change detection task --- that we considered in our experiments with the remote
-sensing satellite data. Finally, we formally introduce QAS problem, and discuss it's usual constraints that we won't
+sensing satellite data. Finally, we formally introduce QAS problem, and discuss its usual constraints that we won't
 consider.
 
 \subsection{Data fusion}
@@ -205,7 +185,7 @@ Change detection can be defined as the following task.
 	\textit{Given a pair of corresponding pictures, depicting the same region and taken at different times, find the
 		regions that differ between the pictures \cite{QMLCaseStudy}. }
 \end{center}
-Change detection can be considered a multi-source data fusion problem, even when the picture was taken using
+Change detection can be considered a multisource data fusion problem, even when the picture was taken using
 the same device. This is due to the fact that the temporal difference between the images implies (in general)
 different atmospheric conditions, and notable spatial (angles, distances, ...) or geographical differences (new
 buildings, ...). This, in turn, introduces heterogeneity to the pair of pictures. In the terms of data processing,
@@ -241,13 +221,13 @@ and direct interested readers to appropriate resources. In particular, we focus 
 comparison to its reported version \cite{Rybotycki_2025}.
 
 While the models we used differ slightly from each other, we would like to point out that their underlying
-high-level logic remains the same and it's only the implementation aspect that differs. Each of our models
+high-level logic remains the same and it is only the implementation aspect that differs. Each of our models
 consists of two main parts: feature extractor and a classifier. The feature extractor is the initial part of
 the model we used. It accepts the input and initially processes the data. For every model, feature extractor
 we used is classical. Preprocessed features are then passed to the classifier. The output of this
 model will be used to obtain the final decision about the input, depending on the experiment. This part of the
 network may be classical (subsection \ref{ssec:mlp}) or quantum and hybrid quantum-classical (subsection
-\ref{ssec:hqnn}) or hybrid-quantum.
+\ref{ssec:hqnn}).
 
 
 
@@ -263,13 +243,13 @@ decided to separate the feature extractor part of the model into two distinct pa
 The first model we implemented was a classical multi-layer perceptron (MLP) \cite{RussellNorvig2010}, which was meant to
 serve as a baseline reference for our subsequent experiments. In this model both the extractors and the classifier were
 a MLP. We present this a architecture in the figure~\ref{fig:model_schamatic}.
-\vspace*{-0.85cm}
+\vspace*{-0.5cm}
 \begin{figure}
 	\centering
 	\hspace*{-0.07\paperwidth}\includegraphics[width=1.2\textwidth]{fig/Model_schematic.pdf}
 	\caption{A schematic representation of all the models used in this work: \textbf{yellow} --- feature extractor, \textbf{blue} --- classifier (here the fusion takes place), \textbf{green} --- optional output logits for quantum
 		classifiers. XOR on the schematic means that only one type of classifier is used at the time. Top classifier
-		represents MLP approach, and the bottom one PQC approach.}
+		represents MLP approach, and the bottom one parametrized quantum circuit approach.}
 	\label{fig:model_schamatic}
 \end{figure}
 
@@ -285,7 +265,7 @@ deep neural networks \cite{RussellNorvig2010}.
 \subsection{Hybrid Quantum--Classical Neural Network}
 \label{ssec:hqnn}
 
-In our initial experiments with automated quantum machine learning, we used a hybrid quantum-classical machine learning
+In our initial experiments with quantum machine learning, we used a hybrid quantum-classical machine learning
 model. What the name entails is the fact that in the ML pipeline, both classical and quantum layers are used. A common
 approach is to include a parameterized quantum circuit (PQC), with an arbitrary number of gate layers, as a single
 quantum layer of the network. Such layer can then be a part of a model, or a model by itself.
@@ -436,7 +416,7 @@ To investigate the performance of our approach with the real data, we decided to
 \cite{QMLCaseStudy}, only this time, with the use of AQML. The model we used for those experiments follows the
 schematic presented in the figure \ref{fig:model_schamatic} and is similar to the model described in previous subsection
 \ref{ssec:hqnn}. The only difference here is that we used a single feature extractor instead of two, to which we uploaded
-the concatenated data from both sources. We decided not to separate the feature extraction, so that the experiment
+the concatenated data from both sources. We decided not to separate the feature extraction, so that our experiment
 differs from \cite{QMLCaseStudy} only in the application of AQML. In this model, the final classical layer was also
 an optional addition. To reduce the initial dimensionality of the input (with 13-band pixels it would require too many
 qubits for efficient simulation) PCA was used, leaving the input from each source described by four features.
@@ -445,15 +425,15 @@ qubits for efficient simulation) PCA was used, leaving the input from each sourc
 
 \subsection{Automated Quantum Machine Learning}
 
-In our experiments, we used the \texttt{aqmlator} library and thus the hyper-parameter optimization (HPO)-based AQML
+In our experiments, we used the \texttt{aqmlator} library and thus the hyperparameter optimization (HPO)-based AQML
 approach reported in \cite{Rybotycki_2025}. The idea behind this algorithm is to treat the ansatz architecture as an
-hyper-parameter and apply classical HPO techniques to find it. However, instead of using quantum gates as the basic
+hyperparameter and apply classical HPO techniques to find it. However, instead of using quantum gates as the basic
 building blocks of the PQC, the authors proposed to use well-known and commonly used quantum layers, and thus limiting
 the search-space of the optimization algorithm significantly.
 
 The latest version of \texttt{aqmlator} (2.0.0a1, available only through the sources), aside from technical
 improvements, offers more flexible ansatze finding classes, proposes data re-uploading layers, and uses a wider range
-of layers during the ansatz search. In particular, it implements the \texttt{SimplifiedTwoDesign} and the
+of variational layers during the ansatz search. In particular, it implements the \texttt{SimplifiedTwoDesign} and the
 \texttt{BellmanLayer}, thus making it possible for \texttt{aqmlator} to find the models used in the previous ONERA QML
 change detection experiments \cite{QMLCaseStudy}.
 
@@ -487,21 +467,21 @@ also wanted not to overcomplicate our preliminary examples. We arbitrarily selec
 	\item digit ``7'' (\(6265\) training samples and \(1028\) validation samples).
 \end{itemize}
 
-Each image was preprocessed to construct synthetic multi-source inputs. Images were split horizontally into top and
+Each image was preprocessed to construct synthetic multisource inputs. Images were split horizontally into top and
 bottom halves, which were treated as complementary views. Each view was then binarized, spatially downsampled, and
 transformed into a 14-dimensional vector by computing the mean pixel intensity along the columns. These vectors
-correspond to the synthetic multi-source inputs $x_{\mathrm{top}}$ and $x_{\mathrm{bottom}}$, each described with
+correspond to the synthetic multisource inputs $x_{\mathrm{top}}$ and $x_{\mathrm{bottom}}$, each described with
 14 features. We graphically present this data preparation scheme in the figure \ref{fig:dataPrep}.
 \begin{figure}
 	\centering
 	\includegraphics[width=\textwidth]{fig/preprocessing.pdf}
-	\caption{Overview of the synthetic multi-source preprocessing pipeline.
+	\caption{Overview of the synthetic multisource preprocessing pipeline.
 		(a) Original input image.
 		(b) Horizontal splitting into top and bottom halves.
 		(c) Binarization of each half.
 		(d) Spatial downsampling.
 		(e) Computation of column-wise mean pixel intensities, resulting in vector representations
-		that constitute the synthetic multi-source inputs $x_{\mathrm{top}}$ and $x_{\mathrm{bottom}}$.
+		that constitute the synthetic multisource inputs $x_{\mathrm{top}}$ and $x_{\mathrm{bottom}}$.
 	}
 	\label{fig:dataPrep}
 \end{figure}
@@ -548,19 +528,19 @@ metrics allowed us to assess the general performance of the evaluated models.
 \subsubsection{Hyperparameter Optimization}
 \label{ssec:hpo}
 
-We performed hyper-parameter optimization (HPO) to select the optimal architecture for the models we tested in the
-experiment. To that aim, we used \texttt{optuna} hyper-parameter optimizer \cite{optuna}, a \texttt{Python} package
+We performed hyperparameter optimization (HPO) to select the optimal architecture for the models we tested in the
+experiment. To that aim, we used \texttt{optuna} hyperparameter optimizer \cite{optuna}, a \texttt{Python} package
 for HPO, used in both ML and QML. We present the HPO setup and the results for the classical and quantum experiments in
 the Tables~\ref{tab:baseline_hpo} and \ref{tab:pqc_hpo}. Those results were obtained without early stopping, and
 using random seed equal to 42. The number of trials varied, depending on the model, and was equal to 100, 100, 50
 and 35 for MLP, $PQC_{\mathrm{manual}}$, $PQC_{\mathrm{AQML}^{\mathrm{Solo}}}$ and
-$PQC_{\mathrm{AQML}^{\mathrm{Linear}}}$, respectively. The variation was the effect of limited compuational
+$PQC_{\mathrm{AQML}^{\mathrm{Linear}}}$, respectively. The numbers differ due to limited compuational
 resources.
 
 % ===== Hyperparameters: MLP_experiment_setup =====
 \begin{table}[t]
 	\centering
-	\caption{Experiment setup for baseline hyper-parameters optimization.}
+	\caption{Experiment setup for baseline hyperparameters optimization.}
 	\label{tab:baseline_hpo}
 	\begin{tabular}{p{6cm}p{2cm}p{1.5cm}l}
 		\hline
@@ -578,7 +558,7 @@ resources.
 % ===== Hyperparameters: PQC_experiment_setup =====
 \begin{table}[t]
 	\centering
-	\caption{Experiment setup for PQC hyper-parameters optimization. For those experiments the learning rate was
+	\caption{Experiment setup for PQC hyperparameters optimization. For those experiments the learning rate was
 		fixed to $lr = 10^{-3}$. PQC$^{\mathrm{Solo}}_{\mathrm{AQML}}$ and PQC$^{\mathrm{Linear}}_{\mathrm{AQML}}$ denote
 		PQC models without and with final classical linear layer respectively. We present the architecture of the model
 		in the parenthesis, next to the model's name.}
@@ -617,7 +597,7 @@ resources.
 
 In table~\ref{tab:mnist_results} we present the values of metrics obtained with the best classical, manual PQC and
 AQML-found PQC models. The results clearly show that the models found with AQML outperformed manually selected PQCs
-for our synthetic multi-source MNIST classification task. The accuracy they obtain is on par with the classical MLP,
+for our synthetic multisource MNIST classification task. The accuracy they obtain is on par with the classical MLP,
 but with over 10 times less parameters. Over 100 times less, if we consider only classifiers.
 
 In the table~\ref{tab:mnist_results} one can also see that while PQCs with additional linear layer performed better,
@@ -724,7 +704,7 @@ accuracy it achieved was 0.738, which is below the best accuracy reported by bas
 direction of research, we considered an MLP with only 2 hidden neurons, and thus 16 parameters. Over another 10 runs,
 the model scored 0.731, 0.667, 0.525 for maximal, average and minimal accuracy, all below AQML-found PQCs.
 
-We also report that AQML approach led to the results that were better than originally reported with accuracy
+We also report that AQML approach led to the results that were better than originally reported (with accuracy
 0.752 vs. 0.720). That's also true for PQC$^{\mathrm{Solo}}_{\mathrm{AQML}}$ models, which achieved best accuracy of
 0.738. Furthermore, the best PQC model had only 8 parameters and significantly less gates than the model reported
 in the original research. This conclusion is vital, because transpiling and running such model on a real device would
@@ -776,8 +756,8 @@ further studies.
 \vspace*{-0.3cm}
 \begin{credits}
 
-	\subsubsection{\ackname} We gratefully acknowledge the funding support by the program ”Excellence initiative—research
-	university” for the AGH University of Kraków as well as the ARTIQ project (UMO-2021/01/2/ST6/00004 and
+	\subsubsection{\ackname} We gratefully acknowledge the funding support by the program ``Excellence initiative—research
+	university'' for the AGH University of Kraków as well as the ARTIQ project (UMO-2021/01/2/ST6/00004 and
 	ARTIQ/0004/2021).
 
 	\vspace*{-0.3cm}
