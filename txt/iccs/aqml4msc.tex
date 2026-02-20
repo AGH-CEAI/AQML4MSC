@@ -61,7 +61,7 @@
 		In this manuscript, we present an automated QML (AQML) approach for solving data fusion problem. We study how using
 		AQML-found circuits compare to the classical MLP and manually selected QML models, in the case when the input to
 		those models comes from multiple sources. We also apply our technique for the change detection task, analyzing the
-		hyper-spectral ONERA dataset and show improvement over previously reported change detection accuracy.
+		hyper-spectral ONERA dataset and show improvement over previously reported QML-based change detection accuracy.
 
 
 	\keywords{quantum data fusion  \and auto quantum machine learning \and remote sensing \and hyper-spectral imaging
@@ -74,7 +74,6 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
 
-\todo[inline]{Sprawdzić pracę w \texttt{Coblis}.}
 % Multisource
 % Data about an observed object can be gathered from multiple complementary sensors. To obtain richer and more
 % accurate decision outcomes, multisource information fusion (MSIF) can be employed.
@@ -188,11 +187,15 @@ Recently, several works explored the application of QML methods to multi-source 
 	sensing satellite data. Finally, we formally introduce QAS problem, and discuss it's usual constraints that we won't
 	consider.
 
-\subsection{Feature fusion}
+\subsection{Data fusion}
 
-\todo[inline]{SD: Przepisać tak, żeby nie było o danych, tylko o problemie.}
-\todo[inline]{Po sformułowaniu problemu, możnaby przeanalizować jakie podejścia ludzie mają i dlaczego one są ograniczone. I gdzie użycie kwantów może pomóc.}
-\todo[inline]{TR}
+	Data fusion has a goal-oriented definition.
+	\begin{center}
+		\textit{Join information from multiple modalities (sources) to perform prediction \cite{baltrusaitisMultimodalMachineLearning2019}.}
+	\end{center}
+	In this work we study early fusion, which means the data will be aggregated directly after its extraction. Data
+	fusion is known to enhance the quality of MLP model predictions and is required for tasks such as change detection
+	\cite{QMLCaseStudy}. The simplest form of data fusion is concatenating the extracted feature vectors.
 
 
 	\subsection{Change detection}
@@ -260,6 +263,7 @@ decided to separate the feature extractor part of the model into two distinct pa
 The first model we implemented was a classical multi-layer perceptron (MLP) \cite{RussellNorvig2010}, which was meant to
 serve as a baseline reference for our subsequent experiments. In this model both the extractors and the classifier was
 a MLP. We present this a architecture in the figure~\ref{fig:model_schamatic}.
+\vspace*{-0.85cm}
 \begin{figure}
 	\centering
 	\hspace*{-0.07\paperwidth}\includegraphics[width=1.2\textwidth]{fig/Model_schematic.pdf}
@@ -432,10 +436,10 @@ To investigate the performance of our approach with the real data, we decided to
 \cite{QMLCaseStudy}, only this time, with the use of AQML. The model we used for those experiments follows the
 schematic presented in the figure \ref{fig:model_schamatic} and is similar to the model described in previous subsection
 \ref{ssec:hqnn}. The only difference here is that we used a single data extractor instead of two, to which we uploaded
-the concatenated data from both the sources. This approach, known as data-level fusion, is also sometimes considered in
-remote sensing \cite{dalla_mura_challenges_2015}. We decided not to separate the data extraction, so that the experiment
+the concatenated data from both the sources. We decided not to separate the data extraction, so that the experiment
 differs from \cite{QMLCaseStudy} only in the application of AQML. In this model, the final classical layer was also
-an optional addition.
+an optional addition. To reduce the initial dimensionality of the input (with 13-band pixels it would require too many
+qubits for efficient simulation) PCA was used, leaving the input from each source described by four features.
 
 
 
@@ -463,14 +467,16 @@ In the following sections, we present the overview of the quantum data fusion ex
 We begin with the description of our initial experiments using synthetic data created from the well-known MNIST dataset
 \cite{lecunMNISTHandwrittenDigits2025}. With the successful application of QML and AQML to the synthetic data, we shift
 our attention to the real-world ONERA dataset \cite{onera} and revisit experiments from \cite{QMLCaseStudy}, but this
-time using AQML techniques to select the quantum classifier.
+time using AQML techniques to select the quantum classifier. The code from our MNIST experiments is available in
+the public github repository\footnote{\url{https://github.com/AGH-CEAI/AQML4MSC}}. Our ONERA AQML experiments are in the
+original repository of \cite{QMLCaseStudy}.
 
 	\subsection{MNIST}
 
 		\subsubsection{Dataset}
 		The original MNIST dataset consists of 70,000 grayscale images of handwritten digits (0--9), each of size $28
 		\times 28$ pixels. We obtained the dataset from Kaggle \cite{lecunMNISTHandwrittenDigits2025}, and used the
-		predefined training--validation split without modification.
+		predefined training--validation split as-is.
 		
 		In the preliminary research, we reduced the number of output classes from 10 to 3. The idea here was to reduce the
 		complexity of the task, so that we could ensure reasonable (i. e. simulable) sizes of our quantum classifiers. We
@@ -612,12 +618,12 @@ time using AQML techniques to select the quantum classifier.
 		In table~\ref{tab:mnist_results} we present the values of metrics obtained with the best classical, manual PQC and
 		AQML-found PQC models. The results clearly show that the models found with AQML outperformed manually selected PQCs
 		for our synthetic multi-source MNIST classification task. The accuracy they obtain is on par with the classical MLP,
-		but with over 10 times less parameters.Over 100 times less, if we consifer only classifiers.
+		but with over 10 times less parameters.Over 100 times less, if we consider only classifiers.
 		
 		In the table~\ref{tab:mnist_results} one can also see that while PQCs with additional linear layer performed better,
 		the difference between the best models reported isn't significant (is within a single standard deviation). We have
 		noticed, however, that the models with linear layer seem to behave more consistently during the training. We started
-		to investigate that phenomenon, and found that indeed accuracies averaged over all models from given groups were:
+		to investigate that phenomenon, and found that indeed accuracy averaged over all models from given groups was:
 		\begin{equation}
 			\mathrm{accuracy}^{\mathrm{avg}}_{\mathrm{PQC}^{\mathrm{Solo}}_{AQML}}
 			= 0.837 < 0.889 =
@@ -690,8 +696,8 @@ time using AQML techniques to select the quantum classifier.
 
 	\subsubsection{Experimental setup} 
 	In our experiments we repeat the experiment reported in \cite{QMLCaseStudy}, thus the setup remains the same. The only
-	change we include is using AQML to find ansatze used for the change detecion. The metric we consider is still accuracy
-	and the data is prepocessed and fused in the same manner as in \cite{QMLCaseStudy}, as we explained in the section
+	change we include is using AQML to find ansatze used for the change detection. The metric we consider is still
+	accuracy and the data is preprocessed and fused in the same manner as in \cite{QMLCaseStudy}, as we explained in the section
 	\ref{sec:method}.
 	
 	For the AQML, we set up the number of QML blocks in range [1, 5]. We also included baseline classical classifier,
@@ -717,15 +723,16 @@ time using AQML techniques to select the quantum classifier.
 	containing a single hidden layer, reducing the number of trainable parameters to 64. The accuracy of MLP didn't
 	drop significantly, and remained at an impressive 0.731 on average (the best from all the models). However, the best
 	accuracy it achieved was 0.738, which is below the best accuracy reported by baseline MLP and PQC. Finishing this
-	direction of research, we considered an MLP with only 2 hidden neurons, and thus 16 parameters. 
+	direction of research, we considered an MLP with only 2 hidden neurons, and thus 16 parameters. Over another 10 runs,
+	the model scored 0.731, 0.667, 0.525 for maximal, average and minimal accuracy, all below AQML-found PQCs.
 	
 	We also report that AQML approach led to the results that were better than originally reported with accuracy 
 	0.752 vs. 0.720). That's also true for PQC$^{\mathrm{Solo}}_{\mathrm{AQML}}$ models, which achieved best accuracy of
 	0.738. Furthermore, the best PQC model had only 8 parameters and significantly less gates than the model reported
 	in the original research. This conclusion is vital, because transpiling and running such model on a real device would
 	be much easier and would lead to lesser influence of the device imperfections. And models that easy were not even
-	considered in the orginal study! This highlights how useful AQML approach can be, if only at the prototyping stage
-	of the research.
+	considered in the original study! This highlights how useful AQML approach can be, if only at the prototyping stage
+	of the research. 
 	
 	Finally, we also report that while the additional classical linear layer had no significant influence on the best
 	accuracy obtained with both the models, we noticed that the stability of the training and the results are greatly
@@ -736,7 +743,6 @@ time using AQML techniques to select the quantum classifier.
 		= 0.676 < 0.738 =
 		\mathrm{accuracy}^{\mathrm{avg}}_{\mathrm{PQC}^{\mathrm{Linear}}_{AQML}},
 	\end{equation}
-	and:
 	\begin{equation}
 		\mathrm{accuracy}^{\mathrm{min}}_{\mathrm{PQC}^{\mathrm{Solo}}_{AQML}} 
 		= 0.505 < 0.710 = 
@@ -751,23 +757,33 @@ time using AQML techniques to select the quantum classifier.
 \section{Conclusion}
 \label{sec:conclusions}
 
-\todo[inline]{TR}
-\begin{itemize}
-	\item AQML > QML
-	\item Classical >= AQML
-\end{itemize}
-
-
+	In this study, we provide evidence that even the simplest AQML approach can lead to better hybrid quantum-classical
+	models. This is particularly true for the models that also perform data fusion.
+	
+	Using specially prepared MNIST as an synthetic example, we report that manually selected QML models were worse than
+	that found by AQML. Although the models were never as good as the best classical models, they were comparable, and
+	they needed far trainable parameters to achieve their accuracy.
+	
+	We also performed experiments using real data, this time using AQML to suggest the best QML model for change detection
+	on ONERA dataset. Not only do we report finding QML model better than the original work, but we also report that on
+	average the AQML-found models were better than classical MLP with similar number of parameters. This result further
+	highlights the usefulness of AQML approach.
+	
+	An interesting by-product of our study is that the additional classical linear output layer seem to stabilize the
+	hybrid model training. We presented the preliminary results on that matter and leave the proper investigation for 
+	further studies.
 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\vspace*{-0.3cm}
 \begin{credits}
 
 	\subsubsection{\ackname} We gratefully acknowledge the funding support by the program ”Excellence initiative—research
 	university” for the AGH University of Kraków as well as the ARTIQ project (UMO-2021/01/2/ST6/00004 and
 	ARTIQ/0004/2021).
 
+	\vspace*{-0.3cm}
 	\subsubsection{\discintname}
 	The authors have no competing interests to declare that are
 	relevant to the content of this article.
