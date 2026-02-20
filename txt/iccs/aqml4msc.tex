@@ -146,9 +146,9 @@ platforms for AQML (see \cite{Rybotycki_2025} for brief overview) available for 
 state-of-the-art results achieved using at least one of them \cite{AQML_Exp}.
 
 % Summary
-It this paper, we present an application of AQML to quantum feature fusion problem. In the following section
+It this paper, we present an application of AQML to quantum feature fusion problem. In the following Section
 \ref{sec:problem_formulation} we formally present the issues addressed in this manuscript: the feature fusion and
-quantum architecture search. Then, we provide the detailed description of our multi-level approach in section
+quantum architecture search. Then, we provide the detailed description of our multi-level approach in Section
 \ref{sec:method}. Section \ref{sec:exp} contains the experiments overview --- along with the datasets description,
 hyperparameter optimization (HPO) step and the results' analysis. We conclude the paper with final remarks and
 insights for future work.
@@ -161,7 +161,7 @@ insights for future work.
 
 Performing the feature fusion using QML models is a complex, multi-step problem. While it most notably involves a QAS problem,
 there are also multiple other decisions to be made. Complete pipelines are not necessarily restricted
-to quantum models, after all. In this section, we detail the feature fusion problem and further argument why
+to quantum models, after all. In this Section, we detail the feature fusion problem and further argument why
 QML models are plausible candidates for providing satisfactory solutions in that regard. We also introduce a
 specific case of data fusion --- change detection task --- that we considered in our experiments with the remote
 sensing satellite data. Finally, we formally introduce QAS problem, and discuss its usual constraints that we won't
@@ -216,7 +216,7 @@ model trained on a noiseless simulator was run on a real quantum device.
 \label{sec:method}
 
 In this work, we present two different approaches, sharing a common core in the form of AQML. We detailed both in
-subsection \ref{ssec:hqnn}. After all the models are introduced, we will briefly describe the AQML technique we used
+Subsection \ref{ssec:hqnn}. After all the models are introduced, we will briefly describe the AQML technique we used
 and direct interested readers to appropriate resources. In particular, we focus on the adjustments that are new in
 comparison to its reported version \cite{Rybotycki_2025}.
 
@@ -226,7 +226,7 @@ consists of two main parts: feature extractor and a classifier. The feature extr
 the model we used. It accepts the input and initially processes the data. For every model, feature extractor
 we used is classical. Preprocessed features are then passed to the classifier. The output of this
 model will be used to obtain the final decision about the input, depending on the experiment. This part of the
-network may be classical (subsection \ref{ssec:mlp}) or quantum and hybrid quantum-classical (subsection
+network may be classical (Subsection \ref{ssec:mlp}) or quantum and hybrid quantum-classical (Subsection
 \ref{ssec:hqnn}).
 
 
@@ -242,7 +242,7 @@ decided to separate the feature extractor part of the model into two distinct pa
 
 The first model we implemented was a classical multi-layer perceptron (MLP) \cite{RussellNorvig2010}, which was meant to
 serve as a baseline reference for our subsequent experiments. In this model both the extractors and the classifier were
-a MLP. We present this a architecture in the figure~\ref{fig:model_schamatic}.
+a MLP. We present this a architecture in the Figure~\ref{fig:model_schamatic}.
 \vspace*{-0.5cm}
 \begin{figure}
 	\centering
@@ -270,8 +270,8 @@ model. What the name entails is the fact that in the ML pipeline, both classical
 approach is to include a parameterized quantum circuit (PQC), with an arbitrary number of gate layers, as a single
 quantum layer of the network. Such layer can then be a part of a model, or a model by itself.
 
-Starting from the model schematic, as presented in the figure \ref{fig:model_schamatic}, we kept the feature extractors
-as in the MLP experiment (see subsection \ref{ssec:mlp}). However, we used quantum classifier, instead of the classical
+Starting from the model schematic, as presented in the Figure \ref{fig:model_schamatic}, we kept the feature extractors
+as in the MLP experiment (see Subsection \ref{ssec:mlp}). However, we used quantum classifier, instead of the classical
 one. This way, our final architecture resembled the one in \cite{wuFeatureEntanglementbasedQuantum2026}. Moreover, this
 way we could assess the classification capabilities on the found models, under the assumption that the data
 preprocessing (i.e. the preprocessing algorithm) remained intact.
@@ -281,7 +281,7 @@ ansatz (which is another usual name for a PQC). In that case, the model we selec
 consisted of typically used quantum neural network (QNN) layers. In our other approach, we used AQML techniques to
 find the right ansatz for the problem. In this scenario, the algorithm suggested the circuit built using several QML
 blocks, which are pairs of data (re-)uploading and variational operations. The resultant PQC schematic is presented in
-the figure \ref{fig:AQML_PQC}.
+the Figure \ref{fig:AQML_PQC}.
 \begin{figure}
 	\centering
 	\includegraphics[width=0.6\textwidth]{fig/variational_circuit.pdf}
@@ -414,7 +414,7 @@ quantum circuits \cite{schuld_effect_2021}.
 
 To investigate the performance of our approach with the real data, we decided to revisit the experiments reported in
 \cite{QMLCaseStudy}, only this time, with the use of AQML. The model we used for those experiments follows the
-schematic presented in the figure \ref{fig:model_schamatic} and is similar to the model described in previous subsection
+schematic presented in the Figure \ref{fig:model_schamatic} and is similar to the model described in previous Subsection
 \ref{ssec:hqnn}. The only difference here is that we used a single feature extractor instead of two, to which we uploaded
 the concatenated data from both sources. We decided not to separate the feature extraction, so that our experiment
 differs from \cite{QMLCaseStudy} only in the application of AQML. In this model, the final classical layer was also
@@ -447,9 +447,9 @@ In the following sections, we present the overview of the quantum data fusion ex
 We begin with the description of our initial experiments using synthetic data created from the well-known MNIST dataset
 \cite{lecunMNISTHandwrittenDigits2025}. With the successful application of QML and AQML to the synthetic data, we shift
 our attention to the real-world ONERA dataset \cite{onera} and revisit experiments from \cite{QMLCaseStudy}, but this
-time using AQML techniques to select the quantum classifier. The code from our MNIST experiments is available in
-the public github repository\footnote{\url{https://github.com/AGH-CEAI/AQML4MSC}}. Our ONERA AQML experiments are in the
-original repository of \cite{QMLCaseStudy}.
+time using AQML techniques to select the quantum classifier. The code and the data from our MNIST experiments are
+available through Zenodo \cite{dziura_2026_18717347}. Our ONERA AQML experiments are in the original repository of
+\cite{QMLCaseStudy}.
 
 \subsection{MNIST}
 
@@ -471,7 +471,7 @@ Each image was preprocessed to construct synthetic multisource inputs. Images we
 bottom halves, which were treated as complementary views. Each view was then binarized, spatially downsampled, and
 transformed into a 14-dimensional vector by computing the mean pixel intensity along the columns. These vectors
 correspond to the synthetic multisource inputs $x_{\mathrm{top}}$ and $x_{\mathrm{bottom}}$, each described with
-14 features. We graphically present this data preparation scheme in the figure \ref{fig:dataPrep}.
+14 features. We graphically present this data preparation scheme in the Figure \ref{fig:dataPrep}.
 \begin{figure}
 	\centering
 	\includegraphics[width=\textwidth]{fig/preprocessing.pdf}
@@ -506,9 +506,9 @@ $v_{\mathrm{bottom}}$ of equal dimensionality. These features are fused and clas
 $h(\cdot,\theta_3)$ --- realized by the classifier --- yielding the final classification decision $d$. The
 resulting formulation is defined as:
 \begin{align*}
-	v_{\mathrm{top}}    & = f(x_{\mathrm{top}}, \theta_1),                      \\
-	v_{\mathrm{bottom}} & = f(x_{\mathrm{bottom}}, \theta_2),                   \\
-	d                   & = h(v_{\mathrm{top}}, v_{\mathrm{bottom}}, \theta_3).
+	v_{\mathrm{top}}    = f(x_{\mathrm{top}}, \theta_1); \quad 
+	v_{\mathrm{bottom}}  = f(x_{\mathrm{bottom}}, \theta_2); \quad
+	d                    = h(v_{\mathrm{top}}, v_{\mathrm{bottom}}, \theta_3).
 \end{align*}
 All learnable parameters $\theta_1$, $\theta_2$, and $\theta_3$ are optimized jointly during the training. The
 training is performed using the cross-entropy loss, and predictions are obtained by selecting the output
@@ -595,12 +595,12 @@ resources.
 
 \subsubsection{Results}
 
-In table~\ref{tab:mnist_results} we present the values of metrics obtained with the best classical, manual PQC and
+In the Table~\ref{tab:mnist_results} we present the values of metrics obtained with the best classical, manual PQC and
 AQML-found PQC models. The results clearly show that the models found with AQML outperformed manually selected PQCs
 for our synthetic multisource MNIST classification task. The accuracy they obtain is on par with the classical MLP,
 but with over 10 times less parameters. Over 100 times less, if we consider only classifiers.
 
-In the table~\ref{tab:mnist_results} one can also see that while PQCs with additional linear layer performed better,
+In the Table~\ref{tab:mnist_results} one can also see that while PQCs with additional linear layer performed better,
 the difference between the best models reported isn't significant (is within a single standard deviation). We have
 noticed, however, that the models with linear layer seem to behave more consistently during the training. We started
 to investigate that phenomenon, and found that indeed accuracy averaged over all models from given groups was:
@@ -661,22 +661,22 @@ of a separate study.
 \subsubsection{Dataset}
 The ONERA change detection dataset is a publicly available dataset containing annotated pairs of multispectral
 satellite images \cite{onera}. The spatial resolution of the images vary between the pairs. Each image has 13 spectral
-bands. An example of the input, reduced to the visible bands, is presented in the figure~\ref{fig:ONERA}.
+bands. An example of the input, reduced to the visible bands, is presented in the Figure~\ref{fig:ONERA}.
 
-\begin{figure*}
+\begin{figure}
 	\centering
 	\includegraphics[scale=0.24]{./fig/saclay1.png}
 	\includegraphics[scale=0.24]{./fig/saclay2.png}
 	\caption{A pair of images from the ONERA dataset. They show Saclay, a city in France. The images were taken on 15
 		III 2016 (Left) and 29 VIII 2017 (Right).}
 	\label{fig:ONERA}
-\end{figure*}
+\end{figure}
 
 \subsubsection{Experimental setup}
 In our experiments we repeat the experiment reported in \cite{QMLCaseStudy}, thus the setup remains the same. The only
 change we include is using AQML to find ansatze used for the change detection. The metric we consider is still
-accuracy and the data is preprocessed and fused in the same manner as in \cite{QMLCaseStudy}, as we explained in the section
-\ref{sec:method}.
+accuracy and the data is preprocessed and fused in the same manner as in \cite{QMLCaseStudy}, as we explained in the
+Section \ref{sec:method}.
 
 For the AQML, we set up the number of QML blocks in range [1, 5]. We also included baseline classical classifier,
 which was an MLP with 6 layers. As in \cite{QMLCaseStudy}, we didn't vary over the number of qubits, and it remained
