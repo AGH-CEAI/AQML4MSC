@@ -19,7 +19,7 @@ class ClassificationPipeline:
         trainer_params: dict,
         data_params: dict,
         experiment_params: dict,
-        optuna_params: dict,
+        optuna_params: dict = {},
         ansatz=None,  # TODO(SD) To refactor
     ) -> dict:
         set_seeds(experiment_params["seed"])
