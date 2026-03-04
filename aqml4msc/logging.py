@@ -81,7 +81,9 @@ def create_mlflow_experiment(exp_name: str) -> None:
         "project_name": "AQML4MSC",
     }
 
-    mlflow.create_experiment(name=exp_name, tags=tags, artifact_location=os.environ["MLFLOW_ARTIFACTS_ROOT"])
+    mlflow.create_experiment(
+        name=exp_name, tags=tags, artifact_location=os.environ["MLFLOW_ARTIFACTS_ROOT"]
+    )
 
 
 def log_params(params):

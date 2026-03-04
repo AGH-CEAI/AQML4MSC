@@ -1,7 +1,7 @@
 from torch import nn
 
 from aqml4msc.data import choose_digits, load_data
-from aqml4msc.mlflow_utils import EpochMetricsTracker
+from aqml4msc.logging import EpochMetricsTracker
 from aqml4msc.models.classical_mlp import CMLP_1
 from aqml4msc.models.vqa import QMLP_1
 from aqml4msc.pipeline import ClassificationPipeline
