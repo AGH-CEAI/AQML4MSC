@@ -4,6 +4,9 @@ from typing import Any, Dict, TextIO, Tuple
 
 import mlflow
 import numpy as np
+import pennylane as qml
+from aqmlator.tuner import compute_qc_metrics
+from metrics import compute_classification_metrics
 from mlflow.models import infer_signature
 from pytorch_lightning.callbacks import Callback
 from sklearn.metrics import classification_report, confusion_matrix
@@ -123,6 +126,37 @@ def log_model(
 ):
     signature = infer_signature(X_val, trainer.predict(X_val))
     trainer.log_model(model_name=model_name, signature=signature)
+
+
+def log_all_run_metrics(
+    metrics: list,
+    true_labels: np.ndarray,
+    preds: np.ndarray,
+    val_data: tuple,
+    fold: int,
+    classifier: BaseTraining,
+    model_name: str,
+    ansatz,
+) -> list:
+    metrics.append(compute_classification_metrics(y_true=true_labels, y_pred=preds))
+
+    if ansatz is not None:
+        metrics[-1].update(
+            compute_qc_metrics(qml.QNode(ansatz, device=classifier.model.dev))
+        )
+    log_metrics(metrics[fold - 1])
+    try:
+        log_classification_report(y_true=true_labels, y_pred=preds)
+        log_confusion_matrix(y_true=true_labels, y_pred=preds)
+        log_model(
+            trainer=classifier,
+            X_val=val_data,
+            model_name=model_name,
+        )
+    except Exception as e:
+        print(f"Could not save artifacts. Error occured: {e}")
+
+    return metrics
 
 
 # ------------------------------------------------------------------------------

@@ -1,9 +1,7 @@
 import numpy as np
-import pennylane as qml
-from aqmlator.tuner import compute_qc_metrics
 
 import aqml4msc.logging as logging
-from aqml4msc.metrics import aggregate_fold_metrics, compute_classification_metrics
+from aqml4msc.metrics import aggregate_fold_metrics
 from aqml4msc.preprocessing import preprocess_pipeline
 from aqml4msc.training.base_training import BaseTraining
 from aqml4msc.utils import encode_labels, get_stratified_cv_splits, set_seeds
@@ -65,29 +63,16 @@ class ClassificationPipeline:
                     preds = label_encoder.inverse_transform(preds)
                     true_labels = label_encoder.inverse_transform(val_y)
 
-                    # TODO(SD): Separete method for metrics logging.
-                    metrics.append(
-                        compute_classification_metrics(y_true=true_labels, y_pred=preds)
+                    metrics = logging.log_all_run_metrics(
+                        metrics,
+                        true_labels,
+                        preds,
+                        val_data,
+                        fold,
+                        classifier,
+                        model_name=experiment_params["model_name"],
+                        ansatz=ansatz,
                     )
-
-                    metrics[-1].update(
-                        compute_qc_metrics(
-                            qml.QNode(ansatz, device=classifier.model.dev)
-                        )
-                    )
-                    logging.log_metrics(metrics[fold - 1])
-                    try:
-                        logging.log_classification_report(
-                            y_true=true_labels, y_pred=preds
-                        )
-                        logging.log_confusion_matrix(y_true=true_labels, y_pred=preds)
-                        logging.log_model(
-                            trainer=classifier,
-                            X_val=val_data,
-                            model_name=experiment_params["model_name"],
-                        )
-                    except Exception as e:
-                        print(f"Could not save artifacts. Error occured: {e}")
 
             aggretated_metrics = aggregate_fold_metrics(metrics)
             logging.log_aggregated_metrics(aggretated_metrics)
