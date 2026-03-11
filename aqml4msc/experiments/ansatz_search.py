@@ -15,7 +15,7 @@ from statistics import mean
 from typing import Any, Callable
 
 import optuna
-from aqmlator.qml import AnsatzBuilder
+from aqmlator.qml.models import AnsatzBuilder
 from aqmlator.tuner import AnsatzFinder
 from torch import nn
 
