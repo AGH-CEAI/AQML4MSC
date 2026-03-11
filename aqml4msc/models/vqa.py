@@ -1,5 +1,6 @@
 from typing import List
 
+import numpy as np
 import pennylane as qml
 import torch
 from qmetric.converters import PennylaneToQASM3
@@ -33,7 +34,9 @@ class QMLP_1(BaseMLPModel):
         self.model_bottom = self.make_classical_network(
             input_dim=input_dim, hidden_dim=hidden_dim_part, output_dim=output_dim_part
         )
-        self.model_classifier = self.make_quantum_classifier(n_layers=n_layers, num_classes=num_classes)
+        self.model_classifier = self.make_quantum_classifier(
+            n_layers=n_layers, num_classes=num_classes
+        )
 
     def forward(self, x_top, x_bottom):
         features1 = self.model_top(x_top)
@@ -60,15 +63,15 @@ class QMLP_1(BaseMLPModel):
 
         # return qml.qnn.TorchLayer(qnode, weight_shapes)
         return torch.nn.Sequential(
-            qml.qnn.TorchLayer(qnode, weight_shapes), torch.nn.ReLU(), torch.nn.Linear(self.n_qubits, self.n_classes)
-        )  # type: ignore
+            qml.qnn.TorchLayer(qnode, weight_shapes),  # type: ignore
+            torch.nn.ReLU(),
+            torch.nn.Linear(self.n_qubits, self.n_classes),
+        )
 
     def apply_ansatz(self, ansatz):
 
-        import numpy as np
-
         @qml.qnode(self.dev)
-        def probe_circuit(inputs, weights) -> list[qml.measurements.ExpectationMP]:
+        def probe_circuit(inputs, weights) -> list[qml.measurements.ExpectationMP]:  # type: ignore
             ansatz(np.array(inputs), np.array(weights))
             return [qml.expval(qml.PauliZ(wires=i)) for i in range(self.n_classes)]
 
@@ -76,7 +79,7 @@ class QMLP_1(BaseMLPModel):
         weight_shapes.pop("inputs")
 
         @qml.qnode(self.dev)
-        def circuit(inputs, weights) -> list[qml.measurements.ExpectationMP]:
+        def circuit(inputs, weights) -> list[qml.measurements.ExpectationMP]:  # type: ignore
             ansatz(torch.as_tensor(inputs), torch.as_tensor(weights))
             return [qml.expval(qml.PauliZ(wires=i)) for i in range(self.n_classes)]
 
