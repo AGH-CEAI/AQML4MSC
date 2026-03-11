@@ -91,7 +91,7 @@ def create_mlflow_experiment(exp_name: str) -> None:
 
 def log_params(params):
     # Remove duplicate, if they happend to
-    for k in mlflow.get_run(mlflow.active_run().info.run_id).data.params.keys():
+    for k in mlflow.get_run(mlflow.active_run().info.run_id).data.params.keys():  # type: ignore
         if k in params.keys():
             params.pop(k)
 
