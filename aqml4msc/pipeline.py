@@ -2,7 +2,7 @@ import numpy as np
 
 import aqml4msc.logging as logging
 from aqml4msc.metrics import aggregate_fold_metrics
-from aqml4msc.preprocessing import preprocess_pipeline
+from aqml4msc.preprocessing.mnist import preprocess_pipeline
 from aqml4msc.training.base_training import BaseTraining
 from aqml4msc.utils import encode_labels, get_stratified_cv_splits, set_seeds
 
