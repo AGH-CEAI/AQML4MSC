@@ -2,6 +2,9 @@ from abc import ABC, abstractmethod
 
 
 class BaseDataset(ABC):
+    def __init__(self, config: dict):
+        self.config = config
+
     @abstractmethod
     def load_raw(self):
         raise NotImplementedError
