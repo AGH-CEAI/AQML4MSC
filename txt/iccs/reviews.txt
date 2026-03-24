@@ -1,0 +1,156 @@
+Dear Sebastian Dziura,
+
+Thank you for your submission to the International Conference on Computational Science (ICCS).
+Please read below for the decision on your paper.
+
+Like the previous edition in Singapore, this 26th edition will be a fully in-person event. However, there is still a registration option (incl. publication) for authors of accepted contributions who are unable to join us in Hamburg.
+
+As always, submission to ICCS was very competitive. The program committee and conference chairs had to carefully select papers of the highest quality and relevance to the field of Computational Science.
+
+We are pleased to inform you that your paper (see below) has been accepted for publication (as a 12-15 pages full paper in Springer's LNCS Series) and oral presentation (20 minutes incl. Q&A) at the conference.
+
+344  Auto Quantum Machine Learning for Multisource Classification
+
+Acceptance is still conditional on the following:
+
+1. That you revise your paper taking into account the reviewers' comments, strictly following the guidelines for camera-ready submission, and submit your final version before the deadline of 10 April 2026.
+Detailed instructions on how to submit your camera-ready paper will be sent in a few days, in a separate e-mail.
+
+2. That you register for the conference and complete payment before the author registration deadline (10 April 2026):
+https://www.iccs-meeting.org/iccs2026/registration/
+
+Please note that the registration deadline is strict. Only those papers registered until this date will be included in the proceedings.
+
+With best regards,
+The ICCS Organizing Committee
+
+SUBMISSION: 344
+TITLE: Auto Quantum Machine Learning for Multisource Classification
+
+----------------------- REVIEW 1 ---------------------
+
+SUBMISSION: 344
+TITLE: Auto Quantum Machine Learning for Multisource Classification
+
+----------- Overall evaluation -----------
+SCORE: 2 (accept)
+----------- Reviewer's confidence -----------
+SCORE: 3 ((medium))
+----------- Relevance to ICCS -----------
+SCORE: 4 (good)
+----------- Quality of abstract -----------
+SCORE: 4 (good)
+----------- Introduction and motivation -----------
+SCORE: 4 (good)
+----------- Literature review and related work -----------
+SCORE: 4 (good)
+----------- Description & originality of the own contribution -----------
+SCORE: 5 (excellent)
+----------- Results and presentation -----------
+SCORE: 4 (good)
+----------- Conclusions and future work -----------
+SCORE: 4 (good)
+----------- Readability, quality of the English -----------
+SCORE: 5 (excellent)
+----------- Quality of the figures -----------
+SCORE: 5 (excellent)
+----------- Conformance to the LNCS template -----------
+SCORE: 5 (excellent)
+----------- Candidate for best paper -----------
+SCORE: 2 (No)
+----------- Candidate for Best Student Competition Paper -----------
+SELECTION: no
+----------- Candidate for special issue of Journal of Computational Science -----------
+SCORE: 1 (Yes)
+----------- Comments for the authors -----------
+- It is a very interesting and novel work that aims to solve the data fusion problem with quantum machine learning. This area is relatively new and largely unexplored.
+
+- The paper is generally well-written and easy to read.
+
+
+- The evaluation is relatively simple, but I believe it is sufficient for a preliminary evaluation. Moreover, given the current state of quantum computing, conducting large-scale experiments will be difficult.
+
+
+- I suggest discussing a bit more detail on how the noise in quantum computers may affect the results. If invited to contribute to a special issue of the journal, this aspect could be experimentally evaluated. However, in this version, some discussion would be nice to add.
+
+
+----------------------- REVIEW 2 ---------------------
+
+SUBMISSION: 344
+TITLE: Auto Quantum Machine Learning for Multisource Classification
+
+----------- Overall evaluation -----------
+SCORE: 2 (accept)
+----------- Reviewer's confidence -----------
+SCORE: 4 ((high))
+----------- Relevance to ICCS -----------
+SCORE: 5 (excellent)
+----------- Quality of abstract -----------
+SCORE: 5 (excellent)
+----------- Introduction and motivation -----------
+SCORE: 5 (excellent)
+----------- Literature review and related work -----------
+SCORE: 5 (excellent)
+----------- Description & originality of the own contribution -----------
+SCORE: 5 (excellent)
+----------- Results and presentation -----------
+SCORE: 5 (excellent)
+----------- Conclusions and future work -----------
+SCORE: 5 (excellent)
+----------- Readability, quality of the English -----------
+SCORE: 5 (excellent)
+----------- Quality of the figures -----------
+SCORE: 5 (excellent)
+----------- Conformance to the LNCS template -----------
+SCORE: 5 (excellent)
+----------- Candidate for best paper -----------
+SCORE: 3 (Don't Know)
+----------- Candidate for Best Student Competition Paper -----------
+SELECTION: no
+----------- Candidate for special issue of Journal of Computational Science -----------
+SCORE: 3 (Don't Know)
+----------- Comments for the authors -----------
+The paper presents a clear study of automated quantum machine learning for multisource classification and data fusion. The comparison between classical baselines, manual PQC architectures, and AQML-generated circuits is well designed, and the experiments on both synthetic MNIST and the ONERA dataset demonstrate the potential of the approach. The results showing competitive accuracy with significantly fewer parameters are particularly interesting. Overall, this is a solid and well-presented contribution.
+
+
+----------------------- REVIEW 3 ---------------------
+
+SUBMISSION: 344
+TITLE: Auto Quantum Machine Learning for Multisource Classification
+
+----------- Overall evaluation -----------
+SCORE: 1 (weak accept)
+----------- Reviewer's confidence -----------
+SCORE: 3 ((medium))
+----------- Relevance to ICCS -----------
+SCORE: 5 (excellent)
+----------- Quality of abstract -----------
+SCORE: 4 (good)
+----------- Introduction and motivation -----------
+SCORE: 5 (excellent)
+----------- Literature review and related work -----------
+SCORE: 3 (fair)
+----------- Description & originality of the own contribution -----------
+SCORE: 4 (good)
+----------- Results and presentation -----------
+SCORE: 4 (good)
+----------- Conclusions and future work -----------
+SCORE: 3 (fair)
+----------- Readability, quality of the English -----------
+SCORE: 4 (good)
+----------- Quality of the figures -----------
+SCORE: 4 (good)
+----------- Conformance to the LNCS template -----------
+SCORE: 4 (good)
+----------- Candidate for best paper -----------
+SCORE: 2 (No)
+----------- Candidate for Best Student Competition Paper -----------
+SELECTION: no
+----------- Candidate for special issue of Journal of Computational Science -----------
+SCORE: 2 (No)
+----------- Comments for the authors -----------
+This paper explores the use of automated quantum machine learning (AQML) to design quantum circuits for multisource classification problems. The authors focus on feature-level data fusion, where information from multiple inputs is combined before classification. Their approach uses a hybrid architecture in which classical neural networks extract features from the inputs, while a parameterized quantum circuit acts as the classifier. The architecture of the quantum circuit is selected automatically using an AQML framework based on hyperparameter optimization.
+
+The method is evaluated on two datasets: a synthetic multisource version of MNIST and the ONERA multispectral satellite dataset for change detection. The results show that the automatically generated quantum circuits perform better than manually designed quantum models and achieve results close to those of classical multilayer perceptrons while using far fewer trainable parameters. On the ONERA dataset, the approach also improves upon previously reported QML results.
+
+Overall, the paper is clearly written and presents an interesting application of automated architecture search in quantum machine learning. However, the experimental evaluation could be stronger, particularly through comparisons with more advanced classical models and experiments on noisy or real quantum devices.
