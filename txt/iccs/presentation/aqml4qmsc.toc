@@ -1,0 +1,4 @@
+\babel@toc {english}{}\relax 
+\beamer@sectionintoc {1}{Basic elements}{10}{4}{1}
+\beamer@sectionintoc {2}{Mathematics}{18}{4}{2}
+\beamer@sectionintoc {3}{Computer Science}{22}{4}{3}
