@@ -1,0 +1,2 @@
+\frametitle{\iflanguage {polish}{Informacje}{Information}}
+\iflanguage{polish}{Aktualna wersja szablonu jest dostępna pod adresem \url{https://github.com/polaksta/beamer-AGH}}{The current version of the template is available at \url{https://github.com/polaksta/beamer-AGH}}
