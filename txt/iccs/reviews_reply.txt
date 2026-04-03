@@ -1,0 +1,53 @@
+----------------------- REVIEW 1 ---------------------
+
+We thank the reviewer for the positive assessment of the novelty, clarity, and relevance of our work. 
+We also appreciate the suggestion regarding the discussion of noise effects in quantum computations.
+
+In the revised manuscript, we have added a discussion addressing the impact of noise on quantum models. 
+Specifically, we clarify that all experiments were conducted using noiseless simulators to isolate the behavior of the proposed 
+AQML framework. We also reference prior work (Rybotycki et al. 2025), which analyzes the effects of noise 
+and real-device execution for similar PQC-based models on the ONERA dataset. Based on these findings, we expect that introducing 
+noise would lead to performance degradation in our approach as well. A more comprehensive experimental evaluation under realistic noise conditions is an important direction 
+for future work.
+
+1. Rybotycki, T., Gupta, M.K., Gawron, P.: Explainable Quantum Machine Learning for Multispectral Images Segmentation: Case Study, http://arxiv.org/abs/2503.08962, (2025). https://doi.org/10.48550/arXiv.2503.08962.
+
+
+
+----------------------- REVIEW 2 ---------------------
+
+We thank the reviewer for the positive and encouraging feedback. We are pleased that the motivation, methodology, 
+and experimental design are clear, and that the comparison between AQML-generated circuits, manual PQCs, 
+and classical baselines is well received.
+
+We also appreciate the recognition of one of the key findings of our work, that AQML can identify compact quantum models 
+that achieve competitive performance with significantly fewer trainable parameters. This supports the potential of automated 
+approaches in quantum architecture design, particularly in resource-constrained settings.
+
+
+
+----------------------- REVIEW 3 ---------------------
+We thank the reviewer for the detailed summary and constructive feedback. We are glad that the overall approach 
+and its contribution are clearly understood and considered relevant.
+
+Regarding the strength of the experimental evaluation, we would like to clarify two points:
+
+1. Choice of classical baselines
+We intentionally used a simple MLP as a baseline, as the primary goal of this work is to demonstrate the capability of AQML 
+to discover effective quantum architectures, rather than to outperform state-of-the-art classical models. In addition, 
+the synthetic MNIST-based dataset is a toy problem that does not require highly complex models to achieve strong performance. 
+We have clarified this rationale in the revised manuscript. For the ONERA dataset, we also acknowledge that more advanced 
+classical approaches can achieve higher accuracy(Daudt et al. 2018, Rybotycki et al. 2025), but they typically rely 
+on significantly larger numbers of trainable parameters.
+
+2. Noise and real-device experiments
+We agree that evaluating performance under realistic noise conditions is important. In this work, we restricted experiments 
+to noiseless simulators to focus on the architectural aspects of AQML. We have now added a discussion referencing prior 
+work (Rybotycki et al. 2025), which studies the impact of noise and real quantum hardware for similar PQC-based approaches 
+on the ONERA dataset. Based on these results, we expect a similar sensitivity to noise in our setting. 
+Extending the evaluation to noisy simulators and real devices is part of our planned future work.
+
+We have incorporated these clarifications into the manuscript to improve completeness and address the reviewer’s concerns.
+
+1. Daudt, R.C., Le Saux, B., Boulch, A., Gousseau, Y.: Urban Change Detection for Multispectral Earth Observation Using Convolutional Neural Networks. In: IGARSS 2018 - 2018 IEEE International Geoscience and Remote Sensing Symposium. pp. 2115–2118 (2018). https://doi.org/10.1109/IGARSS.2018.8518015.
+2. Rybotycki, T., Gupta, M.K., Gawron, P.: Explainable Quantum Machine Learning for Multispectral Images Segmentation: Case Study, http://arxiv.org/abs/2503.08962, (2025). https://doi.org/10.48550/arXiv.2503.08962.
