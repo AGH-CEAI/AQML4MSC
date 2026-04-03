@@ -43,10 +43,10 @@
 \maketitle              % typeset the header of the contribution
 %
 \begin{abstract}
-	With fault-tolerant quantum computing on the horizon, there is growing interest in applying quantum computational methods to data-intensive scientific fields like remote sensing. Quantum machine learning (QML) has already demonstrated potential for such demanding tasks.
-	One area of particular focus is quantum data fusion—a complex data analysis problem that has attracted significant recent attention.
-	In this work, we introduce an automated QML (AQML) approach for addressing data fusion challenges. We evaluate how AQML-generated quantum circuits perform compared to classical multilayer perceptrons (MLPs) and manually designed QML models when processing multisource inputs.
-	Furthermore, we apply our method to change detection using the multispectral ONERA dataset, achieving improved accuracy over previously reported QML-based change detection results.
+		With fault-tolerant quantum computing on the horizon, there is growing interest in applying quantum computational methods to data-intensive scientific fields like remote sensing. Quantum machine learning (QML) has already demonstrated potential for such demanding tasks.
+		One area of particular focus is quantum data fusion—a complex data analysis problem that has attracted significant recent attention.
+		In this work, we introduce an automated QML (AQML) approach for addressing data fusion challenges. We evaluate how AQML-generated quantum circuits perform compared to classical multilayer perceptrons (MLPs) and manually designed QML models when processing multisource inputs.
+		Furthermore, we apply our method to change detection using the multispectral ONERA dataset, achieving improved accuracy over previously reported QML-based change detection results.
 
 
 	\keywords{quantum data fusion  \and auto quantum machine learning \and remote sensing \and multispectral imaging
@@ -255,10 +255,6 @@ The resultant vector $v$ is used as the input of the classifier network (here an
 the output) we used $ ReLU(v) = \max(v, 0)$ activation function, which is a standard way to introduce non-linearity in
 deep neural networks \cite{RussellNorvig2010}.
 
-We used a simple MLP as a baseline to demonstrate that AQML can identify effective quantum architectures for multisource
-classification, rather than to outperform state-of-the-art methods. The synthetic MNIST-based dataset is a toy problem that
-does not require complex models. On the ONERA dataset, classical models can achieve higher
-accuracy~\cite{daudtUrbanChangeDetection2018,QMLCaseStudy}, but at the cost of substantially more trainable parameters.
 
 \subsection{Hybrid Quantum--Classical Neural Network}
 \label{ssec:hqnn}
@@ -449,9 +445,6 @@ time using AQML techniques to select the quantum classifier. The code and the da
 available through Zenodo \cite{dziura_2026_18717347}. Our ONERA AQML experiments are in the original repository of
 \cite{QMLCaseStudy}.
 
-All experiments employed noiseless simulators. Prior work~\cite{QMLCaseStudy} studied the impact of noise and real-device execution
-for PQC-based change detection on ONERA, suggesting that performance would degrade similarly in our setting.
-
 \subsection{MNIST}
 
 \subsubsection{Dataset}
@@ -505,7 +498,7 @@ $v_{\mathrm{bottom}}$ of equal dimensionality. These features are fused and clas
 $h(\cdot,\theta_3)$ --- realized by the classifier --- yielding the final classification decision $d$. The
 resulting formulation is defined as:
 \begin{align*}
-	v_{\mathrm{top}}    = f(x_{\mathrm{top}}, \theta_1); \quad
+	v_{\mathrm{top}}    = f(x_{\mathrm{top}}, \theta_1); \quad 
 	v_{\mathrm{bottom}}  = f(x_{\mathrm{bottom}}, \theta_2); \quad
 	d                    = h(v_{\mathrm{top}}, v_{\mathrm{bottom}}, \theta_3).
 \end{align*}
