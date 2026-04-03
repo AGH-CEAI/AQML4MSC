@@ -73,10 +73,14 @@ systems~\cite{sycaraIntegratedApproachHighlevel2009}, and human action
 recognition~\cite{fortinoAdvancesMultisensorFusion2019}, among
 others~\cite{liMultisourceInformationFusion2024}.
 
-The issue lies at the core of MSIF, a field dedicated to efficient multisource data aggregation. It has been extensively studied,
-particularly in remote sensing \cite{DataFusion1986,liA3CLNNSpatialSpectral2022}. The wide range of existing methods can be
-categorized into groups and subgroups \cite{baltrusaitisMultimodalMachineLearning2019}. In this work, we focus on one such subgroup:
-model-agnostic early (feature-based) fusion, where fusion occurs at early stages of the ML pipeline.
+The issue mentioned above lies at the very core of the MSIF, a domain of knowledge dedicated to finding efficient methods for multisource data aggregation. 
+The field itself has been a subject of scientific investigations for quite some time now, 
+particularly in the context of remote sensing \cite{DataFusion1986}, where it persists as a subject of studies \cite{liA3CLNNSpatialSpectral2022}. 
+The research on data fusion is extensive enough, and the scope of techniques it presents is so wide, that they could be categorized into groups and further 
+subgroups \cite{baltrusaitisMultimodalMachineLearning2019}. In this work, we focus solely on one such subgroup: 
+a model-agnostic early fusion, otherwise known as feature-based fusion. This term refers to a family of algorithms in which the fusion occurs 
+at the early stages of the ML pipeline. A subtype of those algorithms is a data-level fusion, an approach in which the multisource data is aggregated 
+prior to entering the ML model \cite{dalla_mura_challenges_2015}.
 
 % Transition: MSIF -> QML
 % Despite the success of classical machine learning models for feature-level fusion, their performance can be limited
@@ -98,7 +102,7 @@ fundamentally from classical machine learning~\cite{biamonteQuantumMachineLearni
 computations are done within quantum circuits, commonly with the use of quantum logic gates (see e.g.
 \cite{sebastianelli2021circuitbasedhybridquantumneural}). In the mathematical model of quantum computation, those
 gates can be expressed by unitary gates, making the whole circuit (up to the measurement) a unitary transformation
-of the input. However simple the description may look, quantum mechanics introduces two computationally useful
+of the input. However simple the descripthe issue lition may look, quantum mechanics introduces two computationally useful
 phenomena --- superposition and entanglement --- that when used correctly can significantly speed up the
 computations. That said, we can think of a QML model as a ML model that uses quantum computing. It is known that
 such models can represent complex functions using comparatively shallow (i. e. with low layers count) circuits
