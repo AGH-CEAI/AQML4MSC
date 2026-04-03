@@ -73,16 +73,10 @@ systems~\cite{sycaraIntegratedApproachHighlevel2009}, and human action
 recognition~\cite{fortinoAdvancesMultisensorFusion2019}, among
 others~\cite{liMultisourceInformationFusion2024}.
 
-The issue mentioned above lies at the very core of the MSIF, a domain of
-knowledge dedicated to finding efficient methods for multisource data aggregation. The field itself has been a
-subject of scientific investigations for quite some time now, particularly in the context of remote sensing
-\cite{DataFusion1986}, where it persists as a subject of studies \cite{liA3CLNNSpatialSpectral2022}. The research
-on data fusion is extensive enough, and the scope of techniques it presents is so wide, that they could be
-categorized into groups and further subgroups \cite{baltrusaitisMultimodalMachineLearning2019}. In this work, we
-focus solely on one such subgroup: a model-agnostic early fusion, otherwise known as feature-based fusion. This
-term refers to a family of algorithms in which the fusion occurs at the early stages of the ML pipeline. A subtype of
-those algorithms is a data-level fusion, an approach in which the multisource data is aggregated prior to entering
-the ML model \cite{dalla_mura_challenges_2015}.
+The issue lies at the core of MSIF, a field dedicated to efficient multisource data aggregation. It has been extensively studied,
+particularly in remote sensing \cite{DataFusion1986,liA3CLNNSpatialSpectral2022}. The wide range of existing methods can be
+categorized into groups and subgroups \cite{baltrusaitisMultimodalMachineLearning2019}. In this work, we focus on one such subgroup:
+model-agnostic early (feature-based) fusion, where fusion occurs at early stages of the ML pipeline.
 
 % Transition: MSIF -> QML
 % Despite the success of classical machine learning models for feature-level fusion, their performance can be limited
@@ -261,12 +255,10 @@ The resultant vector $v$ is used as the input of the classifier network (here an
 the output) we used $ ReLU(v) = \max(v, 0)$ activation function, which is a standard way to introduce non-linearity in
 deep neural networks \cite{RussellNorvig2010}.
 
-We chose a simple MLP architecture as a baseline, as the primary objective of this work is to demonstrate that AQML
-can identify suitable quantum architectures for multisource classification tasks, rather than to outperform state-of-the-art methods.
-Moreover, the synthetic dataset derived from MNIST is a toy dataset that does not require complex architectures to achieve strong
-performance. For the ONERA dataset, prior studies have reported higher accuracy with classical
-models~\cite{daudtUrbanChangeDetection2018,QMLCaseStudy}; however, these approaches rely on substantially larger
-numbers of trainable parameters.
+We used a simple MLP as a baseline to demonstrate that AQML can identify effective quantum architectures for multisource
+classification, rather than to outperform state-of-the-art methods. The synthetic MNIST-based dataset is a toy problem that
+does not require complex models. On the ONERA dataset, classical models can achieve higher
+accuracy~\cite{daudtUrbanChangeDetection2018,QMLCaseStudy}, but at the cost of substantially more trainable parameters.
 
 \subsection{Hybrid Quantum--Classical Neural Network}
 \label{ssec:hqnn}
@@ -457,9 +449,8 @@ time using AQML techniques to select the quantum classifier. The code and the da
 available through Zenodo \cite{dziura_2026_18717347}. Our ONERA AQML experiments are in the original repository of
 \cite{QMLCaseStudy}.
 
-For all experiments, we used noiseless simulators. In~\cite{QMLCaseStudy}, the authors already analyzed the impact of noise
-in simulations and execution on real quantum hardware. Their study employed parameterized quantum circuits (PQC) for a change
-detection task on the ONERA dataset; therefore, we expect a similar degradation in performance when noise is introduced in our setting.
+All experiments employed noiseless simulators. Prior work~\cite{QMLCaseStudy} studied the impact of noise and real-device execution
+for PQC-based change detection on ONERA, suggesting that performance would degrade similarly in our setting.
 
 \subsection{MNIST}
 
@@ -477,11 +468,9 @@ also wanted not to overcomplicate our preliminary examples. We arbitrarily selec
 	\item digit ``7'' (\(6265\) training samples and \(1028\) validation samples).
 \end{itemize}
 
-Each image was preprocessed to construct synthetic multisource inputs. Images were split horizontally into top and
-bottom halves, which were treated as complementary views. Each view was then binarized, spatially downsampled, and
-transformed into a 14-dimensional vector by computing the mean pixel intensity along the columns. These vectors
-correspond to the synthetic multisource inputs $x_{\mathrm{top}}$ and $x_{\mathrm{bottom}}$, each described with
-14 features. We graphically present this data preparation scheme in the Figure \ref{fig:dataPrep}.
+Images were split into top/bottom halves, binarized, downsampled, and converted to 14-dimensional vectors
+by computing the mean pixel intensity along the columns. These vectors correspond to the synthetic multisource
+inputs $x_{\mathrm{top}}$ and $x_{\mathrm{bottom}}$, illustrated in Figure \ref{fig:dataPrep}.
 \begin{figure}
 	\centering
 	\includegraphics[width=\textwidth]{fig/preprocessing.pdf}
@@ -744,17 +733,16 @@ This observation positions training stability research as an interesting directi
 \section{Conclusion}
 \label{sec:conclusions}
 
-In this study, we provide evidence that even the simplest AQML approach can lead to better hybrid quantum-classical
-models. This is particularly true for the models that also perform data fusion.
+In this study, we show that even a simple AQML approach can improve hybrid quantum-classical models,
+particularly for data fusion tasks.
 
 Using specially prepared MNIST as an synthetic example, we report that manually selected QML models were worse than
 that found by AQML. Although the models were never as good as the best classical models, they were comparable, and
 they needed far less trainable parameters to achieve their accuracy.
 
-We also performed experiments using real data, this time using AQML to suggest the best QML model for the change detection
-on ONERA dataset. Not only do we report finding a QML model better than the original work, but we also report, that on
-average, the AQML-found models were better than classical MLPs with similar number of parameters. This result further
-highlights the usefulness of the AQML approach.
+We also evaluated real data, applying AQML to change detection on the ONERA dataset. We find not only improvements over prior
+QML results, but also that AQML-generated models outperform classical MLPs with similar parameter counts on average,
+further demonstrating the effectiveness of AQML.
 
 An interesting by-product of our study is that the additional classical linear output layer seems to stabilize the
 hybrid model training. We presented the preliminary results on that matter and leave the proper investigation for
