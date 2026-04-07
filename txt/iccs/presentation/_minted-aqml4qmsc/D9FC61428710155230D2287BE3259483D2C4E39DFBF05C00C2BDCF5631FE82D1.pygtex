@@ -1,9 +1,0 @@
-\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8\relax}]
-\PYG{c+cm}{/* The first  program in C++ */}\PYG{+w}{  }\PYG{esc}{\pause}
-\PYG{c+cp}{\PYGZsh{}}\PYG{c+cp}{include}\PYG{+w}{ }\PYG{c+cpf}{\PYGZlt{}iostream\PYGZgt{}}\PYG{c+c1}{  \pause}
-\PYG{k}{using}\PYG{+w}{ }\PYG{k}{namespace}\PYG{+w}{ }\PYG{n+nn}{std}\PYG{p}{;}\PYG{+w}{ }\PYG{esc}{\pause}
-\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{main}\PYG{p}{(}\PYG{p}{)}
-\PYG{p}{\PYGZob{}}\PYG{+w}{       }\PYG{esc}{\pause}
-\PYG{+w}{  }\PYG{n}{cout}\PYG{+w}{ }\PYG{esc}{\pause}\PYG{+w}{ }\PYG{o}{\PYGZlt{}}\PYG{o}{\PYGZlt{}}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{Hello World!}\PYG{l+s}{\PYGZdq{}}\PYG{esc}{\pause}\PYG{+w}{ }\PYG{o}{\PYGZlt{}}\PYG{o}{\PYGZlt{}}\PYG{+w}{ }\PYG{n}{endl}\PYG{p}{;}\PYG{+w}{ }\PYG{esc}{\onslide<4->}
-\PYG{p}{\PYGZcb{}}\PYG{+w}{ }\PYG{esc}{\onslide}
-\end{Verbatim}

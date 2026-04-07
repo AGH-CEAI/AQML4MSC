@@ -16,14 +16,21 @@ mlflow.db
 
 
 # Latex-generated
-*aqml4msc.log
-*aqml4msc.pdf
-*aqml4msc.synctex.gz
-*aqml4msc.aux
-*aqml4msc.bbl
-*aqml4msc.blg
-*aqml4msc.fls
-*aqml4msc.fdb_latexmk
+*aqml4msc*.log
+*aqml4msc*.pdf
+*aqml4msc*.synctex.gz
+*aqml4msc*.aux
+*aqml4msc*.bbl
+*aqml4msc*.blg
+*aqml4msc*.fls
+*aqml4msc*.fdb_latexmk
+*aqml4msc*.toc
+*aqml4msc*.vrb
+*aqml4msc*.snm
+*aqml4msc*.out
+*aqml4msc*.nav
+txt/iccs/presentation/_minted-aqml4msc_presentation/*
+
 scripts/start_mlflow_server.sh
 Dockerfile
 *.env
