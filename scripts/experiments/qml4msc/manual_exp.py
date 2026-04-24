@@ -1,6 +1,6 @@
+from datasets.mnist import MnistDataset
 from torch import nn
 
-from aqml4msc.data import choose_digits, load_data
 from aqml4msc.logging import EpochMetricsTracker
 from aqml4msc.models.classical_mlp import CMLP_1
 from aqml4msc.models.vqa import QMLP_1
@@ -49,12 +49,13 @@ def manual_exp_1():
         batch_size=data_params["batch_size"],
     )
 
-    X, y = load_data()
-    X, y = choose_digits(X, y, data_params["digits"])
+    # Initialize the dataset with the specified data parameters
+    dataset = MnistDataset(config=data_params)
+
+    # Initialize the classification pipeline: ClassificationPipeline
     pipeline = ClassificationPipeline()
     metrics = pipeline.process_data(
-        X=X,
-        y=y,
+        dataset=dataset,
         classifier=training,
         params={
             "experiment_params": experiment_params,
@@ -109,12 +110,13 @@ def manual_exp_2():
         batch_size=data_params["batch_size"],
     )
 
-    X, y = load_data()
-    X, y = choose_digits(X, y, data_params["digits"])
+    # Initialize the dataset with the specified data parameters
+    dataset = MnistDataset(config=data_params)
+
+    # Initialize the classification pipeline: ClassificationPipeline
     pipeline = ClassificationPipeline()
     metrics = pipeline.process_data(
-        X=X,
-        y=y,
+        dataset=dataset,
         classifier=training,
         params={
             "experiment_params": experiment_params,

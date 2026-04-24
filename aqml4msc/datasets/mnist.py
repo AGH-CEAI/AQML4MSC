@@ -27,8 +27,7 @@ class MnistDataset(BaseDataset):
     def clean_data(self):
         indexes = np.isin(self.y_raw, self.config["digits"])
         self.x_clean, self.y_clean = self.x_raw[indexes], self.y_raw[indexes]
-        self.label_encoder.fit(self.y_clean)
-        self.y_clean = self.label_encoder.transform(self.y_clean)  # type: ignore
+        self.y_clean = self.label_encoder.fit_transform(self.y_clean)  # type: ignore
 
     def preprocess(self):
         self.x_top, self.x_bottom = preprocess_pipeline(self.x_clean)
@@ -39,5 +38,8 @@ class MnistDataset(BaseDataset):
         self.val_data = (self.x_top[test_idx], self.x_bottom[test_idx])
         self.val_labels = self.y_clean[test_idx]
 
-    def decode_labels(self, y: list[int]) -> list[int]:
-        return self.label_encoder.inverse_transform(y)  # type: ignore
+    def get_n_samples(self) -> int:
+        return self.x_clean.shape[0]
+
+    def get_encoded_labels(self) -> npt.NDArray[np.int_]:
+        return self.y_clean

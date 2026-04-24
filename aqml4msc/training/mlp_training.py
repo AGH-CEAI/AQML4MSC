@@ -1,9 +1,9 @@
 from typing import Tuple, Type
 
 import mlflow.pytorch as mlflow_pytorch
-import numpy as np
 import pytorch_lightning as pl
 import torch
+from datasets.base_dataset import BaseDataset
 from mlflow.models import ModelSignature
 
 from aqml4msc.training.base_training import BaseTraining
@@ -18,14 +18,10 @@ class MLPTraining(BaseTraining):
         self.trainer_kwargs = trainer_kwargs
         self.batch_size = batch_size
 
-    def fit(
-        self, train_data: Tuple, train_y: np.ndarray, val_data: Tuple, val_y: np.ndarray
-    ):
+    def fit(self, dataset: BaseDataset):
         self.trainer = pl.Trainer(**self.trainer_kwargs)
-        train_dataloader = get_dataloader(
-            *train_data, y=train_y, batch_size=self.batch_size
-        )
-        val_dataloader = get_dataloader(*val_data, y=val_y, batch_size=self.batch_size)
+        train_dataloader = dataset.get_train_dataloader(batch_size=self.batch_size)
+        val_dataloader = dataset.get_val_dataloader(batch_size=self.batch_size)
         self.trainer.fit(self.model, train_dataloader, val_dataloader)
 
     def predict(self, val_data: Tuple):

@@ -17,9 +17,9 @@ from typing import Any, Callable
 import optuna
 from aqmlator.qml.models import AnsatzBuilder
 from aqmlator.tuner import AnsatzFinder
+from datasets.mnist import MnistDataset
 from torch import nn
 
-from aqml4msc.data import choose_digits, load_data
 from aqml4msc.logging import EpochMetricsTracker
 from aqml4msc.models.vqa import QMLP_1
 from aqml4msc.pipeline import ClassificationPipeline
@@ -119,9 +119,8 @@ def optuna_aqml_objective(trial: optuna.Trial) -> float:
         batch_size=data_params["batch_size"],
     )
 
-    # Load and preprocess the dataset
-    X, y = load_data()
-    X, y = choose_digits(X, y, data_params["digits"])
+    # Initialize the dataset with the specified data parameters
+    dataset = MnistDataset(config=data_params)
 
     # Initialize the classification pipeline: ClassificationPipeline
     pipeline = ClassificationPipeline()
@@ -130,8 +129,7 @@ def optuna_aqml_objective(trial: optuna.Trial) -> float:
 
     # Execute the pipeline to process data, train, and evaluate the model
     metrics: dict[str, list[float]] = pipeline.process_data(
-        X=X,
-        y=y,
+        dataset=dataset,
         classifier=training,
         params={
             "experiment_params": experiment_params,

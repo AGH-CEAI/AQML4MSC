@@ -1,12 +1,8 @@
 import random
-from math import prod
 from typing import Iterator, Tuple
 
 import numpy as np
-import pennylane as qml
 import torch
-from numpy.typing import NDArray
-from sklearn.calibration import LabelEncoder
 from sklearn.model_selection import StratifiedKFold
 from torch import from_numpy
 from torch.utils.data import DataLoader, Subset, TensorDataset
@@ -26,7 +22,9 @@ def get_dataloader(
         n_samples = y.shape[0]
         for i, X in enumerate(X_sources):
             if X.shape[0] != n_samples:
-                raise ValueError(f"X_sources[{i}] has {X.shape[0]} samples, expected {n_samples}")
+                raise ValueError(
+                    f"X_sources[{i}] has {X.shape[0]} samples, expected {n_samples}"
+                )
 
     tensors = [from_numpy(X).float() for X in X_sources]
     if y is not None:
@@ -66,15 +64,9 @@ def get_stratified_cv_splits(
     )
 
     yield from (
-        (fold, train_idx, val_idx) for fold, (train_idx, val_idx) in enumerate(kfold.split(y, y), start=start_idx)
+        (fold, train_idx, val_idx)
+        for fold, (train_idx, val_idx) in enumerate(kfold.split(y, y), start=start_idx)
     )
-
-
-def encode_labels(y: np.ndarray) -> Tuple[LabelEncoder, np.ndarray]:
-    label_encoder = LabelEncoder()
-    label_encoder.fit(y)
-    y = label_encoder.transform(y)  # type: ignore
-    return label_encoder, y
 
 
 def set_seeds(seed: int):

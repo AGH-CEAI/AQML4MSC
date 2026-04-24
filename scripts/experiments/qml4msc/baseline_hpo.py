@@ -1,10 +1,10 @@
 from statistics import mean
 
 import optuna
+from datasets.mnist import MnistDataset
 from lightning.pytorch.callbacks.early_stopping import EarlyStopping
 from torch import nn
 
-from aqml4msc.data import choose_digits, load_data
 from aqml4msc.logging import EpochMetricsTracker
 from aqml4msc.models.classical_mlp import CMLP_1
 from aqml4msc.pipeline import ClassificationPipeline
@@ -59,12 +59,13 @@ def hpo_baseline_1():
             batch_size=data_params["batch_size"],
         )
 
-        X, y = load_data()
-        X, y = choose_digits(X, y, data_params["digits"])
+        # Initialize the dataset with the specified data parameters
+        dataset = MnistDataset(config=data_params)
+
+        # Initialize the classification pipeline: ClassificationPipeline
         pipeline = ClassificationPipeline()
         metrics = pipeline.process_data(
-            X=X,
-            y=y,
+            dataset=dataset,
             classifier=training,
             params={
                 "experiment_params": experiment_params,
@@ -126,13 +127,13 @@ def hpo_baseline_2():
             trainer_kwargs=trainer_params,
             batch_size=data_params["batch_size"],
         )
+        # Initialize the dataset with the specified data parameters
+        dataset = MnistDataset(config=data_params)
 
-        X, y = load_data()
-        X, y = choose_digits(X, y, data_params["digits"])
+        # Initialize the classification pipeline: ClassificationPipeline
         pipeline = ClassificationPipeline()
         metrics = pipeline.process_data(
-            X=X,
-            y=y,
+            dataset=dataset,
             classifier=training,
             params={
                 "experiment_params": experiment_params,
@@ -193,12 +194,14 @@ def hpo_baseline_3():
             batch_size=data_params["batch_size"],
         )
 
-        X, y = load_data()
-        X, y = choose_digits(X, y, data_params["digits"])
+        # Initialize the dataset with the specified data parameters
+        dataset = MnistDataset(config=data_params)
+
+        # Initialize the classification pipeline: ClassificationPipeline
         pipeline = ClassificationPipeline()
+
         metrics = pipeline.process_data(
-            X=X,
-            y=y,
+            dataset=dataset,
             classifier=training,
             params={
                 "experiment_params": experiment_params,
