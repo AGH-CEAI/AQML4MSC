@@ -1,3 +1,4 @@
+import logging
 import os
 from statistics import mean, stdev
 from typing import Any, Dict, TextIO, Tuple
@@ -89,10 +90,16 @@ def create_mlflow_experiment(exp_name: str) -> None:
     )
 
 
-def log_params(params):
+def log_params(params: dict):
+    for _, value in params.items():
+        log_nested_params(value)
+
+
+def log_nested_params(params: dict):
     # Remove duplicate, if they happend to
     for k in mlflow.get_run(mlflow.active_run().info.run_id).data.params.keys():  # type: ignore
         if k in params.keys():
+            logging.warning(f"Parameter {k} already logged, skipping duplicate.")
             params.pop(k)
 
     mlflow.log_params(params)

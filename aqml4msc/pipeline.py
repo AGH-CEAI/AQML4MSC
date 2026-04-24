@@ -16,13 +16,7 @@ class ClassificationPipeline:
         params: dict,
         ansatz=None,  # TODO(SD) To refactor
     ) -> dict:
-        model_params = params['model_params']
-        trainer_params = params['trainer_params']
-        data_params = params['data_params']
-        experiment_params = params['experiment_params']
-        optuna_params = params.get('optuna_params', {})
-
-        set_seeds(experiment_params["seed"])
+        set_seeds(params["experiment_params"]["seed"])
 
         X_source_a, X_source_b = preprocess_pipeline(X)
         label_encoder, y = encode_labels(y)
@@ -30,18 +24,16 @@ class ClassificationPipeline:
         logging.setup_mlflow()
         metrics = []
 
-        with logging.start_parent_run(model_name=experiment_params["parent_run_name"]):
-            logging.log_params(model_params)
-            logging.log_params(trainer_params)
-            logging.log_params(data_params)
-            logging.log_params(experiment_params)
-            logging.log_params(optuna_params)
+        with logging.start_parent_run(
+            model_name=params["experiment_params"]["parent_run_name"]
+        ):
+            logging.log_params(params)
 
             for fold, train_idx, val_idx in get_stratified_cv_splits(
                 y=y,
-                n_folds=experiment_params["n_folds"],
+                n_folds=params["experiment_params"]["n_folds"],
                 start_idx=1,
-                seed=experiment_params["seed"],
+                seed=params["experiment_params"]["seed"],
             ):
                 with logging.start_child_hp_run(f"Fold {fold}"):
                     train_data = (X_source_a[train_idx], X_source_b[train_idx])
@@ -72,7 +64,7 @@ class ClassificationPipeline:
                         val_data,
                         fold,
                         classifier,
-                        model_name=experiment_params["model_name"],
+                        model_name=params["experiment_params"]["model_name"],
                         ansatz=ansatz,
                     )
 
