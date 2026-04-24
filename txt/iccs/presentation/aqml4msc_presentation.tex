@@ -15,6 +15,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage{listings} % We want to put listings
 \usepackage{minted}   % We want to put listings
+\usepackage{multirow}
 
 \mode<beamer>{ 	% In the 'beamer' mode
 	\definecolor{links}{HTML}{2A1B81}
@@ -120,210 +121,178 @@
 \maketitle
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \part{Introduction}
-
-
-
-\part{Introduction}
-
-
-\part{Introduction}
-
-
-
-
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\ifdefined\textleftmargin
-	%%%%%%%%%%%%%%%%
-	\begin{frame}[fragile]{\iflanguage{polish}{Informacje}{Information}}
-		\begin{center}
-			\iflanguage{polish}{
-				$\Longleftarrow$ Aktualna wartość \hfill Aktualna wartość $\Longrightarrow$\\
-				$\Longleftarrow$ rozmiaru lewego marginesu \hfill rozmiaru prawego marginesu $\Longrightarrow$\\
-				$\Longleftarrow$ to \the\textleftmargin \hfill to \the\textrightmargin $\Longrightarrow$
-			}{
-				$\Longleftarrow$ The current value of \hfill The current value of $\Longrightarrow$\\
-				$\Longleftarrow$ the  left  margin size \hfill the right margin size $\Longrightarrow$\\
-				$\Longleftarrow$ is \the\textleftmargin \hfill is \the\textrightmargin $\Longrightarrow$
-			}
-		\end{center}
-		\iflanguage{polish}{
-			Możesz je zmieniać za pomocą parametru 'margins' \pauza
-		}{
-			You can change them with the 'margins' parameter ---
-		}
-		\verb+\usetheme[margins=...]{AGH}+
-	\end{frame}
-\fi
-
-\part{\iflanguage{polish}{Przykłady}{Examples}}
-%%%%%%%%%%%%%%%%
-\begin{frame}{\iflanguage{polish}{Plan prezentacji}{Outline}}
-	\tableofcontents[pausesections]
-\end{frame}
-%%%%%%%%%%%%%%%%
-\section{\iflanguage{polish}{Elementy podstawowe}{Basic elements}}
-%%%%%%%%%%%%%%%%
-\begin{frame}{\iflanguage{polish}{Wyszczególnienie}{Itemize}}
+\begin{frame}[fragile]{{Multisource}}
 	\begin{columns}
 		\column{0.5\textwidth}
 		\begin{itemize}
-			\item \iflanguage{polish}{Element 1}{Item 1}
-			\item \iflanguage{polish}{Element 2}{Item 2}
-			\item \iflanguage{polish}{Element 3}{Item 3}
+			\item<1-> Multisource dataset includes different data origin, modality or timing,
+			\item<2-> Multisource Information Fusion (MSIF) is a process to aggregate and transform multisource data into useful information to e.g.\ obtain richer and
+			      more accurate decision outcomes.   feature-level fusion
+			\item<3-> why do we look into this- they are complex tasks, often high dimensional data
 		\end{itemize}
 		\column{0.5\textwidth}
-		\pause
-		\structure{\iflanguage{polish}{Odkrywanie po kolei}{Uncovering one by one}}
-		\begin{itemize}[<+->]
-			\item \iflanguage{polish}{Element 1}{Item 1}
-			\item \iflanguage{polish}{Element 2}{Item 2}
-			\item \iflanguage{polish}{Element 3}{Item 3}
-		\end{itemize}
-		\onslide
 	\end{columns}
 \end{frame}
-%%%%%%%%%%%%%%%%
-\begin{frame}{\iflanguage{polish}{Wyliczenie}{Enumerate}}
-	\begin{columns}
-		\column{0.5\textwidth}
-		\begin{enumerate}
-			\item \iflanguage{polish}{Element 1}{Item 1}
-			\item \iflanguage{polish}{Element 2}{Item 2}
-			\item \iflanguage{polish}{Element 3}{Item 3}
-		\end{enumerate}
-		\column{0.5\textwidth}
-		\pause
-		\structure{\iflanguage{polish}{Odkrywanie elementów po kolei z jednoczesnym wyróżnianiem}{Uncovering elements in turn with simultaneous highlighting}}
-		\begin{enumerate}[<+-|alert@+>]
-			\item \iflanguage{polish}{Element 1}{Item 1}
-			\item \iflanguage{polish}{Element 2}{Item 2}
-			\item \iflanguage{polish}{Element 3}{Item 3}
-		\end{enumerate}
-		\onslide
-	\end{columns}
+
+\begin{frame}[fragile]{{Quantum Machine Learning (QML)}}
+	\begin{itemize}
+		\item what is qml - uses quantum mechanics, sueprposition, entanglment, and machine learning
+		\item how is qml - QNN, QSVM
+		\item why is qml - possible speed-up
+	\end{itemize}
 \end{frame}
-%%%%%%%%%%%%%%%%
-\section{\iflanguage{polish}{Matematyka}{Mathematics}}
-%%%%%%%%%%%%%%%%
-\begin{frame}{\iflanguage{polish}{Podstawowe bloki}{Basic blocks}}
-	% Examples from "The beamer class User Guide"
-	\iflanguage{polish}{
-		\begin{block}{Definicja}
-			\alert{Zbiór} składa się z elementów.
-		\end{block}
-		\begin{exampleblock}{Przykład}
-			Zbiór $\{1,2,3,5\}$ zawiera cztery elementy.
-		\end{exampleblock}
-		\begin{alertblock}{Błędne Twierdzenie}
-			$1=2$.
+
+\begin{frame}[fragile]{{Quantum Architecture Search (QAS)}}
+	\begin{itemize}
+		\item what is qas - quantum architecture search, like neural architecture search (NAS), they are problems to solve
+		\item how is qas - we can use AQML- heuristic algorithm proposing best algorithm for given data and task
+		\item why is qas - Designing effective quantum circuits remains challenging, therefore we use \textbf{AQML}
+	\end{itemize}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\part{Problem Formulation}
+
+\begin{frame}[fragile]{{Problem Formulation}}
+	\alt<1>{
+		\begin{alertblock}<1>{Problem I --- Data Fusion}
+			Join information from multiple modalities (sources) to perform prediction
 		\end{alertblock}
 	}{
-		\begin{block}{Definition}
-			A \alert{set} consists of elements.
+		\begin{block}<1->{Problem I --- Data Fusion}
+			Join information from multiple modalities (sources) to perform prediction
 		\end{block}
-		\begin{exampleblock}{Example}
-			The set $\{1,2,3,5\}$ has four elements.
-		\end{exampleblock}
-		\begin{alertblock}{Wrong Theorem}
-			$1=2$.
-		\end{alertblock}
 	}
-\end{frame}
-%%%%%%%%%%%%%%%%
-\begin{frame}{\iflanguage{polish}{Otoczenia matematyczne}{Math environments}}
-	\begin{columns}
-		\column{0.45\textwidth} %The first column
-		\structure{\iflanguage{polish}{Twierdzenia}{Theorems}}
-		\begin{theorem}[\iflanguage{polish}{Pitagorasa}{Pythagorean}]
-			$a^{2}+  b^{2}=  c^{2}$
-		\end{theorem}
-		\column{0.45\textwidth} %The second column
-		\structure{\iflanguage{polish}{Dowody}{Proofs}}
-		\begin{proof}
-			\ldots
-		\end{proof}
-	\end{columns}
-	\vfill
-	\ldots
-	\vfill
-	\begin{definition}
-		\ldots
-	\end{definition}
-\end{frame}
-%%%%%%%%%%%%%%%%
-\begin{frame}{\iflanguage{polish}{Dynamiczny wzór matematyczny}{Dynamic mathematical formula}}
-	\[
-		\binom{n}{k} = \pause \frac{n!}{k!(n-k)!}
-	\]
-\end{frame}
-%%%%%%%%%%%%%%%%
-\section{\iflanguage{polish}{Informatyka}{Computer Science}}
-%%%%%%%%%%%%%%%%
-\subsection*{\iflanguage{polish}{Wstawianie kodów źródłowych}{Inserting source codes}}
-%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{\iflanguage{polish}{Użycie otoczenia 'listings'}{Using the 'listings' environment}}
-	\begin{lstlisting}[language=C++]
-/* The first  program in C++ */  %*\pause*)
-#include <iostream>  %*\pause*)
-using namespace std; %*\pause*)
-void main() 
-{       %*\pause*)
-  cout %*\pause*) << "Hello World!"%*\pause*) << endl; %*\onslide<4->*)
-} %*\onslide*)
-\end{lstlisting}
-\end{frame}
-%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]{\iflanguage{polish}{Użycie otoczenia 'minted'}{Using the 'minted' environment}}
-	\begin{minted}[beameroverlays,escapeinside=||]{C++}
-/* The first  program in C++ */  |\pause|
-#include <iostream>  |\pause|
-using namespace std; |\pause|
-void main() 
-{       |\pause|
-  cout |\pause| << "Hello World!"|\pause| << endl; |\onslide<4->|
-} |\onslide|
-	\end{minted}
-\end{frame}
-%%%%%%%%%%%%%%%%%%%%%%%
-\appendix
-%%%%%%%%%%%%%%%%%%%%%%%
+	\alt<2>{
+		\begin{alertblock}<2->{Problem II --- Change Detection}
+			Given a pair of corresponding pictures, depicting the same region and taken at different times, find the regions that differ between the pictures
+		\end{alertblock}
+	}{
+		\begin{block}<2->{Problem II --- Change Detection}
+			Given a pair of corresponding pictures, depicting the same region and taken at different times, find the regions that differ between the pictures
+		\end{block}
+	}
+	\alt<3>{
+		\begin{alertblock}<3->{Problem III --- Quantum Architecture Search}
+			Given the task and the search space, find within the search space a quantum circuits that best fits the task, according to predefined evaluation criteria.
+		\end{alertblock}
+	}{
+		\begin{block}<3->{Problem III --- Quantum Architecture Search}
+			Given the task and the search space, find within the search space a quantum circuits that best fits the task, according to predefined evaluation criteria.
+		\end{block}
+	}
 
-\begin{frame}[fragile]{\iflanguage{polish}{Informacje}{Information}}
-	\iflanguage{polish}{Aktualna wersja szablonu jest dostępna pod adresem \url{https://github.com/polaksta/beamer-AGH}}{The current version of the template is available at \url{https://github.com/polaksta/beamer-AGH}}
+
+
+
+
 \end{frame}
-%%%%%%%%%%%%%%%%%%%%%%%		
-\begin{frame}[allowframebreaks]{\iflanguage{polish}{Bibliografia}{Bibliography}}
-	\begin{thebibliography}{9}
-		\setbeamertemplate{bibliography item}[online]
-		\bibitem{wikibook}{Wikibooks \newblock \LaTeX/Source Code Listings \newblock \url{https://en.wikibooks.org/wiki/LaTeX/Source_Code_Listings}}
-		\bibitem{beamer}{Till Tantau, Joseph Wright, Vedran Miletić \newblock The beamer class \newblock \url{http://mirror.ctan.org/macros/latex/contrib/beamer/doc/beameruserguide.pdf}}
-		\setbeamertemplate{bibliography item}[book]
-		\bibitem{lamport}{Leslie Lamport \newblock LATEX: a document preparation system : user's guide and reference manual \newblock Addison-Wesley Pub. Co., 1994 }
-		\setbeamertemplate{bibliography item}[article]
-		\iflanguage{polish}{
-			\bibitem{article1}{Autor \newblock Tytuł artykułu \newblock Edytor, rok \newblock Uwagi}
-			\setbeamertemplate{bibliography item}[triangle]
-			\bibitem{article2}{Autor \newblock Tytuł artykułu \newblock Edytor, rok \newblock Uwagi}
-			\setbeamertemplate{bibliography item}[text]
-			\bibitem{article3}{Autor \newblock Tytuł artykułu \newblock Edytor, rok \newblock Uwagi}
-			\bibitem[Polak98]{article4}{Autor \newblock Tytuł artykułu \newblock Edytor, rok \newblock Uwagi}
-		}{
-			\bibitem{article1}{Author \newblock Title of the article\newblock Editor, year \newblock Notes}
-			\setbeamertemplate{bibliography item}[triangle]
-			\bibitem{article2}{Author \newblock Title of the article\newblock Editor, year \newblock Notes}
-			\setbeamertemplate{bibliography item}[text]
-			\bibitem{article3}{Author \newblock Title of the article\newblock Editor, year \newblock Notes}
-			\bibitem[Polak98]{article4}{Author \newblock Title of the article\newblock Editor, year \newblock Notes}
-		}
-	\end{thebibliography}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\part{Approach}
+\begin{frame}[fragile]{{Hybrid Quantum-Classical Neural Network}}
+	\begin{figure}
+		\centering
+		\includegraphics[width=1.0\textwidth]{fig/Model_schematic.pdf}
+		\label{fig:model_schamatic}
+	\end{figure}
 \end{frame}
+
+\begin{frame}[fragile]{{MNIST Multisource}}
+	\begin{figure}
+		\centering
+		\includegraphics[width=1.0\textwidth]{fig/preprocessing.pdf}
+		\label{fig:mnist}
+	\end{figure}
+\end{frame}
+
+\begin{frame}[fragile]{{OSCD — Onera Satellite Change Detection}}
+	\begin{figure}
+		\centering
+		\includegraphics[width=1.0\textwidth]{fig/change_detection_horizontal.png}
+		\label{fig:oscd}
+	\end{figure}
+\end{frame}
+
+\begin{frame}[fragile]{{AQMLator}}
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\part{Results}
+
+\begin{frame}[fragile]{{MNIST}}
+	\begin{table}[h]
+		\centering
+		\renewcommand{\arraystretch}{1.5}
+		\setlength{\tabcolsep}{6pt}
+		\caption{
+			Accuracy metrics for our best classical, manual PQC and AQML-found PQC models.
+			PQC$^{\mathrm{Solo}}_{\mathrm{AQML}}$ and PQC$^{\mathrm{Linear}}_{\mathrm{AQML}}$ denote PQC models without and with final classical linear layer respectively.
+			We also provide trainable parameters number for each model.}
+		\label{tab:mnist_results}
+		\begin{tabular}{lccc}
+			\hline
+			\textbf{Model}                            & \textbf{Accuracy$\mathrm{\mathbf{_{best}}}$ (5-fold CV, mean ± SD)} & \textbf{\# Parameters} \\
+			\hline
+			{MLP}                                     & $0.960 \pm 0.001$                                                   & {75995}                \\
+			{PQC$_{\mathrm{manual}}$}                 & $0.886 \pm 0.022$                                                   & {4632}                 \\
+			{PQC$^{\mathrm{Solo}}_{\mathrm{AQML}}$}   & $0.939 \pm 0.006$                                                   & {6274}                 \\
+			{PQC$^{\mathrm{Linear}}_{\mathrm{AQML}}$} & $0.944 \pm 0.005$                                                   & {10899}                \\
+			\hline
+		\end{tabular}
+	\end{table}
+\end{frame}
+
+\begin{frame}[fragile]{{OSCD — Onera Satellite Change Detection}}
+	\begin{table}[h]
+		\centering
+		\renewcommand{\arraystretch}{1.5}
+		\setlength{\tabcolsep}{6pt}
+		\caption{
+			Accuracy comparison for change detection on the OSCD dataset. PQC$_{\mathrm{Solo}}^{\mathrm{AQML}}$ is hybrid model without the linear layer,
+			and  PQC$_{\mathrm{Linear}}^{\mathrm{AQML}}$ is with the linear layer.}
+		\label{tab:onera_results}
+		\begin{tabular}{lcccc}
+			\hline
+			\textbf{Model}                          & $\mathbf{acc_{best}}$ & $\mathbf{acc_{avg}}$ & $\mathbf{acc_{min}}$ & \textbf{\# Parameters} \\
+			\hline
+			MLP (6 layers)                          & \textbf{0.752}        & 0.728                & --                   & 384                    \\
+			MLP (1 layer)                           & 0.738                 & \textbf{0.731}       & --                   & 64                     \\
+			PQC$_{\mathrm{Solo}}^{\mathrm{AQML}}$   & 0.738                 & 0.676                & 0.505                & \textbf{8--72}         \\
+			PQC$_{\mathrm{Linear}}^{\mathrm{AQML}}$ & 0.743                 & 0.730                & \textbf{0.710}       & 8--135                 \\
+			\hline
+		\end{tabular}
+	\end{table}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\part{Conclusions}
+\begin{frame}[fragile]{{Conclusions}}
+	\begin{enumerate}[<+-|alert@+>]
+		\item Even a simple AQML approach can improve hybrid quantum-classical models,
+		\item Manually selected QML models were worse than that found by AQML --- for both synthetic and real multisource data,
+		\item QML models were never as good as the best classical models,
+		\item They were comparable, and they needed far less trainable parameters to achieve their accuracy
+	\end{enumerate}
+	\onslide
+\end{frame}
+
+
+\begin{frame}[fragile]{{Ending}}
+	\centering{\Large Thank you for attention}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \end{document}

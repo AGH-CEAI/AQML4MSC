@@ -29,6 +29,7 @@ mlflow.db
 *aqml4msc*.snm
 *aqml4msc*.out
 *aqml4msc*.nav
+txt/iccs/indent.log
 txt/iccs/presentation/_minted-aqml4msc_presentation/*
 
 scripts/start_mlflow_server.sh
