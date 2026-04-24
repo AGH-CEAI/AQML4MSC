@@ -13,13 +13,15 @@ class ClassificationPipeline:
         X: np.ndarray,
         y: np.ndarray,
         classifier: BaseTraining,
-        model_params: dict,
-        trainer_params: dict,
-        data_params: dict,
-        experiment_params: dict,
-        optuna_params: dict = {},
+        params: dict,
         ansatz=None,  # TODO(SD) To refactor
     ) -> dict:
+        model_params = params['model_params']
+        trainer_params = params['trainer_params']
+        data_params = params['data_params']
+        experiment_params = params['experiment_params']
+        optuna_params = params.get('optuna_params', {})
+
         set_seeds(experiment_params["seed"])
 
         X_source_a, X_source_b = preprocess_pipeline(X)

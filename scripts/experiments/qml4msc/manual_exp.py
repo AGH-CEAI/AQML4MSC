@@ -56,10 +56,12 @@ def manual_exp_1():
         X=X,
         y=y,
         classifier=training,
-        experiment_params=experiment_params,
-        data_params=data_params,
-        model_params=model_params,
-        trainer_params=trainer_params,
+        params={
+            "experiment_params": experiment_params,
+            "data_params": data_params,
+            "model_params": model_params,
+            "trainer_params": trainer_params,
+        },
     )
 
 
@@ -114,8 +116,10 @@ def manual_exp_2():
         X=X,
         y=y,
         classifier=training,
-        experiment_params=experiment_params,
-        data_params=data_params,
-        model_params=model_params,
-        trainer_params=trainer_params,
+        params={
+            "experiment_params": experiment_params,
+            "data_params": data_params,
+            "model_params": model_params,
+            "trainer_params": trainer_params,
+        },
     )

@@ -66,11 +66,13 @@ def hpo_baseline_1():
             X=X,
             y=y,
             classifier=training,
-            experiment_params=experiment_params,
-            data_params=data_params,
-            model_params=model_params,
-            trainer_params=trainer_params,
-            optuna_params=trial.params,
+            params={
+                "experiment_params": experiment_params,
+                "data_params": data_params,
+                "model_params": model_params,
+                "trainer_params": trainer_params,
+                "optuna_params": trial.params,
+            },
         )
 
         return mean(metrics["accuracy"])
@@ -132,12 +134,13 @@ def hpo_baseline_2():
             X=X,
             y=y,
             classifier=training,
-            experiment_params=experiment_params,
-            data_params=data_params,
-            model_params=model_params,
-            trainer_params=trainer_params,
+            params={
+                "experiment_params": experiment_params,
+                "data_params": data_params,
+                "model_params": model_params,
+                "trainer_params": trainer_params,
+            },
         )
-
         return mean(metrics["accuracy"])
 
     study = optuna.create_study(direction="maximize")
@@ -197,12 +200,13 @@ def hpo_baseline_3():
             X=X,
             y=y,
             classifier=training,
-            experiment_params=experiment_params,
-            data_params=data_params,
-            model_params=model_params,
-            trainer_params=trainer_params,
+            params={
+                "experiment_params": experiment_params,
+                "data_params": data_params,
+                "model_params": model_params,
+                "trainer_params": trainer_params,
+            },
         )
-
         return mean(metrics["accuracy"])
 
     study = optuna.create_study(direction="maximize")

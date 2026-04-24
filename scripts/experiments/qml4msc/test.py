@@ -64,11 +64,13 @@ def hpo_quantum_test():
             X=X,
             y=y,
             classifier=training,
-            experiment_params=experiment_params,
-            data_params=data_params,
-            model_params=model_params,
-            trainer_params=trainer_params,
-            optuna_params=trial.params,
+            params={
+                "experiment_params": experiment_params,
+                "data_params": data_params,
+                "model_params": model_params,
+                "trainer_params": trainer_params,
+                "optuna_params": trial.params,
+            },
         )
 
         return mean(metrics["accuracy"])
@@ -157,11 +159,13 @@ def test_optuna_aqml_objective(trial: optuna.Trial) -> float:
         X=X,
         y=y,
         classifier=training,
-        experiment_params=experiment_params,
-        data_params=data_params,
-        model_params=model_params,
-        trainer_params=trainer_params,
-        optuna_params=trial.params,
+        params={
+            "experiment_params": experiment_params,
+            "data_params": data_params,
+            "model_params": model_params,
+            "trainer_params": trainer_params,
+            "optuna_params": trial.params,
+        },
         ansatz=ansatz,
     )
 
