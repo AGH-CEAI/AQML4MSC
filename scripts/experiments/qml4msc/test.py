@@ -2,7 +2,7 @@ from statistics import mean
 from typing import Any, Callable
 
 import optuna
-from aqmlator.qml.models import AnsatzBuilder
+from aqmlator.qml import AnsatzBuilder
 from aqmlator.tuner import AnsatzFinder
 from datasets.mnist import MnistDataset
 from torch import nn

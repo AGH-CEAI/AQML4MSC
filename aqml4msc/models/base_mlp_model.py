@@ -33,39 +33,39 @@ class BaseMLPModel(pl.LightningModule):
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         raise NotImplementedError
 
-    def training_step(self, batch: Tuple[Any, ...], batch_idx: int) -> torch.Tensor:
+    def training_step(self, batch, batch_idx):
         *inputs, labels = batch
         logits = self(*inputs)
         loss = self.loss_fn(logits, labels)
 
         preds = torch.argmax(logits, dim=1)
-        self.train_metrics.update(preds, labels)
-        self.log("train_loss", loss, on_epoch=True, on_step=False)
+
+        # log loss
+        self.log("train_loss", loss, on_epoch=True, prog_bar=True)
+
+        # log metrics (handles update/compute internally)
+        self.log_dict(
+            self.train_metrics(preds, labels),
+            on_epoch=True,
+            prog_bar=True,
+        )
+
         return loss
 
-    def on_train_epoch_end(self) -> None:
-        # compute returns dictionary: {"train_acc": x, "train_f1": y}
-        metrics = self.train_metrics.compute()
-        # log each metric
-        for k, v in metrics.items():
-            self.log(k, v, prog_bar=True)
-        self.train_metrics.reset()
-
-    def validation_step(self, batch: Tuple[Any, ...], batch_idx: int) -> torch.Tensor:
+    def validation_step(self, batch, batch_idx):
         *inputs, labels = batch
         logits = self(*inputs)
         loss = self.loss_fn(logits, labels)
 
         preds = torch.argmax(logits, dim=1)
-        self.log("val_loss", loss, on_epoch=True, on_step=False)
-        self.val_metrics.update(preds, labels)
-        return loss
 
-    def on_validation_epoch_end(self) -> None:
-        metrics = self.val_metrics.compute()
-        for k, v in metrics.items():
-            self.log(k, v, prog_bar=True)
-        self.val_metrics.reset()
+        self.log("val_loss", loss, on_epoch=True, prog_bar=True)
+
+        self.log_dict(
+            self.val_metrics(preds, labels),
+            on_epoch=True,
+            prog_bar=True,
+        )
 
     def predict_step(self, batch: Tuple[Any, ...], batch_idx: int) -> torch.Tensor:
         logits = self(*batch)
