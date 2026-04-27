@@ -23,17 +23,21 @@ EXPERIMENT_NAME = "MNIST_Multisource_Classification"
 # ------------------------------------------------------------------------------
 
 
-def print_report_to_file(file: TextIO, model_name: str, y, y_pred):
+def print_report_to_file(
+    file: TextIO, model_name: str, y: np.ndarray, y_pred: np.ndarray
+) -> None:
     file.write(f"\nClassification report for {model_name}:\n")
     file.write(str(classification_report(y, y_pred)))
 
 
-def print_conf_matrix_to_file(file: TextIO, model_name: str, y, y_pred):
+def print_conf_matrix_to_file(
+    file: TextIO, model_name: str, y: np.ndarray, y_pred: np.ndarray
+) -> None:
     file.write(f"\nConfusion matrix for {model_name}:\n")
     file.write(str(confusion_matrix(y, y_pred)))
 
 
-def log_classification_report(y_true, y_pred):
+def log_classification_report(y_true: np.ndarray, y_pred: np.ndarray) -> None:
     report = classification_report(y_true, y_pred)
     file_path = "classification_report.txt"
 
@@ -44,7 +48,7 @@ def log_classification_report(y_true, y_pred):
     os.remove(file_path)
 
 
-def log_confusion_matrix(y_true, y_pred):
+def log_confusion_matrix(y_true: np.ndarray, y_pred: np.ndarray) -> None:
     matrix = confusion_matrix(y_true, y_pred)
     file_path = "confusion_matrix.txt"
 
@@ -60,7 +64,7 @@ def log_confusion_matrix(y_true, y_pred):
 # ------------------------------------------------------------------------------
 
 
-def setup_mlflow():
+def setup_mlflow() -> None:
     mlflow.set_tracking_uri(os.environ["MLFLOW_TRACKING_URI"])
     prepare_mlflow_experiment(EXPERIMENT_NAME)
     mlflow.set_experiment(EXPERIMENT_NAME)
@@ -90,12 +94,12 @@ def create_mlflow_experiment(exp_name: str) -> None:
     )
 
 
-def log_params(params: dict):
+def log_params(params: Dict[str, Any]) -> None:
     for _, value in params.items():
         log_nested_params(value)
 
 
-def log_nested_params(params: dict):
+def log_nested_params(params: Dict[str, Any]) -> None:
     # Remove duplicate, if they happend to
     for k in mlflow.get_run(mlflow.active_run().info.run_id).data.params.keys():  # type: ignore
         if k in params.keys():
@@ -115,12 +119,12 @@ def start_child_hp_run(fold_name: str) -> mlflow.ActiveRun:
     return mlflow.start_run(run_name=fold_name, nested=True)
 
 
-def log_metrics(metrics: dict):
+def log_metrics(metrics: Dict[str, Any]) -> None:
     for metric_name, values in metrics.items():
         mlflow.log_metric(metric_name, values)
 
 
-def log_aggregated_metrics(all_fold_metrics: dict):
+def log_aggregated_metrics(all_fold_metrics: dict) -> None:
     for metric_name, values in all_fold_metrics.items():
         mlflow.log_metric(f"{metric_name}_mean", mean(values))
         mlflow.log_metric(f"{metric_name}_std", stdev(values))
@@ -130,7 +134,7 @@ def log_model(
     trainer: BaseTraining,
     X_val: Tuple[np.ndarray, np.ndarray],
     model_name: str = "model",
-):
+) -> None:
     signature = infer_signature(X_val, trainer.predict(X_val))
     trainer.log_model(model_name=model_name, signature=signature)
 
