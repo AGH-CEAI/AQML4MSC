@@ -56,7 +56,7 @@ def manual_exp_1():
     pipeline = ClassificationPipeline()
     metrics = pipeline.process_data(
         dataset=dataset,
-        classifier=training,
+        training=training,
         params={
             "experiment_params": experiment_params,
             "data_params": data_params,
@@ -117,7 +117,7 @@ def manual_exp_2():
     pipeline = ClassificationPipeline()
     metrics = pipeline.process_data(
         dataset=dataset,
-        classifier=training,
+        training=training,
         params={
             "experiment_params": experiment_params,
             "data_params": data_params,

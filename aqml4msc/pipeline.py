@@ -10,7 +10,7 @@ class ClassificationPipeline:
     def process_data(
         self,
         dataset: BaseDataset,
-        classifier: BaseTraining,
+        training: BaseTraining,
         params: dict,
         ansatz=None,  # TODO(SD) To refactor
     ) -> dict:
@@ -37,13 +37,13 @@ class ClassificationPipeline:
                 with logging.start_child_hp_run(f"Fold {fold}"):
                     dataset.set_splits(train_idx, val_idx)
 
-                    classifier.reset_model()
+                    training.reset_model()
 
                     if ansatz is not None:
-                        classifier.model.apply_ansatz(ansatz)
+                        training.model.apply_ansatz(ansatz)
 
-                    classifier.fit(dataset=dataset)
-                    preds = classifier.predict(val_data=dataset.val_data)
+                    training.fit(dataset=dataset)
+                    preds = training.predict(val_data=dataset.val_data)
 
                     preds = dataset.decode_labels(preds)
                     true_labels = dataset.decode_labels(dataset.val_labels)
@@ -54,7 +54,7 @@ class ClassificationPipeline:
                         preds,
                         dataset.val_data,
                         fold,
-                        classifier,
+                        training,
                         model_name=params["experiment_params"]["model_name"],
                         ansatz=ansatz,
                     )

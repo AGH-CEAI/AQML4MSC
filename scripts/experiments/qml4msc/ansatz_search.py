@@ -130,7 +130,7 @@ def optuna_aqml_objective(trial: optuna.Trial) -> float:
     # Execute the pipeline to process data, train, and evaluate the model
     metrics: dict[str, list[float]] = pipeline.process_data(
         dataset=dataset,
-        classifier=training,
+        training=training,
         params={
             "experiment_params": experiment_params,
             "data_params": data_params,

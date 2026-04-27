@@ -66,7 +66,7 @@ def hpo_baseline_1():
         pipeline = ClassificationPipeline()
         metrics = pipeline.process_data(
             dataset=dataset,
-            classifier=training,
+            training=training,
             params={
                 "experiment_params": experiment_params,
                 "data_params": data_params,
@@ -134,7 +134,7 @@ def hpo_baseline_2():
         pipeline = ClassificationPipeline()
         metrics = pipeline.process_data(
             dataset=dataset,
-            classifier=training,
+            training=training,
             params={
                 "experiment_params": experiment_params,
                 "data_params": data_params,
@@ -202,7 +202,7 @@ def hpo_baseline_3():
 
         metrics = pipeline.process_data(
             dataset=dataset,
-            classifier=training,
+            training=training,
             params={
                 "experiment_params": experiment_params,
                 "data_params": data_params,
