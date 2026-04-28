@@ -6,6 +6,7 @@ import torch
 from datasets.base_dataset import BaseDataset
 from mlflow.models import ModelSignature
 
+from aqml4msc import logging
 from aqml4msc.training.base_training import BaseTraining
 from aqml4msc.utils import get_dataloader
 
@@ -19,7 +20,9 @@ class MLPTraining(BaseTraining):
         self.batch_size = batch_size
 
     def fit(self, dataset: BaseDataset):
-        self.trainer = pl.Trainer(**self.trainer_kwargs)
+        self.trainer = pl.Trainer(
+            **self.trainer_kwargs, logger=logging.get_mlflow_logger()
+        )
         train_dataloader = dataset.get_train_dataloader(batch_size=self.batch_size)
         val_dataloader = dataset.get_val_dataloader(batch_size=self.batch_size)
         self.trainer.fit(self.model, train_dataloader, val_dataloader)

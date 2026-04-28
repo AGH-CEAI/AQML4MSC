@@ -1,7 +1,6 @@
 from datasets.mnist import MnistDataset
 from torch import nn
 
-from aqml4msc.logging import EpochMetricsTracker
 from aqml4msc.models.classical_mlp import CMLP_1
 from aqml4msc.models.vqa import QMLP_1
 from aqml4msc.pipeline import ClassificationPipeline
@@ -24,8 +23,6 @@ def manual_exp_1():
         "enable_checkpointing": False,
         "enable_progress_bar": True,
         "num_sanity_val_steps": 0,
-        "callbacks": [EpochMetricsTracker()],
-        "logger": False,
         "accelerator": "auto",
         "devices": "auto",
     }
@@ -82,11 +79,6 @@ def manual_exp_2():
         "enable_checkpointing": False,
         "enable_progress_bar": True,
         "num_sanity_val_steps": 0,
-        "callbacks": [
-            EpochMetricsTracker(),
-            # EarlyStopping(monitor="val_loss", mode="min"),
-        ],
-        "logger": False,
         "accelerator": "auto",
         "devices": "auto",
     }

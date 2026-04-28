@@ -9,14 +9,10 @@ import pennylane as qml
 from aqmlator.tuner import compute_qc_metrics
 from metrics import compute_classification_metrics
 from mlflow.models import infer_signature
-from pytorch_lightning.callbacks import Callback
+from pytorch_lightning.loggers import MLFlowLogger
 from sklearn.metrics import classification_report, confusion_matrix
 
 from aqml4msc.training.base_training import BaseTraining
-
-EXPERIMENT_NAME = "MNIST_Multisource_Classification"
-# MLFLOW_URI = "http://localhost:5001"
-
 
 # ------------------------------------------------------------------------------
 # FILE REPORTS
@@ -64,27 +60,18 @@ def log_confusion_matrix(y_true: np.ndarray, y_pred: np.ndarray) -> None:
 # ------------------------------------------------------------------------------
 
 
-def setup_mlflow() -> None:
+def setup_mlflow(experiment_name: str) -> None:
     mlflow.set_tracking_uri(os.environ["MLFLOW_TRACKING_URI"])
-    prepare_mlflow_experiment(EXPERIMENT_NAME)
-    mlflow.set_experiment(EXPERIMENT_NAME)
+    prepare_mlflow_experiment(experiment_name)
+    mlflow.set_experiment(experiment_name)
 
 
 def prepare_mlflow_experiment(exp_name: str) -> None:
-    """
-    _summary_ TODO
-    """
     if not mlflow.get_experiment_by_name(exp_name):
         create_mlflow_experiment(exp_name)
 
 
 def create_mlflow_experiment(exp_name: str) -> None:
-    """
-    _summary_ TODO
-
-    :param exp_name: _description_
-    :type exp_name: str
-    """
     tags: Dict[str, Any] = {
         "project_name": "AQML4MSC",
     }
@@ -92,6 +79,15 @@ def create_mlflow_experiment(exp_name: str) -> None:
     mlflow.create_experiment(
         name=exp_name, tags=tags, artifact_location=os.environ["MLFLOW_ARTIFACTS_ROOT"]
     )
+
+
+# TODO(SD): Refactor to use MLFlowLogger directly in the pipeline and training, instead of these helper functions
+def get_mlflow_logger() -> MLFlowLogger:
+    logger = MLFlowLogger(
+        tracking_uri=os.environ["MLFLOW_TRACKING_URI"],
+        run_id=mlflow.active_run().info.run_id,  # type: ignore
+    )
+    return logger
 
 
 def log_params(params: Dict[str, Any]) -> None:
@@ -168,42 +164,3 @@ def log_all_run_metrics(
         print(f"Could not save artifacts. Error occured: {e}")
 
     return metrics
-
-
-# ------------------------------------------------------------------------------
-# Callback: Collect + Log Epoch Metrics
-# ------------------------------------------------------------------------------
-
-
-class EpochMetricsTracker(Callback):
-    """
-    Collects train/val epoch metrics and logs them ONCE per fold.
-    This completely removes the need for external log_epochs_metrics().
-    """
-
-    def __init__(self):
-        super().__init__()
-        self.train_epoch_metrics = []
-        self.val_epoch_metrics = []
-
-    def on_train_epoch_end(self, trainer, pl_module):
-        metrics: dict[str, float | int] = {"epoch": trainer.current_epoch}
-        for key, value in trainer.callback_metrics.items():
-            if key.startswith("train_"):
-                metrics[key] = float(value.item())
-        self.train_epoch_metrics.append(metrics)
-
-    def on_validation_epoch_end(self, trainer, pl_module):
-        metrics: dict[str, float | int] = {"epoch": trainer.current_epoch}
-        for key, value in trainer.callback_metrics.items():
-            if key.startswith("val_"):
-                metrics[key] = float(value.item())
-        self.val_epoch_metrics.append(metrics)
-
-    def on_fit_end(self, trainer, pl_module):
-        # Log all epoch metrics at the end of the fold
-        for entry in self.train_epoch_metrics + self.val_epoch_metrics:
-            epoch = entry["epoch"]
-            for k, v in entry.items():
-                if k != "epoch":
-                    mlflow.log_metric(k, v, step=epoch)

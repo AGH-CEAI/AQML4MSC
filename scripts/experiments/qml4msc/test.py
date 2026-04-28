@@ -7,16 +7,19 @@ from aqmlator.tuner import AnsatzFinder
 from datasets.mnist import MnistDataset
 from torch import nn
 
-from aqml4msc.logging import EpochMetricsTracker
+from aqml4msc import logging
 from aqml4msc.models.vqa import QMLP_1
 from aqml4msc.pipeline import ClassificationPipeline
 from aqml4msc.training.mlp_training import MLPTraining
+
+EXPERIMENT_NAME = "TEST_SD"
 
 
 def hpo_quantum_test():
     print("\n\n***** hpo_quantum_test START *****\n\n")
 
     def objective(trial):
+        # Set configurations
         model_params = {
             "lr": 1e-3,
             "loss_fn": nn.CrossEntropyLoss(),
@@ -26,14 +29,12 @@ def hpo_quantum_test():
             "n_qubits": trial.suggest_int("n_qubits", low=4, high=4, step=2),
             "n_layers": trial.suggest_int("n_layers", low=1, high=2),
         }
-
         trainer_params = {
             "max_epochs": 2,
             "enable_checkpointing": True,
             "enable_progress_bar": True,
             "num_sanity_val_steps": 0,
-            "callbacks": [EpochMetricsTracker()],
-            "logger": False,
+            # "callbacks": [EpochMetricsTracker()],
             "accelerator": "auto",
             "devices": "auto",
         }
@@ -42,7 +43,6 @@ def hpo_quantum_test():
             "num_workers": 8,
             "digits": [5, 6, 7],
         }
-
         experiment_params = {
             "seed": 42,
             "n_folds": 2,
@@ -50,6 +50,7 @@ def hpo_quantum_test():
             "model_name": "QMLP_1",
         }
 
+        # Initialize the trainer with model and training
         training = MLPTraining(
             model_cls=QMLP_1,
             model_kwargs=model_params,
@@ -112,8 +113,7 @@ def test_optuna_aqml_objective(trial: optuna.Trial) -> float:
         "enable_checkpointing": True,
         "enable_progress_bar": True,
         "num_sanity_val_steps": 0,
-        "callbacks": [EpochMetricsTracker()],
-        "logger": False,
+        # "callbacks": [EpochMetricsTracker()],
         "accelerator": "auto",
         "devices": "auto",
     }
@@ -182,6 +182,7 @@ def test_ansatz_search_test() -> None:
 
 if __name__ == "__main__":
     print("Experiment start")
+    logging.setup_mlflow(EXPERIMENT_NAME)
     hpo_quantum_test()
     test_ansatz_search_test()
     print("Experiment finished")

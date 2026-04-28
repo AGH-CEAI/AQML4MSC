@@ -4,7 +4,6 @@ import optuna
 from datasets.mnist import MnistDataset
 from torch import nn
 
-from aqml4msc.logging import EpochMetricsTracker
 from aqml4msc.models.vqa import QMLP_1
 from aqml4msc.pipeline import ClassificationPipeline
 from aqml4msc.training.mlp_training import MLPTraining
@@ -27,8 +26,6 @@ def hpo_quantum_1():
             "enable_checkpointing": True,
             "enable_progress_bar": True,
             "num_sanity_val_steps": 0,
-            "callbacks": [EpochMetricsTracker()],
-            "logger": False,
             "accelerator": "auto",
             "devices": "auto",
         }

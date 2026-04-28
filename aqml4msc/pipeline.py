@@ -20,7 +20,6 @@ class ClassificationPipeline:
         dataset.clean_data()
         dataset.preprocess()
 
-        logging.setup_mlflow()
         metrics = []
 
         with logging.start_parent_run(
