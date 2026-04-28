@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Tuple, Type
 
-import numpy as np
+from datasets.base_dataset import BaseDataset
 from mlflow.models import ModelSignature
 
 
@@ -12,13 +12,7 @@ class BaseTraining(ABC):
         self.model = self.model_cls(**self.model_kwargs)
 
     @abstractmethod
-    def fit(
-        self,
-        train_data: Tuple,
-        train_y: np.ndarray,
-        val_data: Tuple | None = None,
-        val_y: np.ndarray | None = None,
-    ):
+    def fit(self, dataset: BaseDataset):
         raise NotImplementedError
 
     @abstractmethod

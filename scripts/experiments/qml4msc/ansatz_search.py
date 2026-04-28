@@ -17,13 +17,15 @@ from typing import Any, Callable
 import optuna
 from aqmlator.qml import AnsatzBuilder
 from aqmlator.tuner import AnsatzFinder
+from datasets.mnist import MnistDataset
 from torch import nn
 
-from aqml4msc.data import choose_digits, load_data
-from aqml4msc.mlflow_utils import EpochMetricsTracker
+from aqml4msc import logging
 from aqml4msc.models.vqa import QMLP_1
 from aqml4msc.pipeline import ClassificationPipeline
 from aqml4msc.training.mlp_training import MLPTraining
+
+EXPERIMENT_NAME = "MNIST_Multisource_Classification"
 
 
 def suggest_ansatz(trial: optuna.Trial) -> Callable[..., Any]:
@@ -85,8 +87,6 @@ def optuna_aqml_objective(trial: optuna.Trial) -> float:
         "enable_checkpointing": True,
         "enable_progress_bar": True,
         "num_sanity_val_steps": 0,
-        "callbacks": [EpochMetricsTracker()],
-        "logger": False,
         "accelerator": "auto",
         "devices": "auto",
     }
@@ -119,9 +119,8 @@ def optuna_aqml_objective(trial: optuna.Trial) -> float:
         batch_size=data_params["batch_size"],
     )
 
-    # Load and preprocess the dataset
-    X, y = load_data()
-    X, y = choose_digits(X, y, data_params["digits"])
+    # Initialize the dataset with the specified data parameters
+    dataset = MnistDataset(config=data_params)
 
     # Initialize the classification pipeline: ClassificationPipeline
     pipeline = ClassificationPipeline()
@@ -130,14 +129,15 @@ def optuna_aqml_objective(trial: optuna.Trial) -> float:
 
     # Execute the pipeline to process data, train, and evaluate the model
     metrics: dict[str, list[float]] = pipeline.process_data(
-        X=X,
-        y=y,
-        classifier=training,
-        experiment_params=experiment_params,
-        data_params=data_params,
-        model_params=model_params,
-        trainer_params=trainer_params,
-        optuna_params=trial.params,
+        dataset=dataset,
+        training=training,
+        params={
+            "experiment_params": experiment_params,
+            "data_params": data_params,
+            "model_params": model_params,
+            "trainer_params": trainer_params,
+            "optuna_params": trial.params,
+        },
         ansatz=ansatz,
     )
 
@@ -147,6 +147,7 @@ def optuna_aqml_objective(trial: optuna.Trial) -> float:
 
 def main() -> None:
     """Calls the experiment."""
+    logging.setup_mlflow(EXPERIMENT_NAME)
     study: optuna.Study = optuna.create_study(direction="maximize")
     study.optimize(optuna_aqml_objective, n_trials=20)
     print(study.best_params)

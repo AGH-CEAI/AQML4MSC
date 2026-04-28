@@ -1,10 +1,9 @@
+from datasets.mnist import MnistDataset
 from torch import nn
 
-from aqml4msc.data.loading import choose_digits, load_data
-from aqml4msc.logging.mlflow_utils import EpochMetricsTracker
 from aqml4msc.models.classical_mlp import CMLP_1
 from aqml4msc.models.vqa import QMLP_1
-from aqml4msc.pipeline.pipeline import ClassificationPipeline
+from aqml4msc.pipeline import ClassificationPipeline
 from aqml4msc.training.mlp_training import MLPTraining
 
 
@@ -24,8 +23,6 @@ def manual_exp_1():
         "enable_checkpointing": False,
         "enable_progress_bar": True,
         "num_sanity_val_steps": 0,
-        "callbacks": [EpochMetricsTracker()],
-        "logger": False,
         "accelerator": "auto",
         "devices": "auto",
     }
@@ -49,17 +46,20 @@ def manual_exp_1():
         batch_size=data_params["batch_size"],
     )
 
-    X, y = load_data()
-    X, y = choose_digits(X, y, data_params["digits"])
+    # Initialize the dataset with the specified data parameters
+    dataset = MnistDataset(config=data_params)
+
+    # Initialize the classification pipeline: ClassificationPipeline
     pipeline = ClassificationPipeline()
     metrics = pipeline.process_data(
-        X=X,
-        y=y,
-        classifier=training,
-        experiment_params=experiment_params,
-        data_params=data_params,
-        model_params=model_params,
-        trainer_params=trainer_params,
+        dataset=dataset,
+        training=training,
+        params={
+            "experiment_params": experiment_params,
+            "data_params": data_params,
+            "model_params": model_params,
+            "trainer_params": trainer_params,
+        },
     )
 
 
@@ -79,11 +79,6 @@ def manual_exp_2():
         "enable_checkpointing": False,
         "enable_progress_bar": True,
         "num_sanity_val_steps": 0,
-        "callbacks": [
-            EpochMetricsTracker(),
-            # EarlyStopping(monitor="val_loss", mode="min"),
-        ],
-        "logger": False,
         "accelerator": "auto",
         "devices": "auto",
     }
@@ -107,15 +102,18 @@ def manual_exp_2():
         batch_size=data_params["batch_size"],
     )
 
-    X, y = load_data()
-    X, y = choose_digits(X, y, data_params["digits"])
+    # Initialize the dataset with the specified data parameters
+    dataset = MnistDataset(config=data_params)
+
+    # Initialize the classification pipeline: ClassificationPipeline
     pipeline = ClassificationPipeline()
     metrics = pipeline.process_data(
-        X=X,
-        y=y,
-        classifier=training,
-        experiment_params=experiment_params,
-        data_params=data_params,
-        model_params=model_params,
-        trainer_params=trainer_params,
+        dataset=dataset,
+        training=training,
+        params={
+            "experiment_params": experiment_params,
+            "data_params": data_params,
+            "model_params": model_params,
+            "trainer_params": trainer_params,
+        },
     )

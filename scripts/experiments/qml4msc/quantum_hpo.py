@@ -1,12 +1,11 @@
 from statistics import mean
 
 import optuna
+from datasets.mnist import MnistDataset
 from torch import nn
 
-from aqml4msc.data.loading import choose_digits, load_data
-from aqml4msc.logging.mlflow_utils import EpochMetricsTracker
 from aqml4msc.models.vqa import QMLP_1
-from aqml4msc.pipeline.pipeline import ClassificationPipeline
+from aqml4msc.pipeline import ClassificationPipeline
 from aqml4msc.training.mlp_training import MLPTraining
 
 
@@ -27,8 +26,6 @@ def hpo_quantum_1():
             "enable_checkpointing": True,
             "enable_progress_bar": True,
             "num_sanity_val_steps": 0,
-            "callbacks": [EpochMetricsTracker()],
-            "logger": False,
             "accelerator": "auto",
             "devices": "auto",
         }
@@ -51,20 +48,23 @@ def hpo_quantum_1():
             trainer_kwargs=trainer_params,
             batch_size=data_params["batch_size"],
         )
+        # Initialize the dataset with the specified data parameters
+        dataset = MnistDataset(config=data_params)
 
-        X, y = load_data()
-        X, y = choose_digits(X, y, data_params["digits"])
+        # Initialize the classification pipeline: ClassificationPipeline
         pipeline = ClassificationPipeline()
-        metrics = pipeline.process_data(
-            X=X,
-            y=y,
-            classifier=training,
-            experiment_params=experiment_params,
-            data_params=data_params,
-            model_params=model_params,
-            trainer_params=trainer_params,
-        )
 
+        metrics = pipeline.process_data(
+            dataset=dataset,
+            training=training,
+            params={
+                "experiment_params": experiment_params,
+                "data_params": data_params,
+                "model_params": model_params,
+                "trainer_params": trainer_params,
+                "optuna_params": trial.params,
+            },
+        )
         return mean(metrics["accuracy"])
 
     study = optuna.create_study(direction="maximize")
