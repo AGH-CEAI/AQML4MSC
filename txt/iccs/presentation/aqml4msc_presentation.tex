@@ -127,23 +127,47 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\part{Introduction}
+% \part{Introduction}
 \begin{frame}[fragile]{{Multisource}}
 	\begin{columns}
 		\column{0.5\textwidth}
+		Multisource dataset includes:
 		\begin{itemize}
-			\item<1-> Multisource dataset includes different data origin, modality or timing,
-			\item<2-> Multisource Information Fusion (MSIF) is a process to aggregate and transform multisource data into useful information to e.g.\ obtain richer and
-			      more accurate decision outcomes.   feature-level fusion
-			\item<3-> why do we look into this- they are complex tasks, often high dimensional data
+			\item<2-> different data origin,
+			\item<3-> modality,
+			\item<4-> timing.
 		\end{itemize}
 		\column{0.5\textwidth}
+		Examples:
+	\end{columns}
+\end{frame}
+
+\begin{frame}[t,fragile]{{Multisource Information Fusion (MSIF)}}
+	\begin{block}{Multisource Information Fusion (MSIF)}
+		MSIF is a process to aggregate and transform multisource data into useful information to e.g.\
+		obtain richer and more accurate decision outcomes
+	\end{block}
+	\setlength{\columnsep}{0pt}
+	\begin{columns}[c,onlytextwidth]
+		\column{0.5\textwidth}
+		\vspace{1cm} \\
+		We can distinguish three levels of fusion:
+		\begin{itemize}[c]
+			\item<1-> Data-level fusion
+			\item<2-> Feature-level fusion
+			\item<3-> Decision-level fusion
+		\end{itemize}
+		\column{0.5\textwidth}
+		\vspace{1cm} \\
+		\includegraphics<1>[width=1.2\textwidth]{fig/Data_Fusion.pdf}
+		\includegraphics<2>[width=1.2\textwidth]{fig/Feature_Fusion.pdf}
+		\includegraphics<3>[width=1.2\textwidth]{fig/Decision_Fusion.pdf}
 	\end{columns}
 \end{frame}
 
 \begin{frame}[fragile]{{Quantum Machine Learning (QML)}}
 	\begin{itemize}
-		\item what is qml - uses quantum mechanics, sueprposition, entanglment, and machine learning
+		\item metody embeddingu
 		\item how is qml - QNN, QSVM
 		\item why is qml - possible speed-up
 	\end{itemize}
