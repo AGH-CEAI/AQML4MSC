@@ -184,52 +184,39 @@
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\part{Problem Formulation}
+% \part{Problem Formulation}
 
-\begin{frame}[fragile]{{Problem Formulation}}
-	\alt<1>{
-		\begin{alertblock}<1>{Problem I --- Data Fusion}
-			Join information from multiple modalities (sources) to perform prediction
-		\end{alertblock}
-	}{
-		\begin{block}<1->{Problem I --- Data Fusion}
-			Join information from multiple modalities (sources) to perform prediction
-		\end{block}
-	}
-	\alt<2>{
-		\begin{alertblock}<2->{Problem II --- Change Detection}
-			Given a pair of corresponding pictures, depicting the same region and taken at different times, find the regions that differ between the pictures
-		\end{alertblock}
-	}{
-		\begin{block}<2->{Problem II --- Change Detection}
-			Given a pair of corresponding pictures, depicting the same region and taken at different times, find the regions that differ between the pictures
-		\end{block}
-	}
-	\alt<3>{
-		\begin{alertblock}<3->{Problem III --- Quantum Architecture Search}
-			Given the task and the search space, find within the search space a quantum circuits that best fits the task, according to predefined evaluation criteria.
-		\end{alertblock}
-	}{
-		\begin{block}<3->{Problem III --- Quantum Architecture Search}
-			Given the task and the search space, find within the search space a quantum circuits that best fits the task, according to predefined evaluation criteria.
-		\end{block}
-	}
-
-
-
-
-
-\end{frame}
+% \begin{frame}[fragile]{{Problem Formulation}}
+% 	\alt<1>{
+% 		\begin{alertblock}<1>{Problem I --- Data Fusion}
+% 			Join information from multiple modalities (sources) to perform prediction
+% 		\end{alertblock}
+% 	}{
+% 		\begin{block}<1->{Problem I --- Data Fusion}
+% 			Join information from multiple modalities (sources) to perform prediction
+% 		\end{block}
+% 	}
+% 	\alt<2>{
+% 		\begin{alertblock}<2->{Problem II --- Change Detection}
+% 			Given a pair of corresponding pictures, depicting the same region and taken at different times, find the regions that differ between the pictures
+% 		\end{alertblock}
+% 	}{
+% 		\begin{block}<2->{Problem II --- Change Detection}
+% 			Given a pair of corresponding pictures, depicting the same region and taken at different times, find the regions that differ between the pictures
+% 		\end{block}
+% 	}
+% 	\alt<3>{
+% 		\begin{alertblock}<3->{Problem III --- Quantum Architecture Search}
+% 			Given the task and the search space, find within the search space a quantum circuits that best fits the task, according to predefined evaluation criteria.
+% 		\end{alertblock}
+% 	}{
+% 		\begin{block}<3->{Problem III --- Quantum Architecture Search}
+% 			Given the task and the search space, find within the search space a quantum circuits that best fits the task, according to predefined evaluation criteria.
+% 		\end{block}
+% 	}
+% \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\part{Approach}
-\begin{frame}[fragile]{{Hybrid Quantum-Classical Neural Network}}
-	\begin{figure}
-		\centering
-		\includegraphics[width=1.0\textwidth]{fig/Model_schematic.pdf}
-		\label{fig:model_schamatic}
-	\end{figure}
-\end{frame}
 
 \begin{frame}[fragile]{{MNIST Multisource}}
 	\begin{figure}
@@ -239,16 +226,48 @@
 	\end{figure}
 \end{frame}
 
-\begin{frame}[fragile]{{OSCD — Onera Satellite Change Detection}}
+\begin{frame}[fragile]{{Baseline Classical Neural Network}}
 	\begin{figure}
 		\centering
-		\includegraphics[width=1.0\textwidth]{fig/change_detection_horizontal.png}
-		\label{fig:oscd}
+		\includegraphics[width=0.8\textwidth]{fig/model_schema_mnist_classical.pdf}
+		\label{fig:mnist_classical}
 	\end{figure}
 \end{frame}
 
-\begin{frame}[fragile]{{AQMLator}}
+\begin{frame}[fragile]{{Hybrid Quantum-Classical Neural Network}}
+	\begin{figure}
+		\centering
+		\includegraphics[width=1.0\textwidth]{fig/model_schema_mnist_quantum.pdf}
+		\label{fig:mnist_quantum}
+	\end{figure}
 \end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{{Change Detection}}
+	\begin{block}{Change Detection}
+		Given a pair of corresponding \textbf{multispectral} (13-band) images, depicting the same region and taken at different times, find the regions that differ between the pictures
+	\end{block}
+	\includegraphics[width=1.0\textwidth]{fig/change_detection_horizontal.png}
+\end{frame}
+
+\begin{frame}[fragile]{{Baseline Classical Neural Network}}
+	\begin{figure}
+		\centering
+		\includegraphics[width=0.8\textwidth]{fig/model_schema_onera_classical.pdf}
+		\label{fig:onera_classical}
+	\end{figure}
+\end{frame}
+
+\begin{frame}[fragile]{{Hybrid Quantum-Classical Neural Network}}
+	\begin{figure}
+		\centering
+		\includegraphics[width=1.0\textwidth]{fig/model_schema_onera_quantum.pdf}
+		\label{fig:onera_quantum}
+	\end{figure}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 
