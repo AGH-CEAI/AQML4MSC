@@ -129,21 +129,23 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \part{Introduction}
 \begin{frame}[fragile]{{Multisource}}
-	\begin{columns}
+	\begin{columns}[c,onlytextwidth]
 		\column{0.5\textwidth}
 		Multisource dataset includes:
 		\begin{itemize}
 			\item<2-> different data origin,
-			\item<3-> modality,
-			\item<4-> timing.
+			\item<3-> multiple modalities,
+			\item<4-> different timing.
 		\end{itemize}
 		\column{0.5\textwidth}
-		Examples:
+		\includegraphics<2>[width=1.2\textwidth]{fig/ms_cameras.png}
+		\includegraphics<3>[width=1.2\textwidth]{fig/ms_multimodal.png}
+		\includegraphics<4>[width=1.2\textwidth]{fig/ms_change.png}
 	\end{columns}
 \end{frame}
 
 \begin{frame}[t,fragile]{{Multisource Information Fusion (MSIF)}}
-	\begin{block}{Multisource Information Fusion (MSIF)}
+	\begin{block}<1->{Multisource Information Fusion (MSIF)}
 		MSIF is a process to aggregate and transform multisource data into useful information to e.g.\
 		obtain richer and more accurate decision outcomes
 	\end{block}
@@ -153,15 +155,15 @@
 		\vspace{1cm} \\
 		We can distinguish three levels of fusion:
 		\begin{itemize}[c]
-			\item<1-> Data-level fusion
-			\item<2-> Feature-level fusion
-			\item<3-> Decision-level fusion
+			\item<2-> Data-level fusion
+			\item<3-> Feature-level fusion
+			\item<4-> Decision-level fusion
 		\end{itemize}
 		\column{0.5\textwidth}
 		\vspace{1cm} \\
-		\includegraphics<1>[width=1.2\textwidth]{fig/Data_Fusion.pdf}
-		\includegraphics<2>[width=1.2\textwidth]{fig/Feature_Fusion.pdf}
-		\includegraphics<3>[width=1.2\textwidth]{fig/Decision_Fusion.pdf}
+		\includegraphics<2>[width=1.2\textwidth]{fig/Data_Fusion-crop.pdf}
+		\includegraphics<3>[width=1.2\textwidth]{fig/Feature_Fusion-crop.pdf}
+		\includegraphics<4>[width=1.2\textwidth]{fig/Decision_Fusion-crop.pdf}
 	\end{columns}
 \end{frame}
 
