@@ -16,6 +16,8 @@
 \usepackage{listings} % We want to put listings
 \usepackage{minted}   % We want to put listings
 \usepackage{multirow}
+\usepackage{amsmath}
+\usepackage{physics}
 
 \mode<beamer>{ 	% In the 'beamer' mode
 	\definecolor{links}{HTML}{2A1B81}
@@ -174,11 +176,34 @@
 \end{frame}
 
 \begin{frame}[fragile]{{Quantum Machine Learning (QML)}}
-	\begin{itemize}
-		\item metody embeddingu
-		\item how is qml - QNN, QSVM
-		\item why is qml - possible speed-up
-	\end{itemize}
+	\begin{figure}
+		\centering
+		\includegraphics[width=1.0\textwidth]{example-image-a}
+		\label{fig:qml}
+	\end{figure}
+\end{frame}
+
+\begin{frame}[t,fragile]{{Quantum Embedding}}
+	\begin{block}<1->{Quantum Embedding}
+		A representation method where classical data is mapped into a quantum state or quantum feature space, enabling processing via quantum circuits
+	\end{block}
+	\setlength{\columnsep}{0pt}
+	\begin{columns}[c,onlytextwidth]
+		\column{0.5\textwidth}
+		\vspace{1cm} \\
+		Examples of quantum embedding methods:
+		\begin{itemize}[<+(1)-|alert@+(1)>]
+			\item Basis embedding
+			\item Angle embedding
+			\item Amplitude embedding
+			\item IQP embedding
+		\end{itemize}
+		\column{0.5\textwidth}
+		\vspace{1cm} \\
+		\begin{equation*}
+			\ket{\psi} = \ket{0}
+		\end{equation*}
+	\end{columns}
 \end{frame}
 
 \begin{frame}[fragile]{{Quantum Architecture Search (QAS)}}
@@ -248,6 +273,29 @@
 	\end{figure}
 \end{frame}
 
+\begin{frame}[fragile]{{MNIST}}
+	\begin{table}[h]
+		\centering
+		\renewcommand{\arraystretch}{1.5}
+		\setlength{\tabcolsep}{6pt}
+		\caption{
+			Accuracy metrics for our best classical, manual PQC and AQML-found PQC models.
+			PQC$^{\mathrm{Solo}}_{\mathrm{AQML}}$ and PQC$^{\mathrm{Linear}}_{\mathrm{AQML}}$ denote PQC models without and with final classical linear layer respectively.
+			We also provide trainable parameters number for each model.}
+		\label{tab:mnist_results}
+		\begin{tabular}{lccc}
+			\hline
+			\textbf{Model}                            & \textbf{Accuracy$\mathrm{\mathbf{_{best}}}$ (5-fold CV, mean ± SD)} & \textbf{\# Parameters} \\
+			\hline
+			{MLP}                                     & $\mathbf{0.960 \pm 0.001}$                                          & {75995}                \\
+			{PQC$_{\mathrm{manual}}$}                 & $0.886 \pm 0.022$                                                   & \textbf{4632}          \\
+			{PQC$^{\mathrm{Solo}}_{\mathrm{AQML}}$}   & $0.939 \pm 0.006$                                                   & {6274}                 \\
+			{PQC$^{\mathrm{Linear}}_{\mathrm{AQML}}$} & $0.944 \pm 0.005$                                                   & {10899}                \\
+			\hline
+		\end{tabular}
+	\end{table}
+\end{frame}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]{{Change Detection}}
 	\begin{block}{Change Detection}
@@ -272,37 +320,6 @@
 	\end{figure}
 \end{frame}
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\part{Results}
-
-\begin{frame}[fragile]{{MNIST}}
-	\begin{table}[h]
-		\centering
-		\renewcommand{\arraystretch}{1.5}
-		\setlength{\tabcolsep}{6pt}
-		\caption{
-			Accuracy metrics for our best classical, manual PQC and AQML-found PQC models.
-			PQC$^{\mathrm{Solo}}_{\mathrm{AQML}}$ and PQC$^{\mathrm{Linear}}_{\mathrm{AQML}}$ denote PQC models without and with final classical linear layer respectively.
-			We also provide trainable parameters number for each model.}
-		\label{tab:mnist_results}
-		\begin{tabular}{lccc}
-			\hline
-			\textbf{Model}                            & \textbf{Accuracy$\mathrm{\mathbf{_{best}}}$ (5-fold CV, mean ± SD)} & \textbf{\# Parameters} \\
-			\hline
-			{MLP}                                     & $0.960 \pm 0.001$                                                   & {75995}                \\
-			{PQC$_{\mathrm{manual}}$}                 & $0.886 \pm 0.022$                                                   & {4632}                 \\
-			{PQC$^{\mathrm{Solo}}_{\mathrm{AQML}}$}   & $0.939 \pm 0.006$                                                   & {6274}                 \\
-			{PQC$^{\mathrm{Linear}}_{\mathrm{AQML}}$} & $0.944 \pm 0.005$                                                   & {10899}                \\
-			\hline
-		\end{tabular}
-	\end{table}
-\end{frame}
-
 \begin{frame}[fragile]{{OSCD — Onera Satellite Change Detection}}
 	\begin{table}[h]
 		\centering
@@ -325,9 +342,8 @@
 	\end{table}
 \end{frame}
 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\part{Conclusions}
+% \part{Conclusions}
 \begin{frame}[fragile]{{Conclusions}}
 	\begin{enumerate}[<+-|alert@+>]
 		\item Even a simple AQML approach can improve hybrid quantum-classical models,
