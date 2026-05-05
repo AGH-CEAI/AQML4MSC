@@ -19,8 +19,8 @@ class MnistDataset(BaseDataset):
 
     def load_raw(
         self,
-        img_path: str = os.environ["TRAIN_VAL_IMAGES_PATH"],
-        label_path: str = os.environ["TRAIN_VAL_LABELS_PATH"],
+        img_path: str = os.environ["MNIST_TRAIN_VAL_IMAGES_PATH"],
+        label_path: str = os.environ["MNIST_TRAIN_VAL_LABELS_PATH"],
     ):
         self.x_raw, self.y_raw = np.load(img_path), np.load(label_path)
 
