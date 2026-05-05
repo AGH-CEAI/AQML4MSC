@@ -128,16 +128,22 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \part{Introduction}
-\begin{frame}[fragile]{{Multisource}}
+\begin{frame}[t, fragile]{{Multisource}}
+	\begin{block}<1->{Multisource data}
+		Information about a single observed object collected from multiple complementary sources.
+	\end{block}
+	\setlength{\columnsep}{0pt}
 	\begin{columns}[c,onlytextwidth]
 		\column{0.5\textwidth}
+		\vspace{3mm} \\
 		Multisource dataset includes:
-		\begin{itemize}
-			\item<2-> different data origin,
-			\item<3-> multiple modalities,
-			\item<4-> different timing.
+		\begin{itemize}[<+(1)-|alert@+(1)>]
+			\item different data origin,
+			\item multiple modalities,
+			\item different timing.
 		\end{itemize}
 		\column{0.5\textwidth}
+		\vspace{3mm} \\
 		\includegraphics<2>[width=1.2\textwidth]{fig/ms_cameras.png}
 		\includegraphics<3>[width=1.2\textwidth]{fig/ms_multimodal.png}
 		\includegraphics<4>[width=1.2\textwidth]{fig/ms_change.png}
@@ -154,10 +160,10 @@
 		\column{0.5\textwidth}
 		\vspace{1cm} \\
 		We can distinguish three levels of fusion:
-		\begin{itemize}[c]
-			\item<2-> Data-level fusion
-			\item<3-> Feature-level fusion
-			\item<4-> Decision-level fusion
+		\begin{itemize}[<+(1)-|alert@+(1)>]
+			\item Data-level fusion
+			\item Feature-level fusion
+			\item Decision-level fusion
 		\end{itemize}
 		\column{0.5\textwidth}
 		\vspace{1cm} \\
