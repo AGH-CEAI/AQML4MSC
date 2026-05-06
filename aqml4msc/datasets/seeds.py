@@ -19,11 +19,11 @@ class SeedsTabDataset(BaseDataset):
         super().__init__(config)
         self.data_raw: pd.DataFrame
         self.x_clean: pd.DataFrame
-        self.y_clean: pd.DataFrame
+        self.y_clean: pd.Series
         self.train_x_df: pd.DataFrame
-        self.train_y_df: pd.DataFrame
+        self.train_y_df: pd.Series
         self.val_x_df: pd.DataFrame
-        self.val_y_df: pd.DataFrame
+        self.val_y_df: pd.Series
 
     def load_raw(
         self,
@@ -32,9 +32,9 @@ class SeedsTabDataset(BaseDataset):
         self.data_raw = pd.read_excel(tab_data_path)
 
     def clean_data(self):
-        self.x_clean, self.y_clean = seperate_X_y(self.data_raw)
-        self.x_clean = drop_columns(self.x_clean)
-        self.x_clean = add_indirect_features(self.x_clean)
+        df_dropped = drop_columns(self.data_raw)
+        df_added = add_indirect_features(df_dropped)
+        self.x_clean, self.y_clean = seperate_X_y(df_added)
         self.y_clean = pd.Series(self.label_encoder.fit_transform(self.y_clean))  # type: ignore
 
     def preprocess(self):

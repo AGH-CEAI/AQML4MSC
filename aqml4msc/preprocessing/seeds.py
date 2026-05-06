@@ -11,7 +11,7 @@ from torchvision import transforms
 
 COLS_TO_DROP = ["No.", "Id"]
 COL_ID = ["Id"]
-COL_LABEL = ["wheatvariety"]
+COL_LABEL = "wheatvariety"
 COLS_TO_KEEP = [
     "kernelarea",
     "kernelperimeter",
@@ -41,8 +41,8 @@ def normalize_data(
     df_train: pd.DataFrame, df_test: pd.DataFrame
 ) -> Tuple[pd.DataFrame, pd.DataFrame]:
     scaler = StandardScaler()
-    df_train[COL_FEATURES] = scaler.fit_transform(df_train[COL_FEATURES])
-    df_test[COL_FEATURES] = scaler.transform(df_test[COL_FEATURES])
+    df_train.loc[:,COL_FEATURES] = scaler.fit_transform(df_train.loc[:,COL_FEATURES])
+    df_test.loc[:,COL_FEATURES] = scaler.transform(df_test.loc[:,COL_FEATURES])
     return df_train, df_test
 
 
@@ -54,13 +54,13 @@ def add_indirect_features(df: pd.DataFrame) -> pd.DataFrame:
     return df_new
 
 
-def seperate_X_y(df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame]:
+def seperate_X_y(df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.Series]:
     X = df[COL_FEATURES]
     y = df[COL_LABEL]
     return X, y
 
 
-def pd_to_numpy_X_y(X: pd.DataFrame, y: pd.DataFrame) -> Tuple[np.ndarray, np.ndarray]:
+def pd_to_numpy_X_y(X: pd.DataFrame, y: pd.Series) -> Tuple[np.ndarray, np.ndarray]:
     X_np = X.to_numpy()
     y_np = y.to_numpy().ravel()
     return X_np, y_np
