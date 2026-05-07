@@ -109,42 +109,12 @@ def pad_image(img: Image.Image, target_width: int, target_height: int) -> Image.
     new_image.paste(img, (pad_size_left, pad_size_top))
     return new_image
 
-
-def image_to_tensor(img: Image.Image) -> torch.Tensor:
-    to_tensor = transforms.ToTensor()
-    tensor = to_tensor(img)
-    return tensor
-
-
 def get_max_sizes(images: List[Image.Image]) -> Tuple[int, int]:
     w, h = [], []
     for img in images:
         w.append(img.width)
         h.append(img.height)
     return max(w), max(h)
-
-
-def get_min_sizes(images: List[Image.Image]) -> Tuple[int, int]:
-    w, h = [], []
-    for img in images:
-        w.append(img.width)
-        h.append(img.height)
-    return min(w), min(h)
-
-
-
-### IMAGE REDUCTION ########################################
-
-
-def img_tensor_to_ndarray(images: torch.Tensor) -> np.ndarray:
-    return images.cpu().detach().numpy()
-
-
-def dim_reduction(images: np.ndarray | torch.Tensor, target_dim: int) -> torch.Tensor:
-    images_flat = images.reshape(len(images), -1)
-    pca = PCA(n_components=target_dim)
-    images_reduced = pca.fit_transform(images_flat)  # type: ignore
-    return torch.from_numpy(images_reduced)
 
 
 ### JOINED PREPROCESSING ########################################
