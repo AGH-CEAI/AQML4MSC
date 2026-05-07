@@ -3,6 +3,7 @@ import os
 import numpy as np
 import numpy.typing as npt
 import pandas as pd
+from sklearn.decomposition import PCA
 
 from preprocessing.seeds import (
     add_indirect_features,
@@ -13,7 +14,6 @@ from preprocessing.seeds import (
     to_grayscale,
     pad_image,
 )
-
 from aqml4msc.datasets.base_dataset import BaseDataset
 
 
@@ -75,11 +75,11 @@ class SeedsImageDataset(BaseDataset):
         super().__init__(config)
         self.images_raw: list[Image.Image]
         self.labels_raw: list[str]
-        self.images_prepared: list[Image.Image]
-        self.train_imgs: list[Image.Image]
-        self.train_labels: npt.NDArray[np.int_]
-        self.val_imgs: list[Image.Image]
-        self.val_labels: npt.NDArray[np.int_]
+        self.images_prepared: npt.NDArray[np.float64]
+        self.labels_extracted: list[str]
+        self.labels_encoded: npt.NDArray[np.int_]
+        self.train_imgs: npt.NDArray[np.float64]
+        self.val_imgs: npt.NDArray[np.float64]
 
     def load_raw(
         self,
@@ -95,33 +95,42 @@ class SeedsImageDataset(BaseDataset):
             with Image.open(os.path.join(img_path, filename)) as img:
                 images.append(img.copy())
         self.images_raw = images
-        self.labels_raw = img_filename_list
+        # Extract class names from filenames (e.g. "canadian10_11.jpg" -> "canadian")
+        self.labels_extracted = ["".join(filter(str.isalpha, fname.split('.')[0])) for fname in img_filename_list]
 
 
     def prepare_data(self):
         """
         Pad images to max size to keep consistent shapes and convert to grayscale
         """
-        if self.images_raw.empty:
+        if len(self.images_raw) == 0:
             raise ValueError("No images found")
         max_width, max_height = get_max_sizes(self.images_raw)
         prepared_images = []
         for img in self.images_raw:
             img = to_grayscale(img)
             img = pad_image(img, max_width, max_height)
-            prepared_images.append(img)
-        self.images_prepared = prepared_images
+            prepared_images.append(np.array(img))
+        self.images_prepared = np.array(prepared_images)
+        self.labels_encoded = self.label_encoder.fit_transform(self.labels_extracted)  # type: ignore
 
     def set_splits(self, train_idx, test_idx):
-        if self.images_prepared.empty:
+        if len(self.images_prepared) == 0:
             raise ValueError("No images found")
         self.train_imgs = self.images_prepared[train_idx]
-        self.train_labels = self.labels_raw[train_idx]
+        self.train_labels = self.labels_encoded[train_idx]
         self.val_imgs = self.images_prepared[test_idx]
-        self.val_labels = self.labels_raw[test_idx]
+        self.val_labels = self.labels_encoded[test_idx]
 
     def preprocess(self):
-        raise NotImplementedError
+        images_flat: npt.NDArray[np.float64] = self.train_imgs.reshape(len(self.train_imgs), -1)
+        images_flat_val: npt.NDArray[np.float64] = self.val_imgs.reshape(len(self.val_imgs), -1)
+        pca = PCA(n_components=self.config["pca_components"])
+        images_reduced: npt.NDArray[np.float64] = pca.fit_transform(images_flat)
+        images_reduced_val: npt.NDArray[np.float64] = pca.transform(images_flat_val)
+        self.train_data = (images_reduced,)
+        self.val_data = (images_reduced_val,)
+         
 
     def get_n_samples(self) -> int:
         raise NotImplementedError
