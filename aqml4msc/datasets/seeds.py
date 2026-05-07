@@ -3,6 +3,7 @@ import os
 import numpy as np
 import numpy.typing as npt
 import pandas as pd
+from PIL import Image
 from sklearn.decomposition import PCA
 
 from preprocessing.seeds import (
@@ -13,6 +14,7 @@ from preprocessing.seeds import (
     seperate_X_y,
     to_grayscale,
     pad_image,
+    get_max_sizes,
 )
 from aqml4msc.datasets.base_dataset import BaseDataset
 
@@ -136,9 +138,9 @@ class SeedsImageDataset(BaseDataset):
         raise NotImplementedError
 
     def get_encoded_labels(self) -> npt.NDArray[np.int_]:
-        if self.labels_raw.empty:
+        if len(self.labels_encoded) == 0:
             raise ValueError("No training labels available")
-        return self.labels_raw.to_numpy()
+        return self.labels_encoded
 
 
 class SeedsDataset(BaseDataset):
