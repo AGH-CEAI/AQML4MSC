@@ -17,8 +17,7 @@ class ClassificationPipeline:
         set_seeds(params["experiment_params"]["seed"])
 
         dataset.load_raw()
-        dataset.clean_data()
-        dataset.preprocess()
+        dataset.prepare_data()
 
         metrics = []
 
@@ -35,6 +34,7 @@ class ClassificationPipeline:
             ):
                 with logging.start_child_hp_run(f"Fold {fold}"):
                     dataset.set_splits(train_idx, val_idx)
+                    dataset.preprocess()
 
                     training.reset_model()
 

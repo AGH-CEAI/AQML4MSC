@@ -21,15 +21,15 @@ class BaseDataset(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def clean_data(self):
-        raise NotImplementedError
-
-    @abstractmethod
-    def preprocess(self):
+    def prepare_data(self):
         raise NotImplementedError
 
     @abstractmethod
     def set_splits(self, train_idx, test_idx):
+        raise NotImplementedError
+
+    @abstractmethod
+    def preprocess(self):
         raise NotImplementedError
 
     @abstractmethod

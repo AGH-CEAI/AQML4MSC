@@ -132,18 +132,6 @@ def get_min_sizes(images: List[Image.Image]) -> Tuple[int, int]:
     return min(w), min(h)
 
 
-def preprocess_images(images: List[Image.Image]) -> torch.Tensor:
-    max_width, max_height = get_max_sizes(images)
-
-    preprocessed_images = []
-    for img in images:
-        img = to_grayscale(img)
-        img = pad_image(img, max_width, max_height)
-        img = image_to_tensor(img)
-        preprocessed_images.append(img)
-
-    return torch.stack(preprocessed_images, dim=0)
-
 
 ### IMAGE REDUCTION ########################################
 

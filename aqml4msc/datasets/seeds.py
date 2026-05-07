@@ -3,12 +3,15 @@ import os
 import numpy as np
 import numpy.typing as npt
 import pandas as pd
+
 from preprocessing.seeds import (
     add_indirect_features,
     drop_columns,
     normalize_data,
     pd_to_numpy_X_y,
     seperate_X_y,
+    to_grayscale,
+    pad_image,
 )
 
 from aqml4msc.datasets.base_dataset import BaseDataset
@@ -31,11 +34,17 @@ class SeedsTabDataset(BaseDataset):
     ):
         self.data_raw = pd.read_excel(tab_data_path)
 
-    def clean_data(self):
+    def prepare_data(self):
         df_dropped = drop_columns(self.data_raw)
         df_added = add_indirect_features(df_dropped)
         self.x_clean, self.y_clean = seperate_X_y(df_added)
         self.y_clean = pd.Series(self.label_encoder.fit_transform(self.y_clean))  # type: ignore
+
+    def set_splits(self, train_idx, test_idx):
+        self.train_x_df = self.x_clean.iloc[train_idx]
+        self.train_y_df = self.y_clean.iloc[train_idx]
+        self.val_x_df = self.x_clean.iloc[test_idx]
+        self.val_y_df = self.y_clean.iloc[test_idx]
 
     def preprocess(self):
         if self.train_x_df.empty or self.val_x_df.empty:
@@ -49,13 +58,6 @@ class SeedsTabDataset(BaseDataset):
         self.train_labels = train_y
         self.val_data = (val_x,)
         self.val_labels = val_y
-
-    def set_splits(self, train_idx, test_idx):
-        self.train_x_df = self.x_clean.iloc[train_idx]
-        self.train_y_df = self.y_clean.iloc[train_idx]
-
-        self.val_x_df = self.x_clean.iloc[test_idx]
-        self.val_y_df = self.y_clean.iloc[test_idx]
 
     def get_n_samples(self) -> int:
         if self.y_clean.empty:
@@ -71,28 +73,63 @@ class SeedsTabDataset(BaseDataset):
 class SeedsImageDataset(BaseDataset):
     def __init__(self, config: dict):
         super().__init__(config)
+        self.images_raw: list[Image.Image]
+        self.labels_raw: list[str]
+        self.images_prepared: list[Image.Image]
+        self.train_imgs: list[Image.Image]
+        self.train_labels: npt.NDArray[np.int_]
+        self.val_imgs: list[Image.Image]
+        self.val_labels: npt.NDArray[np.int_]
 
     def load_raw(
         self,
         img_path: str = os.environ["SEEDS_IMAGE_DATA_LOCATION"],
-        label_path: str = os.environ["SEEDS_TAB_DATA_LOCATION"],
     ):
-        raise NotImplementedError
+        if not os.path.exists(img_path):
+            raise FileNotFoundError(f"Image path not found: {img_path}")
+        img_filename_list = [fname for fname in os.listdir(img_path) if os.path.isfile(os.path.join(img_path, fname))]
+        if not img_filename_list:
+            raise ValueError(f"No images found in {img_path}")
+        images = []
+        for filename in img_filename_list:
+            with Image.open(os.path.join(img_path, filename)) as img:
+                images.append(img.copy())
+        self.images_raw = images
+        self.labels_raw = img_filename_list
 
-    def clean_data(self):
-        raise NotImplementedError
 
-    def preprocess(self):
-        raise NotImplementedError
+    def prepare_data(self):
+        """
+        Pad images to max size to keep consistent shapes and convert to grayscale
+        """
+        if self.images_raw.empty:
+            raise ValueError("No images found")
+        max_width, max_height = get_max_sizes(self.images_raw)
+        prepared_images = []
+        for img in self.images_raw:
+            img = to_grayscale(img)
+            img = pad_image(img, max_width, max_height)
+            prepared_images.append(img)
+        self.images_prepared = prepared_images
 
     def set_splits(self, train_idx, test_idx):
+        if self.images_prepared.empty:
+            raise ValueError("No images found")
+        self.train_imgs = self.images_prepared[train_idx]
+        self.train_labels = self.labels_raw[train_idx]
+        self.val_imgs = self.images_prepared[test_idx]
+        self.val_labels = self.labels_raw[test_idx]
+
+    def preprocess(self):
         raise NotImplementedError
 
     def get_n_samples(self) -> int:
         raise NotImplementedError
 
     def get_encoded_labels(self) -> npt.NDArray[np.int_]:
-        raise NotImplementedError
+        if self.labels_raw.empty:
+            raise ValueError("No training labels available")
+        return self.labels_raw.to_numpy()
 
 
 class SeedsDataset(BaseDataset):
@@ -106,13 +143,14 @@ class SeedsDataset(BaseDataset):
     ):
         raise NotImplementedError
 
-    def clean_data(self):
+    def prepare_data(self):
+        raise NotImplementedError
+
+
+    def set_splits(self, train_idx, test_idx):
         raise NotImplementedError
 
     def preprocess(self):
-        raise NotImplementedError
-
-    def set_splits(self, train_idx, test_idx):
         raise NotImplementedError
 
     def get_n_samples(self) -> int:
