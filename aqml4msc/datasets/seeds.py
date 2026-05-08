@@ -15,6 +15,7 @@ from preprocessing.seeds import (
     to_grayscale,
     pad_image,
     get_max_sizes,
+    sort_dataframe,
 )
 from aqml4msc.datasets.base_dataset import BaseDataset
 
@@ -71,6 +72,9 @@ class SeedsTabDataset(BaseDataset):
             raise ValueError("No training labels available")
         return self.y_clean.to_numpy()
 
+    def sort_by_label(self, ids: List[str]):
+        self.data_raw = sort_dataframe(self.data_raw, ids)
+
 
 class SeedsImageDataset(BaseDataset):
     def __init__(self, config: dict):
@@ -78,7 +82,6 @@ class SeedsImageDataset(BaseDataset):
         self.images_raw: list[Image.Image]
         self.labels_raw: list[str]
         self.images_prepared: npt.NDArray[np.float64]
-        self.labels_extracted: list[str]
         self.labels_encoded: npt.NDArray[np.int_]
         self.train_imgs: npt.NDArray[np.float64]
         self.val_imgs: npt.NDArray[np.float64]
@@ -97,9 +100,7 @@ class SeedsImageDataset(BaseDataset):
             with Image.open(os.path.join(img_path, filename)) as img:
                 images.append(img.copy())
         self.images_raw = images
-        # Extract class names from filenames (e.g. "canadian10_11.jpg" -> "canadian")
-        self.labels_extracted = ["".join(filter(str.isalpha, fname.split('.')[0])) for fname in img_filename_list]
-
+        self.labels_raw = img_filename_list
 
     def prepare_data(self):
         """
@@ -114,7 +115,9 @@ class SeedsImageDataset(BaseDataset):
             img = pad_image(img, max_width, max_height)
             prepared_images.append(np.array(img))
         self.images_prepared = np.array(prepared_images)
-        self.labels_encoded = self.label_encoder.fit_transform(self.labels_extracted)  # type: ignore
+        # Extract class names from filenames (e.g. "canadian10_11.jpg" -> "canadian")
+        labels_extracted: list[str] = ["".join(filter(str.isalpha, fname.split('.')[0])) for fname in self.labels_raw]
+        self.labels_encoded = self.label_encoder.fit_transform(labels_extracted)
 
     def set_splits(self, train_idx, test_idx):
         if len(self.images_prepared) == 0:
@@ -135,37 +138,64 @@ class SeedsImageDataset(BaseDataset):
          
 
     def get_n_samples(self) -> int:
-        raise NotImplementedError
+        if len(self.images_prepared) == 0:
+            raise ValueError("No images found")
+        return self.images_prepared.shape[0]
 
     def get_encoded_labels(self) -> npt.NDArray[np.int_]:
         if len(self.labels_encoded) == 0:
             raise ValueError("No training labels available")
         return self.labels_encoded
 
+    def get_raw_labels(self) -> list[str]:
+        if len(self.labels_raw) == 0:
+            raise ValueError("No training labels available")
+        return self.labels_raw
+
 
 class SeedsDataset(BaseDataset):
     def __init__(self, config: dict):
         super().__init__(config)
+        self.tab_dataset: SeedsTabDataset
+        self.image_dataset: SeedsImageDataset
+
 
     def load_raw(
         self,
         img_path: str = os.environ["SEEDS_IMAGE_DATA_LOCATION"],
         label_path: str = os.environ["SEEDS_TAB_DATA_LOCATION"],
     ):
-        raise NotImplementedError
+        self.image_dataset.load_raw(img_path)
+        self.tab_dataset.load_raw(label_path)
 
     def prepare_data(self):
-        raise NotImplementedError
+        self.tab_dataset.sort_by_label(self.image_dataset.get_raw_labels())
+        self.image_dataset.prepare_data()
+        self.tab_dataset.prepare_data()
 
 
     def set_splits(self, train_idx, test_idx):
-        raise NotImplementedError
+        self.image_dataset.set_splits(train_idx, test_idx)
+        self.tab_dataset.set_splits(train_idx, test_idx)
 
     def preprocess(self):
-        raise NotImplementedError
+        self.image_dataset.preprocess()
+        self.tab_dataset.preprocess()
+        self.train_data = tuple(self.tab_dataset.train_data + self.image_dataset.train_data)
+        self.val_data = tuple(self.tab_dataset.val_data + self.image_dataset.val_data)
+        self.train_labels = self.tab_dataset.train_labels
+        self.val_labels = self.tab_dataset.val_labels
 
     def get_n_samples(self) -> int:
-        raise NotImplementedError
+        img_samples = self.image_dataset.get_n_samples()
+        tab_samples = self.tab_dataset.get_n_samples()
+        if img_samples != tab_samples:
+            raise ValueError("Number of samples in image and tab datasets do not match")
+        return img_samples
 
     def get_encoded_labels(self) -> npt.NDArray[np.int_]:
-        raise NotImplementedError
+        img_labels = self.image_dataset.get_encoded_labels()
+        tab_labels = self.tab_dataset.get_encoded_labels()
+        if not np.array_equal(img_labels, tab_labels):
+            raise ValueError("Labels in image and tab datasets do not match")
+        return img_labels
