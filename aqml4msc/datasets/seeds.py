@@ -72,7 +72,7 @@ class SeedsTabDataset(BaseDataset):
             raise ValueError("No training labels available")
         return self.y_clean.to_numpy()
 
-    def sort_by_label(self, ids: List[str]):
+    def sort_by_label(self, ids: list[str]):
         self.data_raw = sort_dataframe(self.data_raw, ids)
 
 
@@ -156,8 +156,8 @@ class SeedsImageDataset(BaseDataset):
 class SeedsDataset(BaseDataset):
     def __init__(self, config: dict):
         super().__init__(config)
-        self.tab_dataset: SeedsTabDataset
-        self.image_dataset: SeedsImageDataset
+        self.tab_dataset = SeedsTabDataset(config)
+        self.image_dataset = SeedsImageDataset(config)
 
 
     def load_raw(

@@ -4,7 +4,7 @@ import numpy as np
 import os
 from unittest.mock import patch
 
-from aqml4msc.datasets.seeds import SeedsTabDataset, SeedsImageDataset
+from aqml4msc.datasets.seeds import SeedsTabDataset, SeedsImageDataset, SeedsDataset
 from PIL import Image
 
 @pytest.fixture
@@ -120,8 +120,10 @@ def seeds_image_dataset():
 def test_image_load_raw(seeds_image_dataset, dummy_image_dir):
     seeds_image_dataset.load_raw(img_path=dummy_image_dir)
     assert len(seeds_image_dataset.images_raw) == 4
-    assert len(seeds_image_dataset.labels_extracted) == 4
-    assert set(seeds_image_dataset.labels_extracted) == {"canadian", "kama", "rosa"}
+    assert len(seeds_image_dataset.labels_raw) == 4
+    assert set(seeds_image_dataset.labels_raw) == {
+        "canadian10_11.jpg", "kama160_14.jpg", "rosa12_24.jpg", "canadian10_12.jpg"
+    }
 
 def test_image_prepare_data(seeds_image_dataset, dummy_image_dir):
     seeds_image_dataset.load_raw(img_path=dummy_image_dir)
@@ -155,6 +157,99 @@ def test_image_get_encoded_labels(seeds_image_dataset, dummy_image_dir):
     assert isinstance(labels, np.ndarray)
     assert len(labels) == 4
 
-def test_image_get_n_samples_not_implemented(seeds_image_dataset):
-    with pytest.raises(NotImplementedError):
-        seeds_image_dataset.get_n_samples()
+def test_image_get_n_samples(seeds_image_dataset, dummy_image_dir):
+    seeds_image_dataset.load_raw(img_path=dummy_image_dir)
+    seeds_image_dataset.prepare_data()
+    assert seeds_image_dataset.get_n_samples() == 4
+    
+    # Also test empty scenario
+    empty_dataset = SeedsImageDataset({"batch_size": 2, "pca_components": 2})
+    # If prepare_data is not called, images_prepared is not set, so it raises AttributeError.
+    with pytest.raises(AttributeError):
+        empty_dataset.get_n_samples()
+
+@pytest.fixture
+def seeds_dataset_full():
+    config = {"batch_size": 2, "pca_components": 2}
+    return SeedsDataset(config)
+
+@patch("aqml4msc.datasets.seeds.SeedsTabDataset.load_raw")
+@patch("aqml4msc.datasets.seeds.SeedsImageDataset.load_raw")
+def test_seedsdataset_load_raw(mock_img_load, mock_tab_load, seeds_dataset_full):
+    # The default paths are usually mocked or set via os.environ in real code, 
+    # but here we can just pass dummy paths.
+    seeds_dataset_full.load_raw("dummy_img_path", "dummy_tab_path")
+    mock_img_load.assert_called_once_with("dummy_img_path")
+    mock_tab_load.assert_called_once_with("dummy_tab_path")
+
+@patch("aqml4msc.datasets.seeds.SeedsImageDataset.get_raw_labels")
+@patch("aqml4msc.datasets.seeds.SeedsTabDataset.sort_by_label")
+@patch("aqml4msc.datasets.seeds.SeedsImageDataset.prepare_data")
+@patch("aqml4msc.datasets.seeds.SeedsTabDataset.prepare_data")
+def test_seedsdataset_prepare_data(mock_tab_prep, mock_img_prep, mock_tab_sort, mock_img_get_raw, seeds_dataset_full):
+    mock_img_get_raw.return_value = ["canadian10_11.jpg", "kama160_14.jpg"]
+    seeds_dataset_full.prepare_data()
+    mock_img_get_raw.assert_called_once()
+    mock_tab_sort.assert_called_once_with(["canadian10_11.jpg", "kama160_14.jpg"])
+    mock_img_prep.assert_called_once()
+    mock_tab_prep.assert_called_once()
+
+@patch("aqml4msc.datasets.seeds.SeedsImageDataset.set_splits")
+@patch("aqml4msc.datasets.seeds.SeedsTabDataset.set_splits")
+def test_seedsdataset_set_splits(mock_tab_splits, mock_img_splits, seeds_dataset_full):
+    train_idx, test_idx = [0, 1], [2, 3]
+    seeds_dataset_full.set_splits(train_idx, test_idx)
+    mock_img_splits.assert_called_once_with(train_idx, test_idx)
+    mock_tab_splits.assert_called_once_with(train_idx, test_idx)
+
+def test_seedsdataset_preprocess_and_getters(seeds_dataset_full):
+    # Instead of patching everything, let's inject mocks for the datasets
+    from unittest.mock import MagicMock
+    
+    seeds_dataset_full.image_dataset = MagicMock()
+    seeds_dataset_full.tab_dataset = MagicMock()
+    
+    seeds_dataset_full.tab_dataset.train_data = (np.array([[1]]), np.array([[2]]))
+    seeds_dataset_full.image_dataset.train_data = (np.array([[3]]),)
+    seeds_dataset_full.tab_dataset.val_data = (np.array([[4]]), np.array([[5]]))
+    seeds_dataset_full.image_dataset.val_data = (np.array([[6]]),)
+    
+    seeds_dataset_full.tab_dataset.train_labels = np.array([0])
+    seeds_dataset_full.tab_dataset.val_labels = np.array([1])
+    
+    seeds_dataset_full.preprocess()
+    
+    seeds_dataset_full.image_dataset.preprocess.assert_called_once()
+    seeds_dataset_full.tab_dataset.preprocess.assert_called_once()
+    
+    # train_data should be tab_dataset.train_data + image_dataset.train_data
+    assert len(seeds_dataset_full.train_data) == 3
+    assert len(seeds_dataset_full.val_data) == 3
+    assert np.array_equal(seeds_dataset_full.train_labels, np.array([0]))
+    assert np.array_equal(seeds_dataset_full.val_labels, np.array([1]))
+
+def test_seedsdataset_getters(seeds_dataset_full):
+    from unittest.mock import MagicMock
+    seeds_dataset_full.image_dataset = MagicMock()
+    seeds_dataset_full.tab_dataset = MagicMock()
+    
+    # test get_n_samples match
+    seeds_dataset_full.image_dataset.get_n_samples.return_value = 10
+    seeds_dataset_full.tab_dataset.get_n_samples.return_value = 10
+    assert seeds_dataset_full.get_n_samples() == 10
+    
+    # test get_n_samples mismatch
+    seeds_dataset_full.tab_dataset.get_n_samples.return_value = 5
+    with pytest.raises(ValueError, match="Number of samples in image and tab datasets do not match"):
+        seeds_dataset_full.get_n_samples()
+        
+    # test get_encoded_labels match
+    labels = np.array([1, 2, 3])
+    seeds_dataset_full.image_dataset.get_encoded_labels.return_value = labels
+    seeds_dataset_full.tab_dataset.get_encoded_labels.return_value = labels
+    assert np.array_equal(seeds_dataset_full.get_encoded_labels(), labels)
+    
+    # test get_encoded_labels mismatch
+    seeds_dataset_full.tab_dataset.get_encoded_labels.return_value = np.array([1, 2, 4])
+    with pytest.raises(ValueError, match="Labels in image and tab datasets do not match"):
+        seeds_dataset_full.get_encoded_labels()
