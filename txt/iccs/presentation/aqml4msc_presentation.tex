@@ -49,23 +49,36 @@
 \AtBeginPart{ % At begin part: display its name
 	\frame{\partpage}
 } 
-\author[Sebastian Dziura]{Tomasz Rybotycki\inst{1,2,3} \and Sebastian Dziura\inst{1} \and Piotr Gawron\inst{1,2}%
-%   \\{\scriptsize \href{mailto:sdziura@agh.edu.pl}{sdziura@agh.edu.pl}}%
-}
 
+%  ICCS TITLE PAGE
+% \author[Sebastian Dziura]{Tomasz Rybotycki\inst{1,2,3} \and Sebastian Dziura\inst{1} \and Piotr Gawron\inst{1,2}%
+% %   \\{\scriptsize \href{mailto:sdziura@agh.edu.pl}{sdziura@agh.edu.pl}}%
+% }
+% \date{}
+% \title[AQML4MSC]{Auto Quantum Machine Learning for Multisource Classification}
+% \institute[AGH]{
+% 		\inst{1}Center of Excellence in Artificial Intelligence\newline
+% 		AGH University, al. Mickiewicza 30, 30-059 Cracow, Poland
+% 	\and
+% 		\inst{2}Nicolaus Copernicus Astronomical Center\newline
+% 		Polish Academy of Sciences, ul.Bartycka 18, 00-716 Warsaw, Poland
+% 	\and
+% 		\inst{3}Systems Research Institute\newline
+% 		Polish Academy of Sciences, ul. Newelska 6, 01-447 Warsaw, Poland
+% }
+
+% AGH SEMINAR TITLE PAGE
+\author[Sebastian Dziura]{\textbf{Sebastian Dziura}
+   {\scriptsize \newline{Supervisor: \textbf{Piotr Gawron}} \newline {Auxilary supervisor: \textbf{Tomasz Rybotycki}}}%
+}
 \date{}
-
-\title[AQML4MSC]{Auto Quantum Machine Learning for Multisource Classification}
+\title[AQML4MSC]{Quantum machine learning algorithms for multi-source data classification}
 \institute[AGH]{
-		\inst{1}Center of Excellence in Artificial Intelligence\newline
+		\inst{1} Center of Excellence in Artificial Intelligence\newline
 		AGH University, al. Mickiewicza 30, 30-059 Cracow, Poland
-	\and
-		\inst{2}Nicolaus Copernicus Astronomical Center\newline
-		Polish Academy of Sciences, ul.Bartycka 18, 00-716 Warsaw, Poland
-	\and
-		\inst{3}Systems Research Institute\newline
-		Polish Academy of Sciences, ul. Newelska 6, 01-447 Warsaw, Poland
 }
+
+
 \logo{
     \includegraphics[width=1cm]{fig/ceai-logo-icon.png} % Grafika widoczna ma każdym ze slajdów
 }         
@@ -99,24 +112,6 @@
   tabsize=2,	                   % sets default tabsize to 2 spaces
   title=\lstname,                  % show the filename of files included with \lstinputlisting; also try caption instead of title
                                    % needed if you want to use UTF-8 Polish chars
-  literate={ą}{{\k{a}}}1
-           {Ą}{{\k{A}}}1
-           {ę}{{\k{e}}}1
-           {Ę}{{\k{E}}}1
-           {ó}{{\'o}}1
-           {Ó}{{\'O}}1
-           {ś}{{\'s}}1
-           {Ś}{{\'S}}1
-           {ł}{{\l{}}}1
-           {Ł}{{\L{}}}1
-           {ż}{{\.z}}1
-           {Ż}{{\.Z}}1
-           {ź}{{\'z}}1
-           {Ź}{{\'Z}}1
-           {ć}{{\'c}}1
-           {Ć}{{\'C}}1
-           {ń}{{\'n}}1
-           {Ń}{{\'N}}1
 }
 %%%%%%%%%%% Configuration of the minted package %%%%%%%%%%%%%%%%%%%%%%%%%%
 \setminted[C++]{frame=single,linenos}
@@ -159,15 +154,15 @@
 	\end{block}
 	\setlength{\columnsep}{0pt}
 	\begin{columns}[c,onlytextwidth]
-		\column{0.5\textwidth}
+		\column{0.4\textwidth}
 		\vspace{1cm} \\
-		We can distinguish three levels of fusion:
+		We can distinguish three \textbf{levels of fusion}:
 		\begin{itemize}[<+(1)-|alert@+(1)>]
 			\item Data-level fusion
 			\item Feature-level fusion
 			\item Decision-level fusion
 		\end{itemize}
-		\column{0.5\textwidth}
+		\column{0.6\textwidth}
 		\vspace{1cm} \\
 		\includegraphics<2>[width=1.2\textwidth]{fig/Data_Fusion-crop.pdf}
 		\includegraphics<3>[width=1.2\textwidth]{fig/Feature_Fusion-crop.pdf}
@@ -178,7 +173,7 @@
 \begin{frame}[fragile]{{Quantum Machine Learning (QML)}}
 	\begin{figure}
 		\centering
-		\includegraphics[width=1.0\textwidth]{example-image-a}
+		\includegraphics[width=1.0\textwidth]{fig/qml_2.pdf}
 		\label{fig:qml}
 	\end{figure}
 \end{frame}
@@ -189,29 +184,77 @@
 	\end{block}
 	\setlength{\columnsep}{0pt}
 	\begin{columns}[c,onlytextwidth]
-		\column{0.5\textwidth}
+		\column{0.4\textwidth}
 		\vspace{1cm} \\
 		Examples of quantum embedding methods:
 		\begin{itemize}[<+(1)-|alert@+(1)>]
 			\item Basis embedding
 			\item Angle embedding
 			\item Amplitude embedding
-			\item IQP embedding
 		\end{itemize}
-		\column{0.5\textwidth}
-		\vspace{1cm} \\
-		\begin{equation*}
-			\ket{\psi} = \ket{0}
-		\end{equation*}
+		\column{0.6\textwidth}
+
+		\only<2>{
+			\begin{center}
+				\fbox{$n$ bits = $n$ qubits}
+			\end{center}
+			\textbf{Classical data:}
+			$$ \mathbf{x} = \begin{bmatrix} 1 & 0 & 1 \end{bmatrix} $$
+			\textbf{Quantum state:}
+			$$ \ket{\psi} = \ket{101} $$
+		}
+		\only<3>{
+			\begin{center}
+				\fbox{$n$ features = $n$ qubits}
+			\end{center}
+			\textbf{Classical data:}
+			$$ \mathbf{x}  = \begin{bmatrix} \frac{\pi}{4} & \frac{\pi}{3} & \frac{\pi}{2} \end{bmatrix} $$
+			\textbf{Quantum state:}
+			$$ \ket{\psi} = R_x\left(\frac{\pi}{4}\right) \ket{0} \otimes R_x\left(\frac{\pi}{3}\right) \ket{0} \otimes R_x\left(\frac{\pi}{2}\right) \ket{0} $$
+		}
+		\only<4>{
+			\begin{center}
+				\fbox{$2^n$ features = $n$ qubits}
+			\end{center}
+			\textbf{Classical data:}
+			$$ \mathbf{x} = \begin{bmatrix} \frac{1}{4} & \frac{1}{\sqrt{2}} & \frac{1}{2} & \frac{\sqrt{3}}{4} \end{bmatrix} $$
+			\textbf{Quantum state:}
+			$$ \ket{\psi} = \frac{1}{4}\ket{00}  + \frac{1}{\sqrt{2}}\ket{01}  + \frac{1}{2}\ket{10}  + \frac{\sqrt{3}}{4}\ket{11}  $$
+
+		}
 	\end{columns}
 \end{frame}
 
+\begin{frame}[fragile]{{Variational Layers}}
+	\begin{tikzpicture}[remember picture, overlay]
+		% Image 1: Top Left
+		\node<3-> at ([shift={(3cm,-3cm)}]current page.north west)
+		{\includegraphics[width=8cm]{fig/layer_sec.png}};
+
+		% Image 2: Bottom Right
+		\node<2-> at ([shift={(-3cm,2cm)}]current page.south east)
+		{\includegraphics[width=8cm]{fig/layer_cvqnn.png}};
+
+		% Image 3: Center-ish
+		\node<1-> at ([shift={(1cm,0cm)}]current page.center)
+		{\includegraphics[width=8cm]{fig/basic_entangler.png}};
+
+		% Image 4: Top Right
+		\node<4-> at ([shift={(-4cm,-3cm)}]current page.north east)
+		{\includegraphics[width=8cm]{fig/simplified_two_design.png}};
+
+		% Image 5: Bottom Left
+		\node<5-> at ([shift={(4cm,2.5cm)}]current page.south west)
+		{\includegraphics[width=8cm]{fig/layer_rnd.png}};
+	\end{tikzpicture}
+\end{frame}
+
 \begin{frame}[fragile]{{Quantum Architecture Search (QAS)}}
-	\begin{itemize}
-		\item what is qas - quantum architecture search, like neural architecture search (NAS), they are problems to solve
-		\item how is qas - we can use AQML- heuristic algorithm proposing best algorithm for given data and task
-		\item why is qas - Designing effective quantum circuits remains challenging, therefore we use \textbf{AQML}
-	\end{itemize}
+	\begin{figure}
+		\centering
+		\includegraphics[width=1.0\textwidth]{fig/aqmlator_2.png}
+		\label{fig:aqml}
+	\end{figure}
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -346,10 +389,9 @@
 % \part{Conclusions}
 \begin{frame}[fragile]{{Conclusions}}
 	\begin{enumerate}[<+-|alert@+>]
-		\item Even a simple AQML approach can improve hybrid quantum-classical models,
-		\item Manually selected QML models were worse than that found by AQML --- for both synthetic and real multisource data,
-		\item QML models were never as good as the best classical models,
-		\item They were comparable, and they needed far less trainable parameters to achieve their accuracy
+		\item \textbf{Automated Optimization:} Even basic Automated Quantum Machine Learning (AQML) consistently outperforms manually selected quantum architectures.
+		\item \textbf{Performance Gap:} While quantum models did not surpass the best classical benchmarks, they achieved comparable accuracy levels.
+		\item \textbf{Parameter Efficiency:} Quantum models reached competitive performance using significantly fewer trainable parameters than their classical counterparts.
 	\end{enumerate}
 	\onslide
 \end{frame}
