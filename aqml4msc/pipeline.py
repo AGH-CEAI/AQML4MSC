@@ -42,7 +42,7 @@ class ClassificationPipeline:
                         training.model.apply_ansatz(ansatz)
 
                     training.fit(dataset=dataset)
-                    preds = training.predict(val_data=dataset.val_data)
+                    preds = training.predict(dataset=dataset)
 
                     preds = dataset.decode_labels(preds)
                     true_labels = dataset.decode_labels(dataset.val_labels)

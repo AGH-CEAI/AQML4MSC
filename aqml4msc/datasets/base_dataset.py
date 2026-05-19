@@ -45,8 +45,25 @@ class BaseDataset(ABC):
 
     def get_train_dataloader(self) -> DataLoader:
         return get_dataloader(
-            *self.train_data, y=self.train_labels, shuffle=True, batch_size=self.config["batch_size"], num_workers=self.config["num_workers"],s
+            *self.train_data,
+            y=self.train_labels,
+            shuffle=True,
+            batch_size=self.config["batch_size"],
+            num_workers=self.config["num_workers"],
         )
 
     def get_val_dataloader(self) -> DataLoader:
-        return get_dataloader(*self.val_data, y=self.val_labels, batch_size=self.config["batch_size"], num_workers=self.config["num_workers"],)
+        return get_dataloader(
+            *self.val_data,
+            y=self.val_labels,
+            batch_size=self.config["batch_size"],
+            num_workers=self.config["num_workers"],
+        )
+
+    def get_test_dataloader(self) -> DataLoader:
+        return get_dataloader(
+            *self.val_data,
+            y=None,
+            batch_size=self.config["batch_size"],
+            num_workers=self.config["num_workers"],
+        )
