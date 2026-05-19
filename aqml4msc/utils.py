@@ -14,6 +14,7 @@ def get_dataloader(
     indices: np.ndarray | None = None,
     shuffle: bool = False,
     batch_size: int = 32,
+    num_workers: int = 0,
 ) -> DataLoader:
     if len(X_sources) == 0:
         raise ValueError("At least one X source must be provided")
@@ -39,7 +40,7 @@ def get_dataloader(
         dataset=dataset,
         batch_size=batch_size,
         shuffle=shuffle,
-        num_workers=0,
+        num_workers=num_workers,
         pin_memory=False,
         persistent_workers=False,
     )

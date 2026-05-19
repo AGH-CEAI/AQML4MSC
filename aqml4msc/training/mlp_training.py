@@ -23,8 +23,8 @@ class MLPTraining(BaseTraining):
         self.trainer = pl.Trainer(
             **self.trainer_kwargs, logger=logging.get_mlflow_logger()
         )
-        train_dataloader = dataset.get_train_dataloader(batch_size=self.batch_size)
-        val_dataloader = dataset.get_val_dataloader(batch_size=self.batch_size)
+        train_dataloader = dataset.get_train_dataloader()
+        val_dataloader = dataset.get_val_dataloader()
         self.trainer.fit(self.model, train_dataloader, val_dataloader)
 
     def predict(self, val_data: Tuple):

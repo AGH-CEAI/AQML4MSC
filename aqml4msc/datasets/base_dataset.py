@@ -43,10 +43,10 @@ class BaseDataset(ABC):
     def decode_labels(self, y: npt.NDArray[np.int_]) -> npt.NDArray[np.int_]:
         return self.label_encoder.inverse_transform(y)  # type: ignore
 
-    def get_train_dataloader(self, batch_size: int) -> DataLoader:
+    def get_train_dataloader(self) -> DataLoader:
         return get_dataloader(
-            *self.train_data, y=self.train_labels, batch_size=batch_size
+            *self.train_data, y=self.train_labels, shuffle=True, batch_size=self.config["batch_size"], num_workers=self.config["num_workers"],s
         )
 
-    def get_val_dataloader(self, batch_size: int) -> DataLoader:
-        return get_dataloader(*self.val_data, y=self.val_labels, batch_size=batch_size)
+    def get_val_dataloader(self) -> DataLoader:
+        return get_dataloader(*self.val_data, y=self.val_labels, batch_size=self.config["batch_size"], num_workers=self.config["num_workers"],)
