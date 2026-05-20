@@ -1,3 +1,5 @@
+from functools import partial
+
 from datasets.base_dataset import BaseDataset
 
 import aqml4msc.logging as logging
@@ -9,10 +11,10 @@ from aqml4msc.utils import get_stratified_cv_splits, set_seeds
 class ClassificationPipeline:
     def process_data(
         self,
+        model_factory: partial,
         dataset: BaseDataset,
         training: BaseTraining,
         params: dict,
-        ansatz=None,  # TODO(SD) To refactor
     ) -> dict:
         set_seeds(params["experiment_params"]["seed"])
 
@@ -36,13 +38,10 @@ class ClassificationPipeline:
                     dataset.set_splits(train_idx, val_idx)
                     dataset.preprocess()
 
-                    training.reset_model()
+                    model = model_factory()
 
-                    if ansatz is not None:
-                        training.model.apply_ansatz(ansatz)
-
-                    training.fit(dataset=dataset)
-                    preds = training.predict(dataset=dataset)
+                    training.fit(model, dataset)
+                    preds = training.predict(model, dataset)
 
                     preds = dataset.decode_labels(preds)
                     true_labels = dataset.decode_labels(dataset.val_labels)
@@ -55,7 +54,6 @@ class ClassificationPipeline:
                         fold,
                         training,
                         model_name=params["experiment_params"]["model_name"],
-                        ansatz=ansatz,
                     )
 
             aggretated_metrics = aggregate_fold_metrics(metrics)

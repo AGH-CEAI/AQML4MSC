@@ -11,6 +11,7 @@ This module implements AQML approach for ansatz finding using :mod:`aqmlator` pa
     common part of the code.
 """
 
+from functools import partial
 from statistics import mean
 from typing import Any, Callable
 
@@ -21,7 +22,9 @@ from datasets.mnist import MnistDataset
 from torch import nn
 
 from aqml4msc import logging
-from aqml4msc.models.vqa import QMLP_1
+from aqml4msc.models.base_mlp_model import BaseMLPModel
+from aqml4msc.models.classical_mlp import classical_2l_mlp
+from aqml4msc.models.vqa import ConcatVQAFusion
 from aqml4msc.pipeline import ClassificationPipeline
 from aqml4msc.training.mlp_training import MLPTraining
 
@@ -80,6 +83,7 @@ def optuna_aqml_objective(trial: optuna.Trial) -> float:
         "n_qubits": trial.suggest_int("n_qubits", low=4, high=12, step=2),
         "n_layers": trial.suggest_int("n_layers", low=1, high=5),
     }
+    model_params["output_dim_part"] = model_params["n_qubits"] // 2
 
     # Define trainer configuration parameters
     trainer_params: dict[str, Any] = {
@@ -111,13 +115,39 @@ def optuna_aqml_objective(trial: optuna.Trial) -> float:
         "model_name": "QMLP_1",
     }
 
-    # Initialize the trainer with model and training: MLPTraining parameters
-    training = MLPTraining(
-        model_cls=QMLP_1,
-        model_kwargs=model_params,
-        trainer_kwargs=trainer_params,
-        batch_size=data_params["batch_size"],
+    ansatz = suggest_ansatz(trial)
+
+    extractor_factories = [
+        partial(
+            classical_2l_mlp,
+            model_params["input_dim"],
+            model_params["hidden_dim_part"],
+            model_params["output_dim_part"],
+        ),
+        partial(
+            classical_2l_mlp,
+            model_params["input_dim"],
+            model_params["hidden_dim_part"],
+            model_params["output_dim_part"],
+        ),
+    ]
+
+    fusion_factory = partial(
+        ConcatVQAFusion,
+        model_params["n_qubits"],
+        model_params["num_classes"],
+        ansatz=ansatz,
     )
+
+    main_model_factory = partial(
+        BaseMLPModel,
+        model_params=model_params,
+        extractor_factories=extractor_factories,
+        fusion_factory=fusion_factory,
+    )
+
+    # Initialize the trainer with model and training: MLPTraining parameters
+    training = MLPTraining(trainer_kwargs=trainer_params)
 
     # Initialize the dataset with the specified data parameters
     dataset = MnistDataset(config=data_params)
@@ -125,10 +155,9 @@ def optuna_aqml_objective(trial: optuna.Trial) -> float:
     # Initialize the classification pipeline: ClassificationPipeline
     pipeline = ClassificationPipeline()
 
-    ansatz = suggest_ansatz(trial)
-
     # Execute the pipeline to process data, train, and evaluate the model
     metrics: dict[str, list[float]] = pipeline.process_data(
+        model_factory=main_model_factory,
         dataset=dataset,
         training=training,
         params={
@@ -138,7 +167,6 @@ def optuna_aqml_objective(trial: optuna.Trial) -> float:
             "trainer_params": trainer_params,
             "optuna_params": trial.params,
         },
-        ansatz=ansatz,
     )
 
     # Return the mean accuracy across folds as the optimization objective

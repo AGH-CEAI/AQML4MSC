@@ -1,7 +1,7 @@
 import logging
 import os
 from statistics import mean, stdev
-from typing import Any, Dict, TextIO, Tuple
+from typing import Any, Callable, Dict, TextIO, Tuple
 
 import mlflow
 import numpy as np
@@ -143,7 +143,7 @@ def log_all_run_metrics(
     fold: int,
     classifier: BaseTraining,
     model_name: str,
-    ansatz,
+    ansatz: Callable | None = None,
 ) -> list:
     metrics.append(compute_classification_metrics(y_true=true_labels, y_pred=preds))
 

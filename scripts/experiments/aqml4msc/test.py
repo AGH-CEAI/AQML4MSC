@@ -1,3 +1,4 @@
+from functools import partial
 from statistics import mean
 from typing import Any, Callable
 
@@ -8,7 +9,9 @@ from datasets.mnist import MnistDataset
 from torch import nn
 
 from aqml4msc import logging
-from aqml4msc.models.vqa import QMLP_1
+from aqml4msc.models.base_mlp_model import BaseMLPModel
+from aqml4msc.models.classical_mlp import ConcatMLPFusion, classical_2l_mlp
+from aqml4msc.models.vqa import ConcatVQAFusion
 from aqml4msc.pipeline import ClassificationPipeline
 from aqml4msc.training.mlp_training import MLPTraining
 
@@ -50,13 +53,38 @@ def hpo_quantum_test():
             "model_name": "QMLP_1",
         }
 
-        # Initialize the trainer with model and training
-        training = MLPTraining(
-            model_cls=QMLP_1,
-            model_kwargs=model_params,
-            trainer_kwargs=trainer_params,
-            batch_size=data_params["batch_size"],
+        model_params["output_dim_part"] = model_params["n_qubits"] // 2
+
+        extractor_factories = [
+            partial(
+                classical_2l_mlp,
+                model_params["input_dim"],
+                model_params["hidden_dim_part"],
+                model_params["output_dim_part"],
+            ),
+            partial(
+                classical_2l_mlp,
+                model_params["input_dim"],
+                model_params["hidden_dim_part"],
+                model_params["output_dim_part"],
+            ),
+        ]
+
+        fusion_factory = partial(
+            ConcatVQAFusion,
+            model_params["n_qubits"],
+            model_params["num_classes"],
         )
+
+        main_model_factory = partial(
+            BaseMLPModel,
+            model_params=model_params,
+            extractor_factories=extractor_factories,
+            fusion_factory=fusion_factory,
+        )
+
+        # Initialize the trainer with model and training
+        training = MLPTraining(trainer_kwargs=trainer_params)
 
         # Initialize the dataset with the specified data parameters
         dataset = MnistDataset(config=data_params)
@@ -64,6 +92,7 @@ def hpo_quantum_test():
         # Initialize the classification pipeline: ClassificationPipeline
         pipeline = ClassificationPipeline()
         metrics = pipeline.process_data(
+            model_factory=main_model_factory,
             dataset=dataset,
             training=training,
             params={
@@ -138,13 +167,41 @@ def test_optuna_aqml_objective(trial: optuna.Trial) -> float:
         "model_name": "QMLP_1",
     }
 
-    # Initialize the trainer with model and training: MLPTraining parameters
-    training = MLPTraining(
-        model_cls=QMLP_1,
-        model_kwargs=model_params,
-        trainer_kwargs=trainer_params,
-        batch_size=data_params["batch_size"],
+    model_params["output_dim_part"] = model_params["n_qubits"] // 2
+
+    ansatz = test_suggest_ansatz(trial)
+
+    extractor_factories = [
+        partial(
+            classical_2l_mlp,
+            model_params["input_dim"],
+            model_params["hidden_dim_part"],
+            model_params["output_dim_part"],
+        ),
+        partial(
+            classical_2l_mlp,
+            model_params["input_dim"],
+            model_params["hidden_dim_part"],
+            model_params["output_dim_part"],
+        ),
+    ]
+
+    fusion_factory = partial(
+        ConcatVQAFusion,
+        model_params["n_qubits"],
+        model_params["num_classes"],
+        ansatz=ansatz,
     )
+
+    main_model_factory = partial(
+        BaseMLPModel,
+        model_params=model_params,
+        extractor_factories=extractor_factories,
+        fusion_factory=fusion_factory,
+    )
+
+    # Initialize the trainer with model and training: MLPTraining parameters
+    training = MLPTraining(trainer_kwargs=trainer_params)
 
     # Initialize the dataset with the specified data parameters
     dataset = MnistDataset(config=data_params)
@@ -152,10 +209,9 @@ def test_optuna_aqml_objective(trial: optuna.Trial) -> float:
     # Initialize the classification pipeline: ClassificationPipeline
     pipeline = ClassificationPipeline()
 
-    ansatz = test_suggest_ansatz(trial)
-
     # Execute the pipeline to process data, train, and evaluate the model
     metrics: dict[str, list[float]] = pipeline.process_data(
+        model_factory=main_model_factory,
         dataset=dataset,
         training=training,
         params={
@@ -165,7 +221,6 @@ def test_optuna_aqml_objective(trial: optuna.Trial) -> float:
             "trainer_params": trainer_params,
             "optuna_params": trial.params,
         },
-        ansatz=ansatz,
     )
 
     # Return the mean accuracy across folds as the optimization objective
@@ -180,9 +235,104 @@ def test_ansatz_search_test() -> None:
     print("\n\n***** test_ansatz_search_test END *****\n\n")
 
 
+def test_hpo_baseline_1():
+    def objective(trial):
+        model_params = {
+            "lr": trial.suggest_float("lr", 1e-3, 1e-2),
+            "loss_fn": nn.CrossEntropyLoss(),
+            "num_classes": 3,
+            "input_dim": 14,
+            "hidden_dim_part": [
+                trial.suggest_categorical("hidden_dim_part", [64, 128, 256])
+            ],
+            "output_dim_part": trial.suggest_categorical(
+                "output_dim_part", [64, 128, 256]
+            ),
+            "hidden_dim_class": [
+                trial.suggest_categorical("hidden_dim_class", [64, 128, 256])
+            ],
+        }
+
+        trainer_params = {
+            "max_epochs": 2,
+            "enable_checkpointing": False,
+            "enable_progress_bar": True,
+            "num_sanity_val_steps": 0,
+            "accelerator": "auto",
+            "devices": "auto",
+        }
+        data_params = {
+            "batch_size": trial.suggest_categorical("batch_size", [32, 64, 128]),
+            "num_workers": 4,
+            "digits": [5, 6, 7],
+        }
+
+        experiment_params = {
+            "seed": 42,
+            "n_folds": 5,
+            "parent_run_name": "TEST_QMLP_AQML_Classical_Output",
+            "model_name": "Classical_MLP_baseline",
+        }
+
+        extractor_factories = [
+            partial(
+                classical_2l_mlp,
+                model_params["input_dim"],
+                model_params["hidden_dim_part"],
+                model_params["output_dim_part"],
+            ),
+            partial(
+                classical_2l_mlp,
+                model_params["input_dim"],
+                model_params["hidden_dim_part"],
+                model_params["output_dim_part"],
+            ),
+        ]
+
+        fusion_factory = partial(
+            ConcatMLPFusion,
+            2 * model_params["output_dim_part"],
+            model_params["hidden_dim_class"],
+            model_params["num_classes"],
+        )
+        main_model_factory = partial(
+            BaseMLPModel,
+            model_params=model_params,
+            extractor_factories=extractor_factories,
+            fusion_factory=fusion_factory,
+        )
+
+        training = MLPTraining(trainer_kwargs=trainer_params)
+
+        # Initialize the dataset with the specified data parameters
+        dataset = MnistDataset(config=data_params)
+
+        # Initialize the classification pipeline: ClassificationPipeline
+        pipeline = ClassificationPipeline()
+        metrics = pipeline.process_data(
+            model_factory=main_model_factory,
+            dataset=dataset,
+            training=training,
+            params={
+                "experiment_params": experiment_params,
+                "data_params": data_params,
+                "model_params": model_params,
+                "trainer_params": trainer_params,
+                "optuna_params": trial.params,
+            },
+        )
+
+        return mean(metrics["accuracy"])
+
+    study = optuna.create_study(direction="maximize")
+    study.optimize(objective, n_trials=2)
+    print(study.best_params)
+
+
 if __name__ == "__main__":
     print("Experiment start")
     logging.setup_mlflow(EXPERIMENT_NAME)
-    hpo_quantum_test()
-    test_ansatz_search_test()
+    test_hpo_baseline_1()
+    # hpo_quantum_test()
+    # test_ansatz_search_test()
     print("Experiment finished")

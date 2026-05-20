@@ -1,8 +1,11 @@
+from functools import partial
+
 from datasets.mnist import MnistDataset
 from torch import nn
 
-from aqml4msc.models.classical_mlp import CMLP_1
-from aqml4msc.models.vqa import QMLP_1
+from aqml4msc.models.base_mlp_model import BaseMLPModel
+from aqml4msc.models.classical_mlp import ConcatMLPFusion, classical_2l_mlp
+from aqml4msc.models.vqa import ConcatVQAFusion
 from aqml4msc.pipeline import ClassificationPipeline
 from aqml4msc.training.mlp_training import MLPTraining
 
@@ -16,6 +19,7 @@ def manual_exp_1():
         "hidden_dim_part": [128],
         "n_qubits": 6,
         "n_layers": 3,
+        "output_dim_part": 3,  # Added to match n_qubits for fusion: 2 * 3 = 6
     }
 
     trainer_params = {
@@ -39,12 +43,35 @@ def manual_exp_1():
         "model_name": "QMLP_1",
     }
 
-    training = MLPTraining(
-        model_cls=QMLP_1,
-        model_kwargs=model_params,
-        trainer_kwargs=trainer_params,
-        batch_size=data_params["batch_size"],
+    extractor_factories = [
+        partial(
+            classical_2l_mlp,
+            model_params["input_dim"],
+            model_params["hidden_dim_part"],
+            model_params["output_dim_part"],
+        ),
+        partial(
+            classical_2l_mlp,
+            model_params["input_dim"],
+            model_params["hidden_dim_part"],
+            model_params["output_dim_part"],
+        ),
+    ]
+
+    fusion_factory = partial(
+        ConcatVQAFusion,
+        model_params["n_qubits"],
+        model_params["num_classes"],
     )
+
+    main_model_factory = partial(
+        BaseMLPModel,
+        model_params=model_params,
+        extractor_factories=extractor_factories,
+        fusion_factory=fusion_factory,
+    )
+
+    training = MLPTraining(trainer_kwargs=trainer_params)
 
     # Initialize the dataset with the specified data parameters
     dataset = MnistDataset(config=data_params)
@@ -52,6 +79,7 @@ def manual_exp_1():
     # Initialize the classification pipeline: ClassificationPipeline
     pipeline = ClassificationPipeline()
     metrics = pipeline.process_data(
+        model_factory=main_model_factory,
         dataset=dataset,
         training=training,
         params={
@@ -95,12 +123,35 @@ def manual_exp_2():
         "model_name": "Classical_MLP_best_hparams",
     }
 
-    training = MLPTraining(
-        model_cls=CMLP_1,
-        model_kwargs=model_params,
-        trainer_kwargs=trainer_params,
-        batch_size=data_params["batch_size"],
+    extractor_factories = [
+        partial(
+            classical_2l_mlp,
+            model_params["input_dim"],
+            model_params["hidden_dim_part"],
+            model_params["output_dim_part"],
+        ),
+        partial(
+            classical_2l_mlp,
+            model_params["input_dim"],
+            model_params["hidden_dim_part"],
+            model_params["output_dim_part"],
+        ),
+    ]
+
+    fusion_factory = partial(
+        ConcatMLPFusion,
+        2 * model_params["output_dim_part"],
+        model_params["hidden_dim_class"],
+        model_params["num_classes"],
     )
+    main_model_factory = partial(
+        BaseMLPModel,
+        model_params=model_params,
+        extractor_factories=extractor_factories,
+        fusion_factory=fusion_factory,
+    )
+
+    training = MLPTraining(trainer_kwargs=trainer_params)
 
     # Initialize the dataset with the specified data parameters
     dataset = MnistDataset(config=data_params)
@@ -108,6 +159,7 @@ def manual_exp_2():
     # Initialize the classification pipeline: ClassificationPipeline
     pipeline = ClassificationPipeline()
     metrics = pipeline.process_data(
+        model_factory=main_model_factory,
         dataset=dataset,
         training=training,
         params={

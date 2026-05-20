@@ -1,3 +1,4 @@
+from functools import partial
 from statistics import mean
 
 import optuna
@@ -5,7 +6,8 @@ from datasets.mnist import MnistDataset
 from lightning.pytorch.callbacks.early_stopping import EarlyStopping
 from torch import nn
 
-from aqml4msc.models.classical_mlp import CMLP_1
+from aqml4msc.models.base_mlp_model import BaseMLPModel
+from aqml4msc.models.classical_mlp import ConcatMLPFusion, classical_2l_mlp
 from aqml4msc.pipeline import ClassificationPipeline
 from aqml4msc.training.mlp_training import MLPTraining
 
@@ -49,12 +51,34 @@ def hpo_baseline_1():
             "model_name": "Classical_MLP_baseline",
         }
 
-        training = MLPTraining(
-            model_cls=CMLP_1,
-            model_kwargs=model_params,
-            trainer_kwargs=trainer_params,
-            batch_size=data_params["batch_size"],
+        extractor_factories = [
+            partial(
+                classical_2l_mlp,
+                model_params["input_dim"],
+                model_params["hidden_dim_part"],
+                model_params["output_dim_part"],
+            ),
+            partial(
+                classical_2l_mlp,
+                model_params["input_dim"],
+                model_params["hidden_dim_part"],
+                model_params["output_dim_part"],
+            ),
+        ]
+
+        fusion_factory = partial(
+            ConcatMLPFusion,
+            2 * model_params["output_dim_part"],
+            model_params["hidden_dim_class"],
+            model_params["num_classes"],
         )
+        main_model_factory = partial(
+            BaseMLPModel,
+            extractor_factories=extractor_factories,
+            fusion_factory=fusion_factory,
+        )
+
+        training = MLPTraining(trainer_kwargs=trainer_params)
 
         # Initialize the dataset with the specified data parameters
         dataset = MnistDataset(config=data_params)
@@ -62,6 +86,7 @@ def hpo_baseline_1():
         # Initialize the classification pipeline: ClassificationPipeline
         pipeline = ClassificationPipeline()
         metrics = pipeline.process_data(
+            model_factory=main_model_factory,
             dataset=dataset,
             training=training,
             params={
@@ -116,18 +141,42 @@ def hpo_baseline_2():
             "model_name": "Classical_MLP_baseline_2",
         }
 
-        training = MLPTraining(
-            model_cls=CMLP_1,
-            model_kwargs=model_params,
-            trainer_kwargs=trainer_params,
-            batch_size=data_params["batch_size"],
+        extractor_factories = [
+            partial(
+                classical_2l_mlp,
+                model_params["input_dim"],
+                model_params["hidden_dim_part"],
+                model_params["output_dim_part"],
+            ),
+            partial(
+                classical_2l_mlp,
+                model_params["input_dim"],
+                model_params["hidden_dim_part"],
+                model_params["output_dim_part"],
+            ),
+        ]
+
+        fusion_factory = partial(
+            ConcatMLPFusion,
+            2 * model_params["output_dim_part"],
+            model_params["hidden_dim_class"],
+            model_params["num_classes"],
         )
+        main_model_factory = partial(
+            BaseMLPModel,
+            extractor_factories=extractor_factories,
+            fusion_factory=fusion_factory,
+        )
+
+        training = MLPTraining(trainer_kwargs=trainer_params)
+
         # Initialize the dataset with the specified data parameters
         dataset = MnistDataset(config=data_params)
 
         # Initialize the classification pipeline: ClassificationPipeline
         pipeline = ClassificationPipeline()
         metrics = pipeline.process_data(
+            model_factory=main_model_factory,
             dataset=dataset,
             training=training,
             params={
@@ -135,6 +184,7 @@ def hpo_baseline_2():
                 "data_params": data_params,
                 "model_params": model_params,
                 "trainer_params": trainer_params,
+                "optuna_params": trial.params,
             },
         )
         return mean(metrics["accuracy"])
@@ -177,20 +227,43 @@ def hpo_baseline_3():
             "model_name": "Classical_MLP_baseline_3",
         }
 
-        training = MLPTraining(
-            model_cls=CMLP_1,
-            model_kwargs=model_params,
-            trainer_kwargs=trainer_params,
-            batch_size=data_params["batch_size"],
+        extractor_factories = [
+            partial(
+                classical_2l_mlp,
+                model_params["input_dim"],
+                model_params["hidden_dim_part"],
+                model_params["output_dim_part"],
+            ),
+            partial(
+                classical_2l_mlp,
+                model_params["input_dim"],
+                model_params["hidden_dim_part"],
+                model_params["output_dim_part"],
+            ),
+        ]
+
+        fusion_factory = partial(
+            ConcatMLPFusion,
+            2 * model_params["output_dim_part"],
+            model_params["hidden_dim_class"],
+            model_params["num_classes"],
         )
+        main_model_factory = partial(
+            BaseMLPModel,
+            extractor_factories=extractor_factories,
+            fusion_factory=fusion_factory,
+        )
+
+        # Initialize the training algorithm
+        training = MLPTraining(trainer_kwargs=trainer_params)
 
         # Initialize the dataset with the specified data parameters
         dataset = MnistDataset(config=data_params)
 
         # Initialize the classification pipeline: ClassificationPipeline
         pipeline = ClassificationPipeline()
-
         metrics = pipeline.process_data(
+            model_factory=main_model_factory,
             dataset=dataset,
             training=training,
             params={
@@ -198,6 +271,7 @@ def hpo_baseline_3():
                 "data_params": data_params,
                 "model_params": model_params,
                 "trainer_params": trainer_params,
+                "optuna_params": trial.params,
             },
         )
         return mean(metrics["accuracy"])
