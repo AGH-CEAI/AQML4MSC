@@ -3,6 +3,7 @@ from statistics import mean
 
 import optuna
 from datasets.seeds import SeedsTabDataset
+from pytorch_lightning.callbacks import ModelCheckpoint
 from torch import nn
 
 from aqml4msc.logging import setup_mlflow
@@ -28,8 +29,6 @@ def hpo_classical_tab_objective(trial):
         ],
     }
 
-    from pytorch_lightning.callbacks import ModelCheckpoint
-
     checkpoint_callback = ModelCheckpoint(
         dirpath="checkpoints/seeds",
         monitor="val_acc",
@@ -38,7 +37,7 @@ def hpo_classical_tab_objective(trial):
     )
 
     trainer_params = {
-        "max_epochs": 100,
+        "max_epochs": 50,
         "enable_checkpointing": True,
         "enable_progress_bar": True,
         "num_sanity_val_steps": 0,
