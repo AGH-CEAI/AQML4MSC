@@ -2,10 +2,10 @@ from functools import partial
 from statistics import mean
 
 import optuna
-from datasets.mnist import MnistDataset
 from lightning.pytorch.callbacks.early_stopping import EarlyStopping
 from torch import nn
 
+from aqml4msc.datasets.mnist import MnistDataset
 from aqml4msc.models.base_mlp_model import BaseMLPModel
 from aqml4msc.models.classical_mlp import ConcatMLPFusion, classical_2l_mlp
 from aqml4msc.pipeline import ClassificationPipeline

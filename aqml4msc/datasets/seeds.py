@@ -4,7 +4,10 @@ import numpy as np
 import numpy.typing as npt
 import pandas as pd
 from PIL import Image
-from preprocessing.seeds import (
+from sklearn.decomposition import PCA
+
+from aqml4msc.datasets.base_dataset import BaseDataset
+from aqml4msc.preprocessing.seeds import (
     add_indirect_features,
     drop_columns,
     get_max_sizes,
@@ -15,9 +18,6 @@ from preprocessing.seeds import (
     sort_dataframe,
     to_grayscale,
 )
-from sklearn.decomposition import PCA
-
-from aqml4msc.datasets.base_dataset import BaseDataset
 
 
 class SeedsTabDataset(BaseDataset):
@@ -57,13 +57,13 @@ class SeedsTabDataset(BaseDataset):
         self.train_x_df, self.val_x_df = normalize_data(self.train_x_df, self.val_x_df)
         train_x, train_y = pd_to_numpy_X_y(self.train_x_df, self.train_y_df)
         val_x, val_y = pd_to_numpy_X_y(self.val_x_df, self.val_y_df)
-        
+
         pca_components = self.config.get("pca_tab_components", 0)
         if pca_components > 0:
             pca = PCA(n_components=pca_components)
             train_x = pca.fit_transform(train_x)
             val_x = pca.transform(val_x)
-            
+
         self.train_data = (train_x,)
         self.train_labels = train_y
         self.val_data = (val_x,)
@@ -214,5 +214,10 @@ class SeedsDataset(BaseDataset):
         img_labels = self.image_dataset.get_encoded_labels()
         tab_labels = self.tab_dataset.get_encoded_labels()
         if not np.array_equal(img_labels, tab_labels):
-            raise ValueError("Labels in image and tab datasets do not match")
+            raise ValueError(
+                "Encoded labels in image and tab datasets do not match. Did you forget to sort tab dataset?"
+            )
         return img_labels
+
+    def decode_labels(self, y: npt.NDArray[np.int_]) -> npt.NDArray[np.int_]:
+        return self.image_dataset.decode_labels(y)

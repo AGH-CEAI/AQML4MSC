@@ -1,10 +1,10 @@
 import mlflow.pytorch as mlflow_pytorch
 import pytorch_lightning as pl
 import torch
-from datasets.base_dataset import BaseDataset
 from mlflow.models import ModelSignature
 
 from aqml4msc import logging
+from aqml4msc.datasets.base_dataset import BaseDataset
 from aqml4msc.models.base_mlp_model import BaseMLPModel
 from aqml4msc.training.base_training import BaseTraining
 
@@ -12,14 +12,14 @@ from aqml4msc.training.base_training import BaseTraining
 class MLPTraining(BaseTraining):
     def __init__(self, trainer_kwargs: dict):
         import copy
+
         self._initial_trainer_kwargs = copy.deepcopy(trainer_kwargs)
 
     def fit(self, model: BaseMLPModel, dataset: BaseDataset):
         import copy
+
         trainer_kwargs = copy.deepcopy(self._initial_trainer_kwargs)
-        self.trainer = pl.Trainer(
-            **trainer_kwargs, logger=logging.get_mlflow_logger()
-        )
+        self.trainer = pl.Trainer(**trainer_kwargs, logger=logging.get_mlflow_logger())
         train_dataloader = dataset.get_train_dataloader()
         val_dataloader = dataset.get_val_dataloader()
         self.trainer.fit(model, train_dataloader, val_dataloader)

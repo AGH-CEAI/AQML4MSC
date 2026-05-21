@@ -1,10 +1,10 @@
 from functools import partial
 from statistics import mean
 
-from datasets.seeds import SeedsDataset, SeedsImageDataset, SeedsTabDataset
 from pytorch_lightning.callbacks import ModelCheckpoint
 from torch import nn
 
+from aqml4msc.datasets.seeds import SeedsDataset, SeedsImageDataset, SeedsTabDataset
 from aqml4msc.logging import setup_mlflow
 from aqml4msc.models.base_mlp_model import BaseMLPModel
 from aqml4msc.models.classical_mlp import ConcatMLPFusion
@@ -339,8 +339,8 @@ def main() -> None:
     setup_mlflow(experiment_name="Seeds_Multimodal_Classification")
     # metrics = manual_classical_tab_1()
     # print(metrics)
-    metrics = manual_classical_images_1()
-    print(metrics)
+    # metrics = manual_classical_images_1()
+    # print(metrics)
     metrics = manual_classical_multimodal_1()
     print(metrics)
     metrics = manual_classical_multimodal_2()

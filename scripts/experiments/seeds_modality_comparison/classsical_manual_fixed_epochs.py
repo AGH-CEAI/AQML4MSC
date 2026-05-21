@@ -1,9 +1,9 @@
 from functools import partial
 from statistics import mean
 
-from datasets.seeds import SeedsDataset, SeedsImageDataset, SeedsTabDataset
 from torch import nn
 
+from aqml4msc.datasets.seeds import SeedsDataset, SeedsImageDataset, SeedsTabDataset
 from aqml4msc.logging import setup_mlflow
 from aqml4msc.models.base_mlp_model import BaseMLPModel
 from aqml4msc.models.classical_mlp import ConcatMLPFusion

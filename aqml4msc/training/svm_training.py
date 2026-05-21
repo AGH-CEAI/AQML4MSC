@@ -1,9 +1,9 @@
 from typing import Tuple, Type
 
 import mlflow.sklearn as mlflow_sklearn
-from datasets.base_dataset import BaseDataset
 from mlflow.models import ModelSignature
 
+from aqml4msc.datasets.base_dataset import BaseDataset
 from aqml4msc.training.base_training import BaseTraining
 
 

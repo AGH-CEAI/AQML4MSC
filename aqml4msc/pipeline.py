@@ -1,8 +1,7 @@
 from functools import partial
 
-from datasets.base_dataset import BaseDataset
-
 import aqml4msc.logging as logging
+from aqml4msc.datasets.base_dataset import BaseDataset
 from aqml4msc.metrics import aggregate_fold_metrics
 from aqml4msc.training.base_training import BaseTraining
 from aqml4msc.utils import get_stratified_cv_splits, set_seeds

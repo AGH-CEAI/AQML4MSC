@@ -4,7 +4,8 @@ import numpy as np
 import numpy.typing as npt
 from sklearn.preprocessing import LabelEncoder
 from torch.utils.data import DataLoader
-from utils import get_dataloader
+
+from aqml4msc.utils import get_dataloader
 
 
 class BaseDataset(ABC):

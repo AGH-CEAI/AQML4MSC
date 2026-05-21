@@ -7,12 +7,12 @@ import mlflow
 import numpy as np
 import pennylane as qml
 from aqmlator.tuner import compute_qc_metrics
-from metrics import compute_classification_metrics
 from mlflow.models import infer_signature
 from pytorch_lightning.loggers import MLFlowLogger
 from sklearn.metrics import classification_report, confusion_matrix
 
 from aqml4msc.datasets.base_dataset import BaseDataset
+from aqml4msc.metrics import compute_classification_metrics
 from aqml4msc.models.base_mlp_model import BaseMLPModel
 from aqml4msc.training.base_training import BaseTraining
 

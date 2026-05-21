@@ -2,10 +2,10 @@ from functools import partial
 from statistics import mean
 
 import optuna
-from datasets.seeds import SeedsTabDataset
 from pytorch_lightning.callbacks import ModelCheckpoint
 from torch import nn
 
+from aqml4msc.datasets.seeds import SeedsTabDataset
 from aqml4msc.logging import setup_mlflow
 from aqml4msc.models.base_mlp_model import BaseMLPModel
 from aqml4msc.models.classical_mlp import ConcatMLPFusion, classical_2l_mlp

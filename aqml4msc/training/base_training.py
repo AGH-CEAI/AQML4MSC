@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 
-from datasets.base_dataset import BaseDataset
 from mlflow.models import ModelSignature
 
+from aqml4msc.datasets.base_dataset import BaseDataset
 from aqml4msc.models.base_mlp_model import BaseMLPModel
 
 

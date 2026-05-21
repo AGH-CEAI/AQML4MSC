@@ -3,9 +3,9 @@ from statistics import mean
 
 import optuna
 import pennylane as qml
-from datasets.mnist import MnistDataset
 from torch import nn
 
+from aqml4msc.datasets.mnist import MnistDataset
 from aqml4msc.models.base_mlp_model import BaseMLPModel
 from aqml4msc.models.classical_mlp import classical_2l_mlp
 from aqml4msc.models.vqa import ConcatVQAFusion, ansatz_angle_basic
