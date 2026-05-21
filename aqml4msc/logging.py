@@ -135,7 +135,7 @@ def log_model(
     model_name: str = "model",
 ) -> None:
     signature = infer_signature(dataset.val_data, trainer.predict(model, dataset))
-    trainer.log_model(model_name=model_name, signature=signature)
+    trainer.log_model(model=model, model_name=model_name, signature=signature)
 
 
 def log_all_run_metrics(
