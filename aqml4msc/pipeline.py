@@ -50,9 +50,10 @@ class ClassificationPipeline:
                         metrics,
                         true_labels,
                         preds,
-                        dataset.val_data,
+                        dataset,
                         fold,
                         training,
+                        model,
                         model_name=params["experiment_params"]["model_name"],
                     )
 

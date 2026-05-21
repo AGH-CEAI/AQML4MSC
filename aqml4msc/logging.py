@@ -1,7 +1,7 @@
 import logging
 import os
 from statistics import mean, stdev
-from typing import Any, Callable, Dict, TextIO, Tuple
+from typing import Any, Callable, Dict, TextIO
 
 import mlflow
 import numpy as np
@@ -12,6 +12,8 @@ from mlflow.models import infer_signature
 from pytorch_lightning.loggers import MLFlowLogger
 from sklearn.metrics import classification_report, confusion_matrix
 
+from aqml4msc.datasets.base_dataset import BaseDataset
+from aqml4msc.models.base_mlp_model import BaseMLPModel
 from aqml4msc.training.base_training import BaseTraining
 
 # ------------------------------------------------------------------------------
@@ -128,10 +130,11 @@ def log_aggregated_metrics(all_fold_metrics: dict) -> None:
 
 def log_model(
     trainer: BaseTraining,
-    X_val: Tuple[np.ndarray, np.ndarray],
+    model: BaseMLPModel,
+    dataset: BaseDataset,
     model_name: str = "model",
 ) -> None:
-    signature = infer_signature(X_val, trainer.predict(X_val))
+    signature = infer_signature(dataset.val_data, trainer.predict(model, dataset))
     trainer.log_model(model_name=model_name, signature=signature)
 
 
@@ -139,9 +142,10 @@ def log_all_run_metrics(
     metrics: list,
     true_labels: np.ndarray,
     preds: np.ndarray,
-    val_data: tuple,
+    dataset: BaseDataset,
     fold: int,
     classifier: BaseTraining,
+    model: BaseMLPModel,
     model_name: str,
     ansatz: Callable | None = None,
 ) -> list:
@@ -157,7 +161,8 @@ def log_all_run_metrics(
         log_confusion_matrix(y_true=true_labels, y_pred=preds)
         log_model(
             trainer=classifier,
-            X_val=val_data,
+            model=model,
+            dataset=dataset,
             model_name=model_name,
         )
     except Exception as e:
