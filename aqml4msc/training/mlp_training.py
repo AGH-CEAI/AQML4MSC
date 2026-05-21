@@ -21,6 +21,18 @@ class MLPTraining(BaseTraining):
         val_dataloader = dataset.get_val_dataloader()
         self.trainer.fit(model, train_dataloader, val_dataloader)
 
+        # Load best model weights into memory for fair prediction and logging (if checkpointing is enabled)
+        if hasattr(self.trainer, "checkpoint_callback") and getattr(
+            self.trainer.checkpoint_callback, "best_model_path", None
+        ):
+            best_model_path = self.trainer.checkpoint_callback.best_model_path
+            checkpoint = torch.load(
+                best_model_path, map_location=model.device, weights_only=False
+            )
+            model.load_state_dict(checkpoint["state_dict"])
+            if "epoch" in checkpoint:
+                logging.log_metrics({"best_epoch": checkpoint["epoch"]})
+
     def predict(self, model: BaseMLPModel, dataset: BaseDataset):
         dataloader = dataset.get_test_dataloader()
         preds = self.trainer.predict(model, dataloader)
