@@ -27,14 +27,6 @@ def ansatz_to_torch(
     return TorchLayer(circuit, weight_shapes)  # type: ignore
 
 
-def ansatz_angle_basic(n_qubits: int) -> Callable:
-    def ansatz(inputs, weights):
-        qml.AngleEmbedding(inputs, wires=range(n_qubits))
-        qml.BasicEntanglerLayers(weights, wires=range(n_qubits))
-
-    return ansatz
-
-
 def quantum_linear(torch_layer: TorchLayer, n_qubits_measured: int, num_output: int):
     return torch.nn.Sequential(
         torch_layer,  # type: ignore
@@ -52,3 +44,46 @@ class ConcatVQAFusion(torch.nn.Module):
     def forward(self, features: list[torch.Tensor]) -> torch.Tensor:
         fused = torch.cat(features, dim=-1)
         return self.network(fused)
+
+
+class ConcatVQAFusionLinear(torch.nn.Module):
+    def __init__(
+        self,
+        dev: Device,
+        n_qubits_measured: int,
+        num_classes: int,
+        ansatz: Callable | None = None,
+    ):
+        super().__init__()
+        self.ansatz = ansatz
+        self.torch_layer = ansatz_to_torch(ansatz, dev, n_qubits_measured)
+        self.network = quantum_linear(self.torch_layer, n_qubits_measured, num_classes)
+
+    def forward(self, features: list[torch.Tensor]) -> torch.Tensor:
+        fused = torch.cat(features, dim=-1)
+        return self.network(fused)
+
+
+# --- ANSATZE ---
+def ansatz_angle_basic(n_qubits: int) -> Callable:
+    def ansatz(inputs, weights):
+        qml.AngleEmbedding(inputs, wires=range(n_qubits))
+        qml.BasicEntanglerLayers(weights, wires=range(n_qubits))
+
+    return ansatz
+
+
+def ansatz_amplitude_basic(n_qubits: int) -> Callable:
+    def ansatz(inputs, weights):
+        qml.AmplitudeEmbedding(inputs, wires=range(n_qubits))
+        qml.BasicEntanglerLayers(weights, wires=range(n_qubits))
+
+    return ansatz
+
+
+def ansatz_amplitude_strongly(n_qubits: int) -> Callable:
+    def ansatz(inputs, weights):
+        qml.AmplitudeEmbedding(inputs, wires=range(n_qubits))
+        qml.StronglyEntanglingLayers(weights, wires=range(n_qubits))
+
+    return ansatz
