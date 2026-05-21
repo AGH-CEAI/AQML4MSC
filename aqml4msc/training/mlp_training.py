@@ -11,11 +11,14 @@ from aqml4msc.training.base_training import BaseTraining
 
 class MLPTraining(BaseTraining):
     def __init__(self, trainer_kwargs: dict):
-        self.trainer_kwargs = trainer_kwargs
+        import copy
+        self._initial_trainer_kwargs = copy.deepcopy(trainer_kwargs)
 
     def fit(self, model: BaseMLPModel, dataset: BaseDataset):
+        import copy
+        trainer_kwargs = copy.deepcopy(self._initial_trainer_kwargs)
         self.trainer = pl.Trainer(
-            **self.trainer_kwargs, logger=logging.get_mlflow_logger()
+            **trainer_kwargs, logger=logging.get_mlflow_logger()
         )
         train_dataloader = dataset.get_train_dataloader()
         val_dataloader = dataset.get_val_dataloader()
