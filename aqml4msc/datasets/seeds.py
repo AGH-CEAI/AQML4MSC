@@ -4,19 +4,19 @@ import numpy as np
 import numpy.typing as npt
 import pandas as pd
 from PIL import Image
-from sklearn.decomposition import PCA
-
 from preprocessing.seeds import (
     add_indirect_features,
     drop_columns,
+    get_max_sizes,
     normalize_data,
+    pad_image,
     pd_to_numpy_X_y,
     seperate_X_y,
-    to_grayscale,
-    pad_image,
-    get_max_sizes,
     sort_dataframe,
+    to_grayscale,
 )
+from sklearn.decomposition import PCA
+
 from aqml4msc.datasets.base_dataset import BaseDataset
 
 
@@ -57,6 +57,13 @@ class SeedsTabDataset(BaseDataset):
         self.train_x_df, self.val_x_df = normalize_data(self.train_x_df, self.val_x_df)
         train_x, train_y = pd_to_numpy_X_y(self.train_x_df, self.train_y_df)
         val_x, val_y = pd_to_numpy_X_y(self.val_x_df, self.val_y_df)
+        
+        pca_components = self.config.get("pca_tab_components", 0)
+        if pca_components > 0:
+            pca = PCA(n_components=pca_components)
+            train_x = pca.fit_transform(train_x)
+            val_x = pca.transform(val_x)
+            
         self.train_data = (train_x,)
         self.train_labels = train_y
         self.val_data = (val_x,)
@@ -92,7 +99,11 @@ class SeedsImageDataset(BaseDataset):
     ):
         if not os.path.exists(img_path):
             raise FileNotFoundError(f"Image path not found: {img_path}")
-        img_filename_list = [fname for fname in os.listdir(img_path) if os.path.isfile(os.path.join(img_path, fname))]
+        img_filename_list = [
+            fname
+            for fname in os.listdir(img_path)
+            if os.path.isfile(os.path.join(img_path, fname))
+        ]
         if not img_filename_list:
             raise ValueError(f"No images found in {img_path}")
         images = []
@@ -116,7 +127,10 @@ class SeedsImageDataset(BaseDataset):
             prepared_images.append(np.array(img))
         self.images_prepared = np.array(prepared_images)
         # Extract class names from filenames (e.g. "canadian10_11.jpg" -> "canadian")
-        labels_extracted: list[str] = ["".join(filter(str.isalpha, fname.split('.')[0])) for fname in self.labels_raw]
+        labels_extracted: list[str] = [
+            "".join(filter(str.isalpha, fname.split(".")[0]))
+            for fname in self.labels_raw
+        ]
         self.labels_encoded = self.label_encoder.fit_transform(labels_extracted)
 
     def set_splits(self, train_idx, test_idx):
@@ -128,14 +142,17 @@ class SeedsImageDataset(BaseDataset):
         self.val_labels = self.labels_encoded[test_idx]
 
     def preprocess(self):
-        images_flat: npt.NDArray[np.float64] = self.train_imgs.reshape(len(self.train_imgs), -1)
-        images_flat_val: npt.NDArray[np.float64] = self.val_imgs.reshape(len(self.val_imgs), -1)
-        pca = PCA(n_components=self.config["pca_components"])
+        images_flat: npt.NDArray[np.float64] = self.train_imgs.reshape(
+            len(self.train_imgs), -1
+        )
+        images_flat_val: npt.NDArray[np.float64] = self.val_imgs.reshape(
+            len(self.val_imgs), -1
+        )
+        pca = PCA(n_components=self.config["pca_img_components"])
         images_reduced: npt.NDArray[np.float64] = pca.fit_transform(images_flat)
         images_reduced_val: npt.NDArray[np.float64] = pca.transform(images_flat_val)
         self.train_data = (images_reduced,)
         self.val_data = (images_reduced_val,)
-         
 
     def get_n_samples(self) -> int:
         if len(self.images_prepared) == 0:
@@ -159,7 +176,6 @@ class SeedsDataset(BaseDataset):
         self.tab_dataset = SeedsTabDataset(config)
         self.image_dataset = SeedsImageDataset(config)
 
-
     def load_raw(
         self,
         img_path: str = os.environ["SEEDS_IMAGE_DATA_LOCATION"],
@@ -173,7 +189,6 @@ class SeedsDataset(BaseDataset):
         self.image_dataset.prepare_data()
         self.tab_dataset.prepare_data()
 
-
     def set_splits(self, train_idx, test_idx):
         self.image_dataset.set_splits(train_idx, test_idx)
         self.tab_dataset.set_splits(train_idx, test_idx)
@@ -181,7 +196,9 @@ class SeedsDataset(BaseDataset):
     def preprocess(self):
         self.image_dataset.preprocess()
         self.tab_dataset.preprocess()
-        self.train_data = tuple(self.tab_dataset.train_data + self.image_dataset.train_data)
+        self.train_data = tuple(
+            self.tab_dataset.train_data + self.image_dataset.train_data
+        )
         self.val_data = tuple(self.tab_dataset.val_data + self.image_dataset.val_data)
         self.train_labels = self.tab_dataset.train_labels
         self.val_labels = self.tab_dataset.val_labels

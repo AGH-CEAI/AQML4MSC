@@ -122,7 +122,7 @@ def manual_classical_images_1():
     data_params = {
         "batch_size": 32,
         "num_workers": 8,
-        "pca_components": 12,
+        "pca_img_components": 12,
     }
 
     experiment_params = {
@@ -202,7 +202,7 @@ def manual_classical_multimodal_1():
     data_params = {
         "batch_size": 32,
         "num_workers": 8,
-        "pca_components": 12,
+        "pca_img_components": 12,
     }
 
     experiment_params = {
