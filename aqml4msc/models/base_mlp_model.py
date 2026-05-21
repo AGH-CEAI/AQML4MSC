@@ -35,6 +35,10 @@ class BaseMLPModel(pl.LightningModule):
         self.lr = model_params["lr"]
 
     def forward(self, *sources) -> torch.Tensor:
+        if len(sources) != len(self.extractors):
+            raise ValueError(
+                f"Expected {len(self.extractors)} sources, but got {len(sources)}"
+            )
         # Pass each source through its respective extractor
         features = [extractor(src) for extractor, src in zip(self.extractors, sources)]
         # Fusion model needs fusion logic implemented in its forward method
@@ -48,7 +52,7 @@ class BaseMLPModel(pl.LightningModule):
         preds = torch.argmax(logits, dim=1)
 
         # log loss
-        self.log("train_loss", loss, on_epoch=True, prog_bar=True)
+        self.log("train_loss", loss, on_step=False, on_epoch=True, prog_bar=True)
 
         # log metrics (handles update/compute internally)
         self.log_dict(
@@ -66,7 +70,7 @@ class BaseMLPModel(pl.LightningModule):
 
         preds = torch.argmax(logits, dim=1)
 
-        self.log("val_loss", loss, on_epoch=True, prog_bar=True)
+        self.log("val_loss", loss, on_step=False, on_epoch=True, prog_bar=True)
 
         self.log_dict(
             self.val_metrics(preds, labels),
