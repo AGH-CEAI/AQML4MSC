@@ -89,7 +89,7 @@ def ansatz_angle_basic(n_qubits: int) -> Callable:
 
 def ansatz_amplitude_basic(n_qubits: int) -> Callable:
     def ansatz(inputs, weights):
-        qml.AmplitudeEmbedding(inputs, wires=range(n_qubits), pad_with=0)
+        qml.AmplitudeEmbedding(inputs, wires=range(n_qubits), pad_with=0, normalize=True)
         qml.BasicEntanglerLayers(weights, wires=range(n_qubits))
 
     return ansatz
@@ -97,7 +97,7 @@ def ansatz_amplitude_basic(n_qubits: int) -> Callable:
 
 def ansatz_amplitude_strongly(n_qubits: int) -> Callable:
     def ansatz(inputs, weights):
-        qml.AmplitudeEmbedding(inputs, wires=range(n_qubits), pad_with=0)
+        qml.AmplitudeEmbedding(inputs, wires=range(n_qubits), pad_with=0, normalize=True)
         qml.StronglyEntanglingLayers(weights, wires=range(n_qubits))
 
     return ansatz
