@@ -5,6 +5,7 @@ import numpy.typing as npt
 import pandas as pd
 from PIL import Image
 from sklearn.decomposition import PCA
+from sklearn.preprocessing import MinMaxScaler, StandardScaler
 
 from aqml4msc.datasets.base_dataset import BaseDataset
 from aqml4msc.preprocessing.seeds import (
@@ -63,6 +64,10 @@ class SeedsTabDataset(BaseDataset):
             pca = PCA(n_components=pca_components)
             train_x = pca.fit_transform(train_x)
             val_x = pca.transform(val_x)
+
+        scaler = MinMaxScaler(feature_range=(0, np.pi))
+        train_x = scaler.fit_transform(train_x)
+        val_x = scaler.transform(val_x)
 
         self.train_data = (train_x,)
         self.train_labels = train_y
@@ -148,9 +153,18 @@ class SeedsImageDataset(BaseDataset):
         images_flat_val: npt.NDArray[np.float64] = self.val_imgs.reshape(
             len(self.val_imgs), -1
         )
+
+        pre_scaler = StandardScaler()
+        images_flat = pre_scaler.fit_transform(images_flat)
+        images_flat_val = pre_scaler.transform(images_flat_val)
+
         pca = PCA(n_components=self.config["pca_img_components"])
         images_reduced: npt.NDArray[np.float64] = pca.fit_transform(images_flat)
         images_reduced_val: npt.NDArray[np.float64] = pca.transform(images_flat_val)
+
+        post_scaler = MinMaxScaler(feature_range=(0, np.pi))
+        images_reduced = post_scaler.fit_transform(images_reduced)
+        images_reduced_val = post_scaler.transform(images_reduced_val)
         self.train_data = (images_reduced,)
         self.val_data = (images_reduced_val,)
 
