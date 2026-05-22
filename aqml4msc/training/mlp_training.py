@@ -44,7 +44,8 @@ class MLPTraining(BaseTraining):
     def log_model(
         self, model: BaseMLPModel, model_name: str, signature: ModelSignature
     ):
-        mlflow_pytorch.log_model(model, name=model_name, signature=signature)
+        # mlflow_pytorch.log_model(model, name=model_name, signature=signature)
+        pass
 
     def get_n_paramas(self, model: BaseMLPModel) -> dict:
         """Reurns dict with number of trainable parameters"""
