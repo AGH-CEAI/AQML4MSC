@@ -337,10 +337,10 @@ def manual_classical_multimodal_2():
 def main() -> None:
     """Calls the experiment."""
     setup_mlflow(experiment_name="Seeds_Multimodal_Classification")
-    # metrics = manual_classical_tab_1()
-    # print(metrics)
-    # metrics = manual_classical_images_1()
-    # print(metrics)
+    metrics = manual_classical_tab_1()
+    print(metrics)
+    metrics = manual_classical_images_1()
+    print(metrics)
     metrics = manual_classical_multimodal_1()
     print(metrics)
     metrics = manual_classical_multimodal_2()

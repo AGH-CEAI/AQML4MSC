@@ -216,6 +216,7 @@ def manual_quantum_multimodal_1():
 
     extractor_factories = [
         nn.Identity,
+        nn.Identity,
     ]
     fusion_factory = partial(
         ConcatVQAFusionLinear,
