@@ -14,7 +14,7 @@ class BaseMLPModel(pl.LightningModule):
         fusion_factory: Callable[[], torch.nn.Module],
     ):
         super().__init__()
-        self.save_hyperparameters(ignore=["loss_fn"])
+        self.save_hyperparameters(ignore=["loss_fn", "extractor_factories", "fusion_factory"])
 
         # Instantiate sub-models by calling the partial functions
         self.extractors = torch.nn.ModuleList(
