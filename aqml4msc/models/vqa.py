@@ -9,15 +9,20 @@ from qmetric.converters import PennylaneToQASM3
 
 
 def ansatz_to_torch(
-    ansatz: Callable, dev: Device, n_qubits_measured: int
+    ansatz: Callable,
+    dev: Device,
+    n_qubits_measured: int,
+    weight_shapes: dict[str, tuple[int, ...]] | None = None,
 ) -> TorchLayer:
-    @qml.qnode(dev)
-    def probe_circuit(inputs, weights) -> list[qml.measurements.ExpectationMP]:  # type: ignore
-        ansatz(np.array(inputs), np.array(weights))
-        return [qml.expval(qml.PauliZ(wires=i)) for i in range(n_qubits_measured)]
+    if weight_shapes is None:
 
-    weight_shapes = PennylaneToQASM3.probe_inputs_and_weight_shapes(probe_circuit)
-    weight_shapes.pop("inputs")
+        @qml.qnode(dev)
+        def probe_circuit(inputs, weights) -> list[qml.measurements.ExpectationMP]:  # type: ignore
+            ansatz(np.array(inputs), np.array(weights))
+            return [qml.expval(qml.PauliZ(wires=i)) for i in range(n_qubits_measured)]
+
+        weight_shapes = PennylaneToQASM3.probe_inputs_and_weight_shapes(probe_circuit)
+        weight_shapes.pop("inputs")
 
     @qml.qnode(dev)
     def circuit(inputs, weights) -> list[qml.measurements.ExpectationMP]:  # type: ignore
@@ -36,10 +41,16 @@ def quantum_linear(torch_layer: TorchLayer, n_qubits_measured: int, num_output: 
 
 
 class ConcatVQAFusion(torch.nn.Module):
-    def __init__(self, dev: Device, num_classes: int, ansatz: Callable | None = None):
+    def __init__(
+        self,
+        dev: Device,
+        num_classes: int,
+        ansatz: Callable | None = None,
+        weight_shapes: dict[str, tuple[int, ...]] | None = None,
+    ):
         super().__init__()
         self.ansatz = ansatz
-        self.network = ansatz_to_torch(ansatz, dev, num_classes)
+        self.network = ansatz_to_torch(ansatz, dev, num_classes, weight_shapes)
 
     def forward(self, features: list[torch.Tensor]) -> torch.Tensor:
         fused = torch.cat(features, dim=-1)
@@ -53,10 +64,13 @@ class ConcatVQAFusionLinear(torch.nn.Module):
         n_qubits_measured: int,
         num_classes: int,
         ansatz: Callable | None = None,
+        weight_shapes: dict[str, tuple[int, ...]] | None = None,
     ):
         super().__init__()
         self.ansatz = ansatz
-        self.torch_layer = ansatz_to_torch(ansatz, dev, n_qubits_measured)
+        self.torch_layer = ansatz_to_torch(
+            ansatz, dev, n_qubits_measured, weight_shapes
+        )
         self.network = quantum_linear(self.torch_layer, n_qubits_measured, num_classes)
 
     def forward(self, features: list[torch.Tensor]) -> torch.Tensor:
@@ -75,7 +89,7 @@ def ansatz_angle_basic(n_qubits: int) -> Callable:
 
 def ansatz_amplitude_basic(n_qubits: int) -> Callable:
     def ansatz(inputs, weights):
-        qml.AmplitudeEmbedding(inputs, wires=range(n_qubits))
+        qml.AmplitudeEmbedding(inputs, wires=range(n_qubits), pad_with=0)
         qml.BasicEntanglerLayers(weights, wires=range(n_qubits))
 
     return ansatz
@@ -83,7 +97,7 @@ def ansatz_amplitude_basic(n_qubits: int) -> Callable:
 
 def ansatz_amplitude_strongly(n_qubits: int) -> Callable:
     def ansatz(inputs, weights):
-        qml.AmplitudeEmbedding(inputs, wires=range(n_qubits))
+        qml.AmplitudeEmbedding(inputs, wires=range(n_qubits), pad_with=0)
         qml.StronglyEntanglingLayers(weights, wires=range(n_qubits))
 
     return ansatz
