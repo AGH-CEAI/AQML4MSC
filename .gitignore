@@ -40,3 +40,4 @@ scripts/test.py
 checkpoints/
 txt/iccs/aqml4msc.blg
 *.drawio.bkp
+aqml4msc.tar
