@@ -66,6 +66,7 @@ def manual_quantum_tab_1():
         ansatz=ansatz_amplitude_strongly(model_params["n_qubits"]),
         n_qubits_measured=model_params["n_qubits"],
         num_classes=model_params["num_classes"],
+        weight_shapes={"weights": (1, model_params["n_qubits"], 3)},
     )
     main_model_factory = partial(
         BaseMLPModel,
@@ -143,6 +144,7 @@ def manual_quantum_images_1():
         ansatz=ansatz_amplitude_strongly(model_params["n_qubits"]),
         n_qubits_measured=model_params["n_qubits"],
         num_classes=model_params["num_classes"],
+        weight_shapes={"weights": (1, model_params["n_qubits"], 3)},
     )
     main_model_factory = partial(
         BaseMLPModel,
@@ -221,6 +223,7 @@ def manual_quantum_multimodal_1():
         ansatz=ansatz_amplitude_strongly(model_params["n_qubits"]),
         n_qubits_measured=model_params["n_qubits"],
         num_classes=model_params["num_classes"],
+        weight_shapes={"weights": (1, model_params["n_qubits"], 3)},
     )
     main_model_factory = partial(
         BaseMLPModel,
@@ -300,6 +303,7 @@ def manual_quantum_multimodal_2():
         ansatz=ansatz_amplitude_strongly(model_params["n_qubits"]),
         n_qubits_measured=model_params["n_qubits"],
         num_classes=model_params["num_classes"],
+        weight_shapes={"weights": (1, model_params["n_qubits"], 3)},
     )
     main_model_factory = partial(
         BaseMLPModel,

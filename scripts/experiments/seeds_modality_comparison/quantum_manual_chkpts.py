@@ -2,10 +2,10 @@ from functools import partial
 from statistics import mean
 
 import pennylane as qml
-from aqml4msc.datasets.seeds import SeedsDataset, SeedsImageDataset, SeedsTabDataset
 from pytorch_lightning.callbacks import ModelCheckpoint
 from torch import nn
 
+from aqml4msc.datasets.seeds import SeedsDataset, SeedsImageDataset, SeedsTabDataset
 from aqml4msc.logging import setup_mlflow
 from aqml4msc.models.base_mlp_model import BaseMLPModel
 from aqml4msc.models.vqa import (
@@ -66,6 +66,7 @@ def manual_quantum_tab_1():
         ansatz=ansatz_angle_basic(model_params["n_qubits"]),
         n_qubits_measured=model_params["n_qubits"],
         num_classes=model_params["num_classes"],
+        weight_shapes={"weights": (1, model_params["n_qubits"])},
     )
     main_model_factory = partial(
         BaseMLPModel,
@@ -143,6 +144,7 @@ def manual_quantum_images_1():
         ansatz=ansatz_angle_basic(model_params["n_qubits"]),
         n_qubits_measured=model_params["n_qubits"],
         num_classes=model_params["num_classes"],
+        weight_shapes={"weights": (1, model_params["n_qubits"])},
     )
     main_model_factory = partial(
         BaseMLPModel,
@@ -221,6 +223,7 @@ def manual_quantum_multimodal_1():
         ansatz=ansatz_angle_basic(model_params["n_qubits"]),
         n_qubits_measured=model_params["n_qubits"],
         num_classes=model_params["num_classes"],
+        weight_shapes={"weights": (1, model_params["n_qubits"])},
     )
     main_model_factory = partial(
         BaseMLPModel,
@@ -300,6 +303,7 @@ def manual_quantum_multimodal_2():
         ansatz=ansatz_angle_basic(model_params["n_qubits"]),
         n_qubits_measured=model_params["n_qubits"],
         num_classes=model_params["num_classes"],
+        weight_shapes={"weights": (1, model_params["n_qubits"])},
     )
     main_model_factory = partial(
         BaseMLPModel,
@@ -330,8 +334,8 @@ def manual_quantum_multimodal_2():
 def main() -> None:
     """Calls the experiment."""
     setup_mlflow(experiment_name="Seeds_Multimodal_Classification")
-    # metrics = manual_quantum_tab_1()
-    # print(metrics)
+    metrics = manual_quantum_tab_1()
+    print(metrics)
     metrics = manual_quantum_images_1()
     print(metrics)
     metrics = manual_quantum_multimodal_1()
