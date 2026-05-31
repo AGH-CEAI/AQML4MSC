@@ -122,10 +122,19 @@ def log_metrics(metrics: Dict[str, Any]) -> None:
         mlflow.log_metric(metric_name, values)
 
 
-def log_aggregated_metrics(all_fold_metrics: dict) -> None:
+def log_aggregated_metrics(
+    all_fold_metrics: dict, preds: list, true_labels: list
+) -> None:
     for metric_name, values in all_fold_metrics.items():
         mlflow.log_metric(f"{metric_name}_mean", mean(values))
         mlflow.log_metric(f"{metric_name}_std", stdev(values))
+    try:
+        y_true_concat = np.concatenate(true_labels)
+        y_pred_concat = np.concatenate(preds)
+        log_classification_report(y_true=y_true_concat, y_pred=y_pred_concat)
+        log_confusion_matrix(y_true=y_true_concat, y_pred=y_pred_concat)
+    except Exception as e:
+        print(f"Could not save artifacts. Error occured: {e}")
 
 
 def log_model(

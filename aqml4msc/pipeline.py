@@ -21,6 +21,8 @@ class ClassificationPipeline:
         dataset.prepare_data()
 
         metrics = []
+        preds = []
+        true_labels = []
 
         with logging.start_parent_run(
             model_name=params["experiment_params"]["parent_run_name"]
@@ -40,15 +42,15 @@ class ClassificationPipeline:
                     model = model_factory()
 
                     training.fit(model, dataset)
-                    preds = training.predict(model, dataset)
+                    preds_encoded = training.predict(model, dataset)
 
-                    preds = dataset.decode_labels(preds)
-                    true_labels = dataset.decode_labels(dataset.val_labels)
+                    preds.append(dataset.decode_labels(preds_encoded))
+                    true_labels.append(dataset.decode_labels(dataset.val_labels))
 
                     metrics = logging.log_all_run_metrics(
                         metrics,
-                        true_labels,
-                        preds,
+                        true_labels[-1],
+                        preds[-1],
                         dataset,
                         fold,
                         training,
@@ -57,6 +59,6 @@ class ClassificationPipeline:
                     )
 
             aggretated_metrics = aggregate_fold_metrics(metrics)
-            logging.log_aggregated_metrics(aggretated_metrics)
+            logging.log_aggregated_metrics(aggretated_metrics, preds, true_labels)
 
         return aggretated_metrics  # [pracap]
