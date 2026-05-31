@@ -3,9 +3,13 @@ from collections import defaultdict
 
 from mlflow.tracking import MlflowClient
 
-from aqml4msc.logging import EXPERIMENT_NAME
-
-SEARCHED_RUNS_IDS = {"d2c62d8e25e949da9e6aa32ad90df394"}
+SEARCHED_RUNS_IDS = {
+    "9e6ae4b972b5464a95b93529cae17ea6",
+    "b436bd28aeee49f9b4df85538d108e00",
+    "477b4ed34aa74e83903ac33e4e15ecfa",
+    "6928f2fbde524c0c810ddf41c073e13d",
+}
+EXPERIMENT_NAME = "Seeds_Multimodal_Classification"
 
 
 # -----------------------------
@@ -107,6 +111,7 @@ for parent_id, parent_run in parent_runs.items():
     # ==================================================
     # METRICS (CHILD RUNS / FOLDS)
     # ==================================================
+    child_runs = sorted(child_runs, key=lambda r: r.data.tags.get("mlflow.runName", ""))
     metric_names = sorted({m for run in child_runs for m in run.data.metrics.keys()})
 
     fold_names = [
