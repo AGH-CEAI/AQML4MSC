@@ -98,13 +98,12 @@ def corrected_std(differences, n_train, n_test):
 
 def corrected_ttest_two_tailed(res_1, res_2, n_train, n_test):
     """Computes a two-tailed corrected t-test for repeated cross-validation."""
-    res1 = np.array(res_1)
-    res2 = np.array(res_2)
-    differences = res1 - res2
-    n = len(differences)
-    df = n - 1
+    differences = np.array(res_1) - np.array(res_2)
+    df = len(differences) - 1
+
     mean = np.mean(differences)
     std = corrected_std(differences, n_train, n_test)
+
     t_stat = mean / std
     p_val = t.sf(np.abs(t_stat), df) * 2  # two-tailed
     return t_stat, p_val
@@ -134,11 +133,8 @@ def corrected_ttest_one_tailed(res_1, res_2, n_train, n_test, alternative="great
     p_value : float
         The one-tailed p-value.
     """
-    res1 = np.array(res_1)
-    res2 = np.array(res_2)
-    differences = res1 - res2
-    n = len(differences)
-    df = n - 1
+    differences = np.array(res_1) - np.array(res_2)
+    df = len(differences) - 1
 
     mean_diff = np.mean(differences)
     std_corr = corrected_std(differences, n_train, n_test)
