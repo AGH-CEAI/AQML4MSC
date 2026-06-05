@@ -41,6 +41,15 @@ def quantum_linear(torch_layer: TorchLayer, n_qubits_measured: int, num_output: 
 
 
 class ConcatVQAFusion(torch.nn.Module):
+    def __init__(self):
+        super().__init__()
+
+    def forward(self, features: list[torch.Tensor]) -> torch.Tensor:
+        fused = torch.cat(features, dim=-1)
+        return self.network(fused)
+
+
+class VQAAnsatz(ConcatVQAFusion):
     def __init__(
         self,
         dev: Device,
@@ -52,12 +61,8 @@ class ConcatVQAFusion(torch.nn.Module):
         self.ansatz = ansatz
         self.network = ansatz_to_torch(ansatz, dev, num_classes, weight_shapes)
 
-    def forward(self, features: list[torch.Tensor]) -> torch.Tensor:
-        fused = torch.cat(features, dim=-1)
-        return self.network(fused)
 
-
-class ConcatVQAFusionLinear(torch.nn.Module):
+class VQAAnsatzLinear(ConcatVQAFusion):
     def __init__(
         self,
         dev: Device,
@@ -72,10 +77,6 @@ class ConcatVQAFusionLinear(torch.nn.Module):
             ansatz, dev, n_qubits_measured, weight_shapes
         )
         self.network = quantum_linear(self.torch_layer, n_qubits_measured, num_classes)
-
-    def forward(self, features: list[torch.Tensor]) -> torch.Tensor:
-        fused = torch.cat(features, dim=-1)
-        return self.network(fused)
 
 
 # --- ANSATZE ---
@@ -105,3 +106,19 @@ def ansatz_amplitude_strongly(n_qubits: int) -> Callable:
         qml.StronglyEntanglingLayers(weights, wires=range(n_qubits))
 
     return ansatz
+
+
+class test(ConcatVQAFusion):
+    def __init__(self, dev, num_classes, n_qubits):
+        ansatz = ansatz_amplitude_strongly
+        weight_shapes = {"weights": (1, n_qubits, 3)}
+
+        @qml.qnode(dev)
+        def circuit(inputs, weights) -> list[qml.measurements.ExpectationMP]:  # type: ignore
+            qml.AmplitudeEmbedding(
+                inputs, wires=range(n_qubits), pad_with=0, normalize=True
+            )
+            qml.StronglyEntanglingLayers(weights, wires=range(n_qubits))
+            return [qml.expval(qml.PauliZ(wires=i)) for i in range(num_classes)]
+
+        super().__init__(dev, num_classes, ansatz, weight_shapes)

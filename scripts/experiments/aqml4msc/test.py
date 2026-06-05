@@ -12,7 +12,7 @@ from aqml4msc import logging
 from aqml4msc.datasets.mnist import MnistDataset
 from aqml4msc.models.base_mlp_model import BaseMLPModel
 from aqml4msc.models.classical_mlp import ConcatMLPFusion, classical_2l_mlp
-from aqml4msc.models.vqa import ConcatVQAFusion
+from aqml4msc.models.vqa import VQAAnsatz
 from aqml4msc.pipeline import ClassificationPipeline
 from aqml4msc.training.mlp_training import MLPTraining
 
@@ -72,7 +72,7 @@ def hpo_quantum_test():
         ]
 
         fusion_factory = partial(
-            ConcatVQAFusion,
+            VQAAnsatz,
             dev=qml.device("default.qubit", wires=model_params["n_qubits"]),
             num_classes=model_params["num_classes"],
         )
@@ -188,7 +188,7 @@ def test_optuna_aqml_objective(trial: optuna.Trial) -> float:
     ]
 
     fusion_factory = partial(
-        ConcatVQAFusion,
+        VQAAnsatz,
         dev=qml.device("default.qubit", wires=model_params["n_qubits"]),
         num_classes=model_params["num_classes"],
         ansatz=ansatz,
