@@ -4,10 +4,10 @@ from collections import defaultdict
 from mlflow.tracking import MlflowClient
 
 SEARCHED_RUNS_IDS = {
-    "9e6ae4b972b5464a95b93529cae17ea6",
-    "b436bd28aeee49f9b4df85538d108e00",
-    "477b4ed34aa74e83903ac33e4e15ecfa",
-    "6928f2fbde524c0c810ddf41c073e13d",
+    "7afa83e007bf4600a9995f2d9fc6040f",
+    "2e432f7e9b3a48f4928dc7a32e41272f",
+    "463813e63bc14d50acdb0f21cd7bca01",
+    "2a3fcb0d4b9040d1bca7c8b1f129e62e",
 }
 EXPERIMENT_NAME = "Seeds_Multimodal_Classification"
 

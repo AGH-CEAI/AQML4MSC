@@ -2,9 +2,9 @@ from functools import partial
 from statistics import mean
 
 import pennylane as qml
-from aqml4msc.datasets.seeds import SeedsDataset, SeedsImageDataset, SeedsTabDataset
 from torch import nn
 
+from aqml4msc.datasets.seeds import SeedsDataset, SeedsImageDataset, SeedsTabDataset
 from aqml4msc.logging import setup_mlflow
 from aqml4msc.models.base_mlp_model import BaseMLPModel
 from aqml4msc.models.vqa import ConcatVQAFusionLinear, ansatz_amplitude_strongly
