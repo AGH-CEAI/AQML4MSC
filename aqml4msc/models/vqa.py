@@ -108,17 +108,57 @@ def ansatz_amplitude_strongly(n_qubits: int) -> Callable:
     return ansatz
 
 
-class test(ConcatVQAFusion):
-    def __init__(self, dev, num_classes, n_qubits):
-        ansatz = ansatz_amplitude_strongly
+def ansatz_amplitude_seperate_strongly(
+    n_qubits: list[int], feat_sizes: list[int]
+) -> Callable:
+    def ansatz(inputs, weights):
+        it_qubits = 0
+        it_features = 0
+        for i, n in enumerate(n_qubits):
+            qml.AmplitudeEmbedding(
+                inputs[..., it_features : it_features + feat_sizes[i]],
+                wires=range(it_qubits, it_qubits + n),
+                pad_with=0,
+                normalize=True,
+            )
+            it_qubits += n
+            it_features += feat_sizes[i]
+        qml.StronglyEntanglingLayers(weights, wires=range(sum(n_qubits)))
+
+    return ansatz
+
+
+# --- CUSTOM ---
+class VQAAmplStrongProbs(ConcatVQAFusion):
+    def __init__(self, dev: Device, num_classes: int, n_qubits: int):
+        super().__init__()
+        ansatz = ansatz_amplitude_strongly(n_qubits)
         weight_shapes = {"weights": (1, n_qubits, 3)}
 
         @qml.qnode(dev)
-        def circuit(inputs, weights) -> list[qml.measurements.ExpectationMP]:  # type: ignore
-            qml.AmplitudeEmbedding(
-                inputs, wires=range(n_qubits), pad_with=0, normalize=True
-            )
-            qml.StronglyEntanglingLayers(weights, wires=range(n_qubits))
-            return [qml.expval(qml.PauliZ(wires=i)) for i in range(num_classes)]
+        def circuit(inputs, weights):  # type: ignore
+            ansatz(torch.as_tensor(inputs), torch.as_tensor(weights))
+            return qml.probs(wires=range(n_qubits))
 
-        super().__init__(dev, num_classes, ansatz, weight_shapes)
+        self.network = quantum_linear(
+            TorchLayer(circuit, weight_shapes), 2**n_qubits, num_classes
+        )
+
+
+class VQAAmplStrongProbs_Bilinear_Pool(ConcatVQAFusion):
+    def __init__(
+        self, dev: Device, num_classes: int, n_qubits: list[int], feat_sizes: list[int]
+    ):
+        super().__init__()
+        ansatz = ansatz_amplitude_seperate_strongly(n_qubits, feat_sizes)
+        weight_shapes = {"weights": (1, sum(n_qubits), 3)}
+
+        @qml.transforms.broadcast_expand
+        @qml.qnode(dev)
+        def circuit(inputs, weights):  # type: ignore
+            ansatz(torch.as_tensor(inputs), torch.as_tensor(weights))
+            return qml.probs(wires=range(sum(n_qubits)))
+
+        self.network = quantum_linear(
+            TorchLayer(circuit, weight_shapes), 2 ** sum(n_qubits), num_classes
+        )
