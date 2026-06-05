@@ -1,5 +1,6 @@
 from functools import partial
 
+import pennylane as qml
 from torch import nn
 
 from aqml4msc.datasets.mnist import MnistDataset
@@ -60,8 +61,8 @@ def manual_exp_1():
 
     fusion_factory = partial(
         ConcatVQAFusion,
-        model_params["n_qubits"],
-        model_params["num_classes"],
+        dev=qml.device("default.qubit", wires=model_params["n_qubits"]),
+        num_classes=model_params["num_classes"],
     )
 
     main_model_factory = partial(

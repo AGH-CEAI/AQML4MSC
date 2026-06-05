@@ -3,6 +3,7 @@ from statistics import mean
 from typing import Any, Callable
 
 import optuna
+import pennylane as qml
 from aqmlator.qml import AnsatzBuilder
 from aqmlator.tuner import AnsatzFinder
 from torch import nn
@@ -72,8 +73,8 @@ def hpo_quantum_test():
 
         fusion_factory = partial(
             ConcatVQAFusion,
-            model_params["n_qubits"],
-            model_params["num_classes"],
+            dev=qml.device("default.qubit", wires=model_params["n_qubits"]),
+            num_classes=model_params["num_classes"],
         )
 
         main_model_factory = partial(
@@ -188,8 +189,8 @@ def test_optuna_aqml_objective(trial: optuna.Trial) -> float:
 
     fusion_factory = partial(
         ConcatVQAFusion,
-        model_params["n_qubits"],
-        model_params["num_classes"],
+        dev=qml.device("default.qubit", wires=model_params["n_qubits"]),
+        num_classes=model_params["num_classes"],
         ansatz=ansatz,
     )
 
