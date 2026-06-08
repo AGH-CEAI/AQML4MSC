@@ -42,7 +42,7 @@ def get_default_configs():
     experiment_params = {
         "seed": 42,
         "n_folds": 5,
-        "parent_run_name": "QMLP_Multimodal",
+        "parent_run_name": "QMLP_Multimodal_Bilinear_Pooling",
         "model_name": "BilinearPoolingVQAFusionLinear",
     }
 
@@ -114,7 +114,7 @@ def manual_quantum_multimodal_bilinear_pooling_2():
     model_params["n_qubits"] = [3, 3]
     data_params["pca_img_components"] = 6
     data_params["pca_tab_components"] = 6
-    experiment_params["parent_run_name"] = "QMLP_Multimodal_6_6"
+    experiment_params["parent_run_name"] = "QMLP_Multimodal_6_6_bilinear_pooling"
 
     return run_experiment(model_params, trainer_params, data_params, experiment_params)
 
