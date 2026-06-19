@@ -1,5 +1,6 @@
 import logging
 import os
+import socket
 from statistics import mean, stdev
 from typing import Any, Callable, Dict, TextIO
 
@@ -93,6 +94,7 @@ def get_mlflow_logger() -> MLFlowLogger:
 
 
 def log_params(params: Dict[str, Any]) -> None:
+    mlflow.set_tag("hostname", socket.gethostname())
     for _, value in params.items():
         log_nested_params(value)
 
