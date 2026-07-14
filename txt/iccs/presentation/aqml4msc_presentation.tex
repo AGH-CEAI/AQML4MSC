@@ -51,7 +51,7 @@
 } 
 
 %  ICCS TITLE PAGE
-\author[Sebastian Dziura]{Tomasz Rybotycki\inst{1,2,3} \and Sebastian Dziura\inst{1} \and Piotr Gawron\inst{1,2}%
+\author[Sebastian Dziura]{Tomasz Rybotycki\inst{1,2,3} \and \underline{Sebastian Dziura}\inst{1} \and Piotr Gawron\inst{1,2}%
 %   \\{\scriptsize \href{mailto:sdziura@agh.edu.pl}{sdziura@agh.edu.pl}}%
 }
 \date{}
@@ -130,7 +130,7 @@
 		Information about a single observed object collected from multiple complementary sources.
 	\end{block}
 	\setlength{\columnsep}{0pt}
-	\begin{columns}[c,onlytextwidth]
+	\begin{columns}[t,onlytextwidth]
 		\column{0.5\textwidth}
 		\vspace{3mm} \\
 		Multisource dataset includes:
@@ -153,9 +153,9 @@
 		obtain richer and more accurate decision outcomes
 	\end{block}
 	\setlength{\columnsep}{0pt}
-	\begin{columns}[c,onlytextwidth]
+	\begin{columns}[t,onlytextwidth]
 		\column{0.4\textwidth}
-		\vspace{1cm} \\
+		\vspace{3mm} \\
 		We can distinguish three \textbf{levels of fusion}:
 		\begin{itemize}[<+(1)-|alert@+(1)>]
 			\item Data-level fusion
@@ -183,9 +183,9 @@
 		A representation method where classical data is mapped into a quantum state or quantum feature space, enabling processing via quantum circuits
 	\end{block}
 	\setlength{\columnsep}{0pt}
-	\begin{columns}[c,onlytextwidth]
+	\begin{columns}[t,onlytextwidth]
 		\column{0.4\textwidth}
-		\vspace{1cm} \\
+		\vspace{3mm} \\
 		Examples of quantum embedding methods:
 		\begin{itemize}[<+(1)-|alert@+(1)>]
 			\item Basis embedding
@@ -208,7 +208,7 @@
 				\fbox{$n$ features $\rightarrow$ $n$ qubits}
 			\end{center}
 			\textbf{Classical data:}
-			$$ \mathbf{x}  = \begin{bmatrix} {4} & {3} & {2} \end{bmatrix} $$
+			$$ \mathbf{x}  = \begin{bmatrix} \frac{1}{4} & \frac{1}{3} & \frac{1}{2} \end{bmatrix} $$
 			\textbf{Quantum state:}
 			$$ \ket{\psi} = R_x\left(\frac{\pi}{4}\right) \ket{0} \otimes R_x\left(\frac{\pi}{3}\right) \ket{0} \otimes R_x\left(\frac{\pi}{2}\right) \ket{0} $$
 		}
@@ -413,7 +413,7 @@
 \end{frame}
 
 
-\begin{frame}[fragile, c]{{Next steps: real hardware)}}
+\begin{frame}[fragile, c]{{Next steps: real hardware}}
 	\begin{columns}[c]
 		\begin{column}{0.6\textwidth}
 			\centering
