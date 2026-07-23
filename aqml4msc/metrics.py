@@ -21,7 +21,7 @@ def compute_classification_metrics(
     """
     metrics = {
         # Accuracy variants
-        "accuracy": accuracy_score(y_true, y_pred),
+        "accuracy": accuracy_score(y_true, y_pred), # micro accuracy
         "accuracy_avg": balanced_accuracy_score(y_true, y_pred),
         # F1-score variants
         "f1_weighted": f1_score(y_true, y_pred, average="weighted", zero_division=0),
