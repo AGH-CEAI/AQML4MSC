@@ -1,7 +1,6 @@
+import torch
 import torch.nn as nn
 
-
-import torch
 
 def classical_2l_mlp(input_dim, hidden_dim, output_dim):
     return nn.Sequential(
