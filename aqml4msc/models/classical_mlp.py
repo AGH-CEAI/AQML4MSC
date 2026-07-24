@@ -27,3 +27,16 @@ class ConcatMLPFusion(nn.Module):
     def forward(self, features: list[torch.Tensor]) -> torch.Tensor:
         fused = torch.cat(features, dim=-1)
         return self.network(fused)
+
+
+class TNormMLPFusion(nn.Module):
+    def __init__(
+        self, input_dim: int, hidden_dim: list[int], output_dim: int, t_norm: callable
+    ):
+        super().__init__()
+        self.network = classical_2l_mlp(input_dim, hidden_dim, output_dim)
+        self.t_norm = t_norm
+
+    def forward(self, features: list[torch.Tensor]) -> torch.Tensor:
+        fused = self.t_norm(features)
+        return self.network(fused)
