@@ -18,9 +18,9 @@ def get_default_configs():
         "lr": 1e-3,
         "loss_fn": nn.CrossEntropyLoss(),
         "num_classes": 3,
-        "input_dim": 24,
+        "input_dim": 12,
         "hidden_dim_part": [0],
-        "output_dim_part": [12],
+        "output_dim_part": 12,
         "hidden_dim_class": [100],
     }
 
@@ -78,7 +78,7 @@ def run_t_norm_experiment(t_norm: callable, parent_run_name: str):
 
     fusion_factory = partial(
         TNormMLPFusion,
-        model_params["input_dim"],
+        model_params["output_dim_part"],
         model_params["hidden_dim_class"],
         model_params["num_classes"],
         t_norm=t_norm,
