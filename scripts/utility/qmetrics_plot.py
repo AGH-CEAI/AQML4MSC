@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from mlflow.tracking import MlflowClient
 
-from aqml4msc.mlflow_utils import EXPERIMENT_NAME
+from aqml4msc.logging import EXPERIMENT_NAME
 
 # =============================
 # Configuration

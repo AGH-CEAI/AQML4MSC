@@ -1,30 +1,48 @@
+from typing import Any, Callable, Tuple
+
 import pytorch_lightning as pl
 import torch
-from torch import nn
 from torchmetrics import MetricCollection
 from torchmetrics.classification import MulticlassAccuracy, MulticlassF1Score
 
 
 class BaseMLPModel(pl.LightningModule):
-    def __init__(self, lr=1e-3, loss_fn=nn.CrossEntropyLoss(), num_classes=3):
+    def __init__(
+        self,
+        model_params: dict,
+        extractor_factories: list[Callable[[], torch.nn.Module]],
+        fusion_factory: Callable[[], torch.nn.Module],
+    ):
         super().__init__()
-        self.save_hyperparameters(ignore=["loss_fn"])
+        self.save_hyperparameters(ignore=["loss_fn", "extractor_factories", "fusion_factory"])
 
-        # self.model = ... to be implemented in subclasses
+        # Instantiate sub-models by calling the partial functions
+        self.extractors = torch.nn.ModuleList(
+            [factory() for factory in extractor_factories]
+        )
+        self.fusion = fusion_factory()
 
         # TorchMetrics
         metrics = MetricCollection(
             {
-                "acc": MulticlassAccuracy(num_classes=num_classes),
-                "f1": MulticlassF1Score(num_classes=num_classes),
+                "acc": MulticlassAccuracy(num_classes=model_params["num_classes"]),
+                "f1": MulticlassF1Score(num_classes=model_params["num_classes"]),
             }
         )
         self.train_metrics = metrics.clone(prefix="train_")
         self.val_metrics = metrics.clone(prefix="val_")
-        self.loss_fn = loss_fn
+        self.loss_fn = model_params["loss_fn"]
+        self.lr = model_params["lr"]
 
-    def forward(self, x):
-        raise NotImplementedError
+    def forward(self, *sources) -> torch.Tensor:
+        if len(sources) != len(self.extractors):
+            raise ValueError(
+                f"Expected {len(self.extractors)} sources, but got {len(sources)}"
+            )
+        # Pass each source through its respective extractor
+        features = [extractor(src) for extractor, src in zip(self.extractors, sources)]
+        # Fusion model needs fusion logic implemented in its forward method
+        return self.fusion(features)
 
     def training_step(self, batch, batch_idx):
         *inputs, labels = batch
@@ -32,17 +50,18 @@ class BaseMLPModel(pl.LightningModule):
         loss = self.loss_fn(logits, labels)
 
         preds = torch.argmax(logits, dim=1)
-        self.train_metrics.update(preds, labels)
-        self.log("train_loss", loss, on_epoch=True, on_step=False)
-        return loss
 
-    def on_train_epoch_end(self):
-        # compute returns dictionary: {"train_acc": x, "train_f1": y}
-        metrics = self.train_metrics.compute()
-        # log each metric
-        for k, v in metrics.items():
-            self.log(k, v, prog_bar=True)
-        self.train_metrics.reset()
+        # log loss
+        self.log("train_loss", loss, on_step=False, on_epoch=True, prog_bar=True)
+
+        # log metrics (handles update/compute internally)
+        self.log_dict(
+            self.train_metrics(preds, labels),
+            on_epoch=True,
+            prog_bar=True,
+        )
+
+        return loss
 
     def validation_step(self, batch, batch_idx):
         *inputs, labels = batch
@@ -50,18 +69,18 @@ class BaseMLPModel(pl.LightningModule):
         loss = self.loss_fn(logits, labels)
 
         preds = torch.argmax(logits, dim=1)
-        self.log("val_loss", loss, on_epoch=True, on_step=False)
-        self.val_metrics.update(preds, labels)
 
-    def on_validation_epoch_end(self):
-        metrics = self.val_metrics.compute()
-        for k, v in metrics.items():
-            self.log(k, v, prog_bar=True)
-        self.val_metrics.reset()
+        self.log("val_loss", loss, on_step=False, on_epoch=True, prog_bar=True)
 
-    def predict_step(self, batch, batch_idx):
+        self.log_dict(
+            self.val_metrics(preds, labels),
+            on_epoch=True,
+            prog_bar=True,
+        )
+
+    def predict_step(self, batch: Tuple[Any, ...], batch_idx: int) -> torch.Tensor:
         logits = self(*batch)
         return torch.argmax(logits, dim=1)
 
-    def configure_optimizers(self):
-        return torch.optim.Adam(self.parameters(), lr=self.hparams.lr)  # type: ignore
+    def configure_optimizers(self) -> torch.optim.Optimizer:
+        return torch.optim.Adam(self.parameters(), lr=self.lr)  # type: ignore

@@ -1,0 +1,281 @@
+from functools import partial
+from statistics import mean
+
+import optuna
+from lightning.pytorch.callbacks.early_stopping import EarlyStopping
+from torch import nn
+
+from aqml4msc.datasets.mnist import MnistDataset
+from aqml4msc.models.base_mlp_model import BaseMLPModel
+from aqml4msc.models.classical_mlp import ConcatMLPFusion, classical_2l_mlp
+from aqml4msc.pipeline import ClassificationPipeline
+from aqml4msc.training.mlp_training import MLPTraining
+
+
+def hpo_baseline_1():
+    def objective(trial):
+        model_params = {
+            "lr": trial.suggest_float("lr", 1e-3, 1e-2),
+            "loss_fn": nn.CrossEntropyLoss(),
+            "num_classes": 3,
+            "input_dim": 14,
+            "hidden_dim_part": [
+                trial.suggest_categorical("hidden_dim_part", [64, 128, 256])
+            ],
+            "output_dim_part": trial.suggest_categorical(
+                "output_dim_part", [64, 128, 256]
+            ),
+            "hidden_dim_class": [
+                trial.suggest_categorical("hidden_dim_class", [64, 128, 256])
+            ],
+        }
+
+        trainer_params = {
+            "max_epochs": 30,
+            "enable_checkpointing": False,
+            "enable_progress_bar": True,
+            "num_sanity_val_steps": 0,
+            "accelerator": "auto",
+            "devices": "auto",
+        }
+        data_params = {
+            "batch_size": trial.suggest_categorical("batch_size", [32, 64, 128]),
+            "num_workers": 4,
+            "digits": [5, 6, 7],
+        }
+
+        experiment_params = {
+            "seed": 42,
+            "n_folds": 5,
+            "parent_run_name": "HPO_classical_MLP",
+            "model_name": "Classical_MLP_baseline",
+        }
+
+        extractor_factories = [
+            partial(
+                classical_2l_mlp,
+                model_params["input_dim"],
+                model_params["hidden_dim_part"],
+                model_params["output_dim_part"],
+            ),
+            partial(
+                classical_2l_mlp,
+                model_params["input_dim"],
+                model_params["hidden_dim_part"],
+                model_params["output_dim_part"],
+            ),
+        ]
+
+        fusion_factory = partial(
+            ConcatMLPFusion,
+            2 * model_params["output_dim_part"],
+            model_params["hidden_dim_class"],
+            model_params["num_classes"],
+        )
+        main_model_factory = partial(
+            BaseMLPModel,
+            extractor_factories=extractor_factories,
+            fusion_factory=fusion_factory,
+        )
+
+        training = MLPTraining(trainer_kwargs=trainer_params)
+
+        # Initialize the dataset with the specified data parameters
+        dataset = MnistDataset(config=data_params)
+
+        # Initialize the classification pipeline: ClassificationPipeline
+        pipeline = ClassificationPipeline()
+        metrics = pipeline.process_data(
+            model_factory=main_model_factory,
+            dataset=dataset,
+            training=training,
+            params={
+                "experiment_params": experiment_params,
+                "data_params": data_params,
+                "model_params": model_params,
+                "trainer_params": trainer_params,
+                "optuna_params": trial.params,
+            },
+        )
+
+        return mean(metrics["accuracy"])
+
+    study = optuna.create_study(direction="maximize")
+    study.optimize(objective, n_trials=20)
+    print(study.best_params)
+
+
+def hpo_baseline_2():
+    def objective(trial):
+        model_params = {
+            "lr": trial.suggest_float("lr", 1e-3, 1e-2),
+            "loss_fn": nn.CrossEntropyLoss(),
+            "num_classes": 3,
+            "input_dim": 14,
+            "hidden_dim_part": [trial.suggest_int("hidden_dim_part", 64, 256)],
+            "output_dim_part": trial.suggest_int("output_dim_part", 64, 256),
+            "hidden_dim_class": [trial.suggest_int("hidden_dim_class", 64, 256)],
+        }
+
+        trainer_params = {
+            "max_epochs": 50,
+            "enable_checkpointing": False,
+            "enable_progress_bar": True,
+            "num_sanity_val_steps": 0,
+            "callbacks": [
+                EarlyStopping(monitor="val_loss", mode="min"),
+            ],
+            "accelerator": "auto",
+            "devices": "auto",
+        }
+        data_params = {
+            "batch_size": trial.suggest_int("batch_size", 32, 128),
+            "num_workers": 8,
+            "digits": [5, 6, 7],
+        }
+
+        experiment_params = {
+            "seed": 42,
+            "n_folds": 5,
+            "parent_run_name": "HPO_classical_MLP_2",
+            "model_name": "Classical_MLP_baseline_2",
+        }
+
+        extractor_factories = [
+            partial(
+                classical_2l_mlp,
+                model_params["input_dim"],
+                model_params["hidden_dim_part"],
+                model_params["output_dim_part"],
+            ),
+            partial(
+                classical_2l_mlp,
+                model_params["input_dim"],
+                model_params["hidden_dim_part"],
+                model_params["output_dim_part"],
+            ),
+        ]
+
+        fusion_factory = partial(
+            ConcatMLPFusion,
+            2 * model_params["output_dim_part"],
+            model_params["hidden_dim_class"],
+            model_params["num_classes"],
+        )
+        main_model_factory = partial(
+            BaseMLPModel,
+            extractor_factories=extractor_factories,
+            fusion_factory=fusion_factory,
+        )
+
+        training = MLPTraining(trainer_kwargs=trainer_params)
+
+        # Initialize the dataset with the specified data parameters
+        dataset = MnistDataset(config=data_params)
+
+        # Initialize the classification pipeline: ClassificationPipeline
+        pipeline = ClassificationPipeline()
+        metrics = pipeline.process_data(
+            model_factory=main_model_factory,
+            dataset=dataset,
+            training=training,
+            params={
+                "experiment_params": experiment_params,
+                "data_params": data_params,
+                "model_params": model_params,
+                "trainer_params": trainer_params,
+                "optuna_params": trial.params,
+            },
+        )
+        return mean(metrics["accuracy"])
+
+    study = optuna.create_study(direction="maximize")
+    study.optimize(objective, n_trials=1000)
+    print(study.best_params)
+
+
+def hpo_baseline_3():
+    def objective(trial):
+        model_params = {
+            "lr": trial.suggest_float("lr", 1e-3, 1e-2),
+            "loss_fn": nn.CrossEntropyLoss(),
+            "num_classes": 3,
+            "input_dim": 14,
+            "hidden_dim_part": [trial.suggest_int("hidden_dim_part", 64, 256)],
+            "output_dim_part": trial.suggest_int("output_dim_part", 64, 256),
+            "hidden_dim_class": [trial.suggest_int("hidden_dim_class", 64, 256)],
+        }
+
+        trainer_params = {
+            "max_epochs": 30,
+            "enable_checkpointing": True,
+            "enable_progress_bar": True,
+            "num_sanity_val_steps": 0,
+            "accelerator": "auto",
+            "devices": "auto",
+        }
+        data_params = {
+            "batch_size": trial.suggest_int("batch_size", 32, 128),
+            "num_workers": 14,
+            "digits": [5, 6, 7],
+        }
+
+        experiment_params = {
+            "seed": 42,
+            "n_folds": 5,
+            "parent_run_name": "HPO_classical_MLP_3",
+            "model_name": "Classical_MLP_baseline_3",
+        }
+
+        extractor_factories = [
+            partial(
+                classical_2l_mlp,
+                model_params["input_dim"],
+                model_params["hidden_dim_part"],
+                model_params["output_dim_part"],
+            ),
+            partial(
+                classical_2l_mlp,
+                model_params["input_dim"],
+                model_params["hidden_dim_part"],
+                model_params["output_dim_part"],
+            ),
+        ]
+
+        fusion_factory = partial(
+            ConcatMLPFusion,
+            2 * model_params["output_dim_part"],
+            model_params["hidden_dim_class"],
+            model_params["num_classes"],
+        )
+        main_model_factory = partial(
+            BaseMLPModel,
+            extractor_factories=extractor_factories,
+            fusion_factory=fusion_factory,
+        )
+
+        # Initialize the training algorithm
+        training = MLPTraining(trainer_kwargs=trainer_params)
+
+        # Initialize the dataset with the specified data parameters
+        dataset = MnistDataset(config=data_params)
+
+        # Initialize the classification pipeline: ClassificationPipeline
+        pipeline = ClassificationPipeline()
+        metrics = pipeline.process_data(
+            model_factory=main_model_factory,
+            dataset=dataset,
+            training=training,
+            params={
+                "experiment_params": experiment_params,
+                "data_params": data_params,
+                "model_params": model_params,
+                "trainer_params": trainer_params,
+                "optuna_params": trial.params,
+            },
+        )
+        return mean(metrics["accuracy"])
+
+    study = optuna.create_study(direction="maximize")
+    study.optimize(objective, n_trials=100)
+    print(study.best_params)

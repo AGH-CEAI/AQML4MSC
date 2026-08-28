@@ -11,6 +11,7 @@ dependencies = [
     "matplotlib>=3.10.8",
     "mlflow==3.8.1",
     "numpy>=2.3.5",
+    "openpyxl>=3.1.5",
     "optuna>=4.6.0",
     "pennylane>=0.43.1",
     "psycopg2-binary>=2.9.11",
@@ -22,11 +23,14 @@ dependencies = [
 requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
-[tool.setuptools]
-package-dir = {"" = "aqml4msc"}
-
-[tool.setuptools.packages.find]
-where = ["aqml4msc"]
 
 [tool.uv.sources]
 aqmlator = { git = "https://github.com/Tomev/AQMLator.git", branch = "tr_ansatze_finder" }
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.3",
+]
+
+[tool.setuptools.packages.find]
+include = ["aqml4msc*"]
