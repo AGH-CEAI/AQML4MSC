@@ -1,4 +1,3 @@
-import mlflow.pytorch as mlflow_pytorch
 import pytorch_lightning as pl
 import torch
 from mlflow.models import ModelSignature
@@ -17,24 +16,39 @@ class MLPTraining(BaseTraining):
 
     def fit(self, model: BaseMLPModel, dataset: BaseDataset):
         import copy
+        from pytorch_lightning.callbacks import ModelCheckpoint
 
         trainer_kwargs = copy.deepcopy(self._initial_trainer_kwargs)
+
+        # Ensure we always save and load the best model
+        callbacks = trainer_kwargs.get("callbacks", [])
+        if not any(isinstance(c, ModelCheckpoint) for c in callbacks):
+            checkpoint_callback = ModelCheckpoint(
+                monitor="val_acc",
+                mode="max",
+                save_top_k=1,
+            )
+            callbacks.append(checkpoint_callback)
+            trainer_kwargs["callbacks"] = callbacks
+            trainer_kwargs["enable_checkpointing"] = True
+
         self.trainer = pl.Trainer(**trainer_kwargs, logger=logging.get_mlflow_logger())
         train_dataloader = dataset.get_train_dataloader()
         val_dataloader = dataset.get_val_dataloader()
         self.trainer.fit(model, train_dataloader, val_dataloader)
 
-        # Load best model weights into memory for fair prediction and logging (if checkpointing is enabled)
+        # Load best model weights into memory for fair prediction and logging
         if hasattr(self.trainer, "checkpoint_callback") and getattr(
             self.trainer.checkpoint_callback, "best_model_path", None
         ):
             best_model_path = self.trainer.checkpoint_callback.best_model_path
-            checkpoint = torch.load(
-                best_model_path, map_location=model.device, weights_only=False
-            )
-            model.load_state_dict(checkpoint["state_dict"])
-            if "epoch" in checkpoint:
-                logging.log_metrics({"best_epoch": checkpoint["epoch"]})
+            if best_model_path:
+                checkpoint = torch.load(
+                    best_model_path, map_location=model.device, weights_only=False
+                )
+                model.load_state_dict(checkpoint["state_dict"])
+                if "epoch" in checkpoint:
+                    logging.log_metrics({"best_epoch": checkpoint["epoch"]})
 
     def predict(self, model: BaseMLPModel, dataset: BaseDataset):
         dataloader = dataset.get_test_dataloader()

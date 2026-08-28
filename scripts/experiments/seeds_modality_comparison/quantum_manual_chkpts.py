@@ -9,7 +9,7 @@ from aqml4msc.datasets.seeds import SeedsDataset, SeedsImageDataset, SeedsTabDat
 from aqml4msc.logging import setup_mlflow
 from aqml4msc.models.base_mlp_model import BaseMLPModel
 from aqml4msc.models.vqa import (
-    ConcatVQAFusionLinear,
+    VQAAnsatzLinear,
     ansatz_angle_basic,
 )
 from aqml4msc.pipeline import ClassificationPipeline
@@ -51,7 +51,7 @@ def manual_quantum_tab_1():
         "seed": 42,
         "n_folds": 5,
         "parent_run_name": "QMLP_tabular",
-        "model_name": "ConcatVQAFusionLinear",
+        "model_name": "VQAAnsatzLinear",
     }
 
     # Initialize the dataset with the specified data parameters
@@ -61,7 +61,7 @@ def manual_quantum_tab_1():
         nn.Identity,
     ]
     fusion_factory = partial(
-        ConcatVQAFusionLinear,
+        VQAAnsatzLinear,
         dev=qml.device("default.qubit", wires=model_params["n_qubits"]),
         ansatz=ansatz_angle_basic(model_params["n_qubits"]),
         n_qubits_measured=model_params["n_qubits"],
@@ -129,7 +129,7 @@ def manual_quantum_images_1():
         "seed": 42,
         "n_folds": 5,
         "parent_run_name": "QMLP_Images",
-        "model_name": "ConcatVQAFusionLinear",
+        "model_name": "VQAAnsatzLinear",
     }
 
     # Initialize the dataset with the specified data parameters
@@ -139,7 +139,7 @@ def manual_quantum_images_1():
         nn.Identity,
     ]
     fusion_factory = partial(
-        ConcatVQAFusionLinear,
+        VQAAnsatzLinear,
         dev=qml.device("default.qubit", wires=model_params["n_qubits"]),
         ansatz=ansatz_angle_basic(model_params["n_qubits"]),
         n_qubits_measured=model_params["n_qubits"],
@@ -208,7 +208,7 @@ def manual_quantum_multimodal_1():
         "seed": 42,
         "n_folds": 5,
         "parent_run_name": "QMLP_Multimodal",
-        "model_name": "ConcatVQAFusionLinear",
+        "model_name": "VQAAnsatzLinear",
     }
 
     # Initialize the dataset with the specified data parameters
@@ -219,7 +219,7 @@ def manual_quantum_multimodal_1():
         nn.Identity,
     ]
     fusion_factory = partial(
-        ConcatVQAFusionLinear,
+        VQAAnsatzLinear,
         dev=qml.device("default.qubit", wires=model_params["n_qubits"]),
         ansatz=ansatz_angle_basic(model_params["n_qubits"]),
         n_qubits_measured=model_params["n_qubits"],
@@ -288,7 +288,7 @@ def manual_quantum_multimodal_2():
         "seed": 42,
         "n_folds": 5,
         "parent_run_name": "QMLP_Multimodal_3_3",
-        "model_name": "ConcatVQAFusionLinear",
+        "model_name": "VQAAnsatzLinear",
     }
 
     # Initialize the dataset with the specified data parameters
@@ -299,7 +299,7 @@ def manual_quantum_multimodal_2():
         nn.Identity,
     ]
     fusion_factory = partial(
-        ConcatVQAFusionLinear,
+        VQAAnsatzLinear,
         dev=qml.device("default.qubit", wires=model_params["n_qubits"]),
         ansatz=ansatz_angle_basic(model_params["n_qubits"]),
         n_qubits_measured=model_params["n_qubits"],
