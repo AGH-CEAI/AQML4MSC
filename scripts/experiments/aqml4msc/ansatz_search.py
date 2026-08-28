@@ -11,6 +11,7 @@ This module implements AQML approach for ansatz finding using :mod:`aqmlator` pa
     common part of the code.
 """
 
+from functools import partial
 from statistics import mean
 from typing import Any, Callable
 
@@ -19,11 +20,15 @@ from aqmlator.qml import AnsatzBuilder
 from aqmlator.tuner import AnsatzFinder
 from torch import nn
 
-from aqml4msc.data import choose_digits, load_data
-from aqml4msc.mlflow_utils import EpochMetricsTracker
-from aqml4msc.models.vqa import QMLP_1
+from aqml4msc import logging
+from aqml4msc.datasets.mnist import MnistDataset
+from aqml4msc.models.base_mlp_model import BaseMLPModel
+from aqml4msc.models.classical_mlp import classical_2l_mlp
+from aqml4msc.models.vqa import ConcatVQAFusion
 from aqml4msc.pipeline import ClassificationPipeline
 from aqml4msc.training.mlp_training import MLPTraining
+
+EXPERIMENT_NAME = "MNIST_Multisource_Classification"
 
 
 def suggest_ansatz(trial: optuna.Trial) -> Callable[..., Any]:
@@ -78,6 +83,7 @@ def optuna_aqml_objective(trial: optuna.Trial) -> float:
         "n_qubits": trial.suggest_int("n_qubits", low=4, high=12, step=2),
         "n_layers": trial.suggest_int("n_layers", low=1, high=5),
     }
+    model_params["output_dim_part"] = model_params["n_qubits"] // 2
 
     # Define trainer configuration parameters
     trainer_params: dict[str, Any] = {
@@ -85,8 +91,6 @@ def optuna_aqml_objective(trial: optuna.Trial) -> float:
         "enable_checkpointing": True,
         "enable_progress_bar": True,
         "num_sanity_val_steps": 0,
-        "callbacks": [EpochMetricsTracker()],
-        "logger": False,
         "accelerator": "auto",
         "devices": "auto",
     }
@@ -111,34 +115,58 @@ def optuna_aqml_objective(trial: optuna.Trial) -> float:
         "model_name": "QMLP_1",
     }
 
-    # Initialize the trainer with model and training: MLPTraining parameters
-    training = MLPTraining(
-        model_cls=QMLP_1,
-        model_kwargs=model_params,
-        trainer_kwargs=trainer_params,
-        batch_size=data_params["batch_size"],
+    ansatz = suggest_ansatz(trial)
+
+    extractor_factories = [
+        partial(
+            classical_2l_mlp,
+            model_params["input_dim"],
+            model_params["hidden_dim_part"],
+            model_params["output_dim_part"],
+        ),
+        partial(
+            classical_2l_mlp,
+            model_params["input_dim"],
+            model_params["hidden_dim_part"],
+            model_params["output_dim_part"],
+        ),
+    ]
+
+    fusion_factory = partial(
+        ConcatVQAFusion,
+        model_params["n_qubits"],
+        model_params["num_classes"],
+        ansatz=ansatz,
     )
 
-    # Load and preprocess the dataset
-    X, y = load_data()
-    X, y = choose_digits(X, y, data_params["digits"])
+    main_model_factory = partial(
+        BaseMLPModel,
+        model_params=model_params,
+        extractor_factories=extractor_factories,
+        fusion_factory=fusion_factory,
+    )
+
+    # Initialize the trainer with model and training: MLPTraining parameters
+    training = MLPTraining(trainer_kwargs=trainer_params)
+
+    # Initialize the dataset with the specified data parameters
+    dataset = MnistDataset(config=data_params)
 
     # Initialize the classification pipeline: ClassificationPipeline
     pipeline = ClassificationPipeline()
 
-    ansatz = suggest_ansatz(trial)
-
     # Execute the pipeline to process data, train, and evaluate the model
     metrics: dict[str, list[float]] = pipeline.process_data(
-        X=X,
-        y=y,
-        classifier=training,
-        experiment_params=experiment_params,
-        data_params=data_params,
-        model_params=model_params,
-        trainer_params=trainer_params,
-        optuna_params=trial.params,
-        ansatz=ansatz,
+        model_factory=main_model_factory,
+        dataset=dataset,
+        training=training,
+        params={
+            "experiment_params": experiment_params,
+            "data_params": data_params,
+            "model_params": model_params,
+            "trainer_params": trainer_params,
+            "optuna_params": trial.params,
+        },
     )
 
     # Return the mean accuracy across folds as the optimization objective
@@ -147,6 +175,7 @@ def optuna_aqml_objective(trial: optuna.Trial) -> float:
 
 def main() -> None:
     """Calls the experiment."""
+    logging.setup_mlflow(EXPERIMENT_NAME)
     study: optuna.Study = optuna.create_study(direction="maximize")
     study.optimize(optuna_aqml_objective, n_trials=20)
     print(study.best_params)

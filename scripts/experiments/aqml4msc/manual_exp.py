@@ -1,0 +1,171 @@
+from functools import partial
+
+from torch import nn
+
+from aqml4msc.datasets.mnist import MnistDataset
+from aqml4msc.models.base_mlp_model import BaseMLPModel
+from aqml4msc.models.classical_mlp import ConcatMLPFusion, classical_2l_mlp
+from aqml4msc.models.vqa import ConcatVQAFusion
+from aqml4msc.pipeline import ClassificationPipeline
+from aqml4msc.training.mlp_training import MLPTraining
+
+
+def manual_exp_1():
+    model_params = {
+        "lr": 1e-3,
+        "loss_fn": nn.CrossEntropyLoss(),
+        "num_classes": 3,
+        "input_dim": 14,
+        "hidden_dim_part": [128],
+        "n_qubits": 6,
+        "n_layers": 3,
+        "output_dim_part": 3,  # Added to match n_qubits for fusion: 2 * 3 = 6
+    }
+
+    trainer_params = {
+        "max_epochs": 100,
+        "enable_checkpointing": False,
+        "enable_progress_bar": True,
+        "num_sanity_val_steps": 0,
+        "accelerator": "auto",
+        "devices": "auto",
+    }
+    data_params = {
+        "batch_size": 32,
+        "num_workers": 4,
+        "digits": [5, 6, 7],
+    }
+
+    experiment_params = {
+        "seed": 42,
+        "n_folds": 5,
+        "parent_run_name": "QMLP_initial_run",
+        "model_name": "QMLP_1",
+    }
+
+    extractor_factories = [
+        partial(
+            classical_2l_mlp,
+            model_params["input_dim"],
+            model_params["hidden_dim_part"],
+            model_params["output_dim_part"],
+        ),
+        partial(
+            classical_2l_mlp,
+            model_params["input_dim"],
+            model_params["hidden_dim_part"],
+            model_params["output_dim_part"],
+        ),
+    ]
+
+    fusion_factory = partial(
+        ConcatVQAFusion,
+        model_params["n_qubits"],
+        model_params["num_classes"],
+    )
+
+    main_model_factory = partial(
+        BaseMLPModel,
+        model_params=model_params,
+        extractor_factories=extractor_factories,
+        fusion_factory=fusion_factory,
+    )
+
+    training = MLPTraining(trainer_kwargs=trainer_params)
+
+    # Initialize the dataset with the specified data parameters
+    dataset = MnistDataset(config=data_params)
+
+    # Initialize the classification pipeline: ClassificationPipeline
+    pipeline = ClassificationPipeline()
+    metrics = pipeline.process_data(
+        model_factory=main_model_factory,
+        dataset=dataset,
+        training=training,
+        params={
+            "experiment_params": experiment_params,
+            "data_params": data_params,
+            "model_params": model_params,
+            "trainer_params": trainer_params,
+        },
+    )
+
+
+def manual_exp_2():
+    model_params = {
+        "lr": 0.0012191286815755042,
+        "loss_fn": nn.CrossEntropyLoss(),
+        "num_classes": 3,
+        "input_dim": 14,
+        "hidden_dim_part": [128],
+        "output_dim_part": 128,
+        "hidden_dim_class": [64],
+    }
+
+    trainer_params = {
+        "max_epochs": 50,
+        "enable_checkpointing": False,
+        "enable_progress_bar": True,
+        "num_sanity_val_steps": 0,
+        "accelerator": "auto",
+        "devices": "auto",
+    }
+    data_params = {
+        "batch_size": 64,
+        "num_workers": 8,
+        "digits": [5, 6, 7],
+    }
+
+    experiment_params = {
+        "seed": 42,
+        "n_folds": 5,
+        "parent_run_name": "Classical_MLP_best_hparams",
+        "model_name": "Classical_MLP_best_hparams",
+    }
+
+    extractor_factories = [
+        partial(
+            classical_2l_mlp,
+            model_params["input_dim"],
+            model_params["hidden_dim_part"],
+            model_params["output_dim_part"],
+        ),
+        partial(
+            classical_2l_mlp,
+            model_params["input_dim"],
+            model_params["hidden_dim_part"],
+            model_params["output_dim_part"],
+        ),
+    ]
+
+    fusion_factory = partial(
+        ConcatMLPFusion,
+        2 * model_params["output_dim_part"],
+        model_params["hidden_dim_class"],
+        model_params["num_classes"],
+    )
+    main_model_factory = partial(
+        BaseMLPModel,
+        model_params=model_params,
+        extractor_factories=extractor_factories,
+        fusion_factory=fusion_factory,
+    )
+
+    training = MLPTraining(trainer_kwargs=trainer_params)
+
+    # Initialize the dataset with the specified data parameters
+    dataset = MnistDataset(config=data_params)
+
+    # Initialize the classification pipeline: ClassificationPipeline
+    pipeline = ClassificationPipeline()
+    metrics = pipeline.process_data(
+        model_factory=main_model_factory,
+        dataset=dataset,
+        training=training,
+        params={
+            "experiment_params": experiment_params,
+            "data_params": data_params,
+            "model_params": model_params,
+            "trainer_params": trainer_params,
+        },
+    )

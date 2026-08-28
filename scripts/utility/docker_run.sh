@@ -1,0 +1,1 @@
+docker run -d --env-file aqml4msc.env -p 5000:5000 --name aqml4msc_container -v $(pwd)/scripts:/app/scripts -v $(pwd)/aqml4msc:/app/aqml4msc aqml4msc "$@" > docker.log 2>&1

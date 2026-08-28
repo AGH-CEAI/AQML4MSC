@@ -1,31 +1,60 @@
-from typing import Tuple, Type
-
 import mlflow.pytorch as mlflow_pytorch
-import numpy as np
 import pytorch_lightning as pl
 import torch
 from mlflow.models import ModelSignature
 
+from aqml4msc import logging
+from aqml4msc.datasets.base_dataset import BaseDataset
+from aqml4msc.models.base_mlp_model import BaseMLPModel
 from aqml4msc.training.base_training import BaseTraining
-from aqml4msc.utils import get_dataloader
 
 
 class MLPTraining(BaseTraining):
-    def __init__(self, model_cls: Type, model_kwargs: dict, trainer_kwargs: dict, batch_size: int):
-        super().__init__(model_cls=model_cls, model_kwargs=model_kwargs)
-        self.trainer_kwargs = trainer_kwargs
-        self.batch_size = batch_size
+    def __init__(self, trainer_kwargs: dict):
+        import copy
 
-    def fit(self, train_data: Tuple, train_y: np.ndarray, val_data: Tuple, val_y: np.ndarray):
-        self.trainer = pl.Trainer(**self.trainer_kwargs)
-        train_dataloader = get_dataloader(*train_data, y=train_y, batch_size=self.batch_size)
-        val_dataloader = get_dataloader(*val_data, y=val_y, batch_size=self.batch_size)
-        self.trainer.fit(self.model, train_dataloader, val_dataloader)
+        self._initial_trainer_kwargs = copy.deepcopy(trainer_kwargs)
 
-    def predict(self, val_data: Tuple):
-        dataloader = get_dataloader(*val_data, y=None, batch_size=self.batch_size)
-        preds = self.trainer.predict(self.model, dataloader)
+    def fit(self, model: BaseMLPModel, dataset: BaseDataset):
+        import copy
+
+        trainer_kwargs = copy.deepcopy(self._initial_trainer_kwargs)
+        self.trainer = pl.Trainer(**trainer_kwargs, logger=logging.get_mlflow_logger())
+        train_dataloader = dataset.get_train_dataloader()
+        val_dataloader = dataset.get_val_dataloader()
+        self.trainer.fit(model, train_dataloader, val_dataloader)
+
+        # Load best model weights into memory for fair prediction and logging (if checkpointing is enabled)
+        if hasattr(self.trainer, "checkpoint_callback") and getattr(
+            self.trainer.checkpoint_callback, "best_model_path", None
+        ):
+            best_model_path = self.trainer.checkpoint_callback.best_model_path
+            checkpoint = torch.load(
+                best_model_path, map_location=model.device, weights_only=False
+            )
+            model.load_state_dict(checkpoint["state_dict"])
+            if "epoch" in checkpoint:
+                logging.log_metrics({"best_epoch": checkpoint["epoch"]})
+
+    def predict(self, model: BaseMLPModel, dataset: BaseDataset):
+        dataloader = dataset.get_test_dataloader()
+        preds = self.trainer.predict(model, dataloader)
         return torch.cat(preds, dim=0).cpu().numpy()  # type: ignore
 
-    def log_model(self, model_name: str, signature: ModelSignature):
-        mlflow_pytorch.log_model(self.model, name=model_name, signature=signature)
+    def log_model(
+        self, model: BaseMLPModel, model_name: str, signature: ModelSignature
+    ):
+        # mlflow_pytorch.log_model(model, name=model_name, signature=signature)
+        pass
+
+    def get_n_paramas(self, model: BaseMLPModel) -> dict:
+        """Reurns dict with number of trainable parameters"""
+        dict = {}
+        total_params = 0
+        for name, parameter in model.named_parameters():
+            if not parameter.requires_grad:
+                continue
+            params = parameter.numel()
+            dict[name] = params
+            total_params += params
+        return dict
