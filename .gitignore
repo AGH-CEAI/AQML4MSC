@@ -29,8 +29,10 @@ mlflow.db
 *aqml4msc*.snm
 *aqml4msc*.out
 *aqml4msc*.nav
+txt/iccs/indent.log
 txt/iccs/presentation/_minted-aqml4msc_presentation/*
 
+# Other
 scripts/start_mlflow_server.sh
 Dockerfile
 *.env
@@ -40,4 +42,4 @@ scripts/test.py
 checkpoints/
 txt/iccs/aqml4msc.blg
 *.drawio.bkp
-aqml4msc.tar
+*.tar
