@@ -14,7 +14,9 @@ class BaseMLPModel(pl.LightningModule):
         fusion_factory: Callable[[], torch.nn.Module],
     ):
         super().__init__()
-        self.save_hyperparameters(ignore=["loss_fn", "extractor_factories", "fusion_factory"])
+        self.save_hyperparameters(
+            ignore=["loss_fn", "extractor_factories", "fusion_factory"]
+        )
 
         # Instantiate sub-models by calling the partial functions
         self.extractors = torch.nn.ModuleList(
@@ -25,8 +27,12 @@ class BaseMLPModel(pl.LightningModule):
         # TorchMetrics
         metrics = MetricCollection(
             {
-                "acc": MulticlassAccuracy(num_classes=model_params["num_classes"]),
-                "f1": MulticlassF1Score(num_classes=model_params["num_classes"]),
+                "acc": MulticlassAccuracy(
+                    num_classes=model_params["num_classes"], average="micro"
+                ),
+                "f1": MulticlassF1Score(
+                    num_classes=model_params["num_classes"], average="macro"
+                ),
             }
         )
         self.train_metrics = metrics.clone(prefix="train_")
@@ -55,8 +61,9 @@ class BaseMLPModel(pl.LightningModule):
         self.log("train_loss", loss, on_step=False, on_epoch=True, prog_bar=True)
 
         # log metrics (handles update/compute internally)
+        self.train_metrics.update(preds, labels)
         self.log_dict(
-            self.train_metrics(preds, labels),
+            self.train_metrics,
             on_epoch=True,
             prog_bar=True,
         )
@@ -72,8 +79,9 @@ class BaseMLPModel(pl.LightningModule):
 
         self.log("val_loss", loss, on_step=False, on_epoch=True, prog_bar=True)
 
+        self.val_metrics.update(preds, labels)
         self.log_dict(
-            self.val_metrics(preds, labels),
+            self.val_metrics,
             on_epoch=True,
             prog_bar=True,
         )
